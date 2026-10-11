@@ -44,6 +44,7 @@ Aucun fichier de code (`services/`, `gateway/`, `libs/`, `frontend/`, `scripts/`
 | Interface Prestataires, mobile, vocal | **Perspectives** (README IA + plan.md) | Les planifier | Absentes des 13 étapes du guide, et hors du MVP de la présentation (diapo 15). |
 | Emplacement des règles de travail | **CLAUDE.md racine** qui **renvoie** vers `frontend/apps/client/CLAUDE.md` | Fusionner les deux | Le fichier du client est géré par `next dev` (bloc régénéré automatiquement). Le fusionner créerait des conflits. |
 | Traçabilité Git | **Branche `ia/etape-00`** créée avant toute écriture | Travailler sur `main` | Recommandation du guide : une branche par étape, facile à relire et à annuler. *(Décision validée.)* |
+| Volume du catalogue pour l'évaluation *(addendum)* | **Seed réaliste et idempotent dans l'étape 1** : ≥ 30 activités à Djerba, 60 à 100 sur 5 villes, GPS, prix DT, durées, catégories, créneaux sur 4 semaines, fr/en/ar | Évaluer sur les 8 activités actuelles · se contenter des POI OSM | 8 activités ne permettent ni de mesurer Recall@k / nDCG, ni une précision@5 et une diversité significatives, ni de donner au solveur de vrais arbitrages (budget, distance, créneaux). Les POI OSM n'ont ni prix réservable ni créneaux. Le seed vit dans `services/catalog/scripts/`, car catalog reste propriétaire de ses données. *(Décision de l'étudiant.)* |
 
 ## 4. Vérification
 
@@ -125,10 +126,10 @@ Non applicable : aucune donnée ni aucun modèle à cette étape. À titre indic
 ## 6. Limites, dette technique, risques
 
 - **ADR-007 n'est pas appliquée** : le service `ai`, la base `voyara_ai`, la route `/api/ai` et l'image pgvector n'existent pas encore. `CLAUDE.md` et `architecture.md` le disent explicitement.
-- **Changement d'image Postgres (étape 3)** : passer de `postgres:16-alpine` à `pgvector/pgvector:pg16` (image Debian) avec le volume `pgdata` existant est à tester. Même version majeure, donc les fichiers de données doivent être compatibles. Une différence de collation (libc musl vs glibc) peut toutefois exiger un `REINDEX` des index texte. Faire un `pg_dump` avant.
+- **Changement d'image Postgres (étape 3)** : passer de `postgres:16-alpine` à `pgvector/pgvector:pg16` (image Debian) avec le volume `pgdata` existant est à tester. Même version majeure, donc les fichiers de données doivent être compatibles. Une différence de collation (libc musl vs glibc) peut toutefois exiger un `REINDEX` des index texte. Faire un `pg_dump` avant. **Alternative à trancher à l'étape 3 :** un **conteneur Postgres dédié au service `ai`** (`pgvector/pgvector:pg16`, port hôte **5435**) laisserait les 5 bases existantes et leur image intactes. En contrepartie : un conteneur et un volume de plus, et `create_databases.py`, `dev.ps1` et les sauvegardes à adapter pour deux serveurs. L'isolation colle bien à ADR-007 (une panne de l'IA ne touche pas la plateforme).
 - **Sections non mises à jour** : `architecture.md` §1 à §11 (« 7 microservices », diagramme, table de routage) et `mcd.md` ne mentionnent pas encore `ai`. C'est voulu : elles décrivent l'architecture *en place* et seront mises à jour quand le service existera (étapes 1 et 3).
 - **Efforts estimés** à partir des durées indicatives du guide, sans historique de vélocité sur ce type de tâches. Les étapes L (4 à 9) cumulent au moins 18 jours : le MVP est ambitieux tant que la date de présentation n'est pas connue.
-- **Dépendance aux données** : le catalogue actuel ne compte que 8 activités. Recherche, recommandation et évaluation dépendront fortement des POI collectés à l'étape 1 et des tags de l'étape 2.
+- **Dépendance aux données** : le catalogue actuel ne compte que 8 activités. Recherche, recommandation et évaluation dépendront fortement des POI collectés à l'étape 1 et des tags de l'étape 2. → Traité par l'addendum : seed de 60 à 100 activités à l'étape 1. Risque résiduel : ce sont des **données de démonstration**. Les métriques devront être présentées comme mesurées sur un catalogue synthétique réaliste, pas sur des données de production. Cela alourdit aussi l'étape 1 (effort probablement L au lieu de M).
 - **Coûts et secrets** : `ANTHROPIC_API_KEY` sera un nouveau secret. Il doit rester dans `.env` (déjà ignoré par Git) et ne jamais apparaître dans un rapport.
 
 ## 7. À vérifier par moi
@@ -153,7 +154,8 @@ Non applicable : aucune donnée ni aucun modèle à cette étape. À titre indic
 - script `collecter_pois.py` (Overpass, 8 villes, idempotent) ;
 - client Open-Meteo avec cache 6 h ;
 - notebook d'EDA ;
-- tests du mapping OSM et du cache.
+- tests du mapping OSM et du cache ;
+- **seed réaliste et idempotent du catalogue** (≥ 30 activités à Djerba, 60 à 100 sur 5 villes, GPS, prix DT, durées, catégories, créneaux sur 4 semaines, fr/en/ar), sans écraser les 8 activités existantes.
 
 Prérequis :
 - Docker démarré (base `voyara_ai` à ajouter à `infra/postgres/init.sql` et à `scripts/create_databases.py`) ;
@@ -161,6 +163,14 @@ Prérequis :
 - Jupyter dans le venv pour le notebook.
 
 ---
+
+### Addendum du 2026-10-11 (après validation du rapport)
+
+Décisions ajoutées par l'étudiant, reportées dans le §3, le §6, le §8, `docs/plan.md` (étapes 1 et 3) et `docs/ia/journal.md` :
+1. **Seed réaliste du catalogue dans l'étape 1** : le catalogue de 8 activités est insuffisant pour évaluer la recherche, la recommandation et le solveur.
+2. **Option « Postgres dédié au service `ai` »** (`pgvector/pgvector:pg16`, port 5435) consignée comme alternative au changement d'image global, à trancher à l'étape 3.
+
+Commits de l'étape : `c6ee7f6` (docs + guide IA), `0460ca7` (RUN.md), puis le commit de cet addendum.
 
 ### Contrôle final (après création de ce rapport)
 
