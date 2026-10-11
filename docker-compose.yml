@@ -1,0 +1,159 @@
+# ==========================================================================
+# Voyara — architecture microservices
+#
+#   docker compose up --build
+#
+# Les secrets (${...}) sont lus depuis le fichier `.env` à la racine
+# (copiez `.env.example` et remplissez les valeurs).
+# Le frontend (Vite) tourne à part : cd frontend && npm run dev
+# ==========================================================================
+
+name: voyara
+
+x-common-env: &common-env
+  ENVIRONMENT: docker
+  JWT_SECRET_KEY: ${JWT_SECRET_KEY}
+  INTERNAL_API_KEY: ${INTERNAL_API_KEY}
+
+x-postgres-env: &postgres-env
+  POSTGRES_USER: ${POSTGRES_USER}
+  POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+  POSTGRES_HOST: postgres
+  POSTGRES_PORT: "5432"
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: voyara          # base du auth-service
+    ports:
+      - "5434:5432"                   # 5434 pour ne pas gêner un Postgres local (5432) ni rezervy-db (5433)
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+      - ./infra/postgres/init.sql:/docker-entrypoint-initdb.d/init.sql:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d voyara"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  auth:
+    build: { context: ., dockerfile: services/auth/Dockerfile }
+    environment:
+      <<: [*common-env, *postgres-env]
+      POSTGRES_DB: voyara
+      NOTIFICATION_SERVICE_URL: http://notification:8006
+      ACCESS_TOKEN_EXPIRE_MINUTES: "30"
+      REFRESH_TOKEN_EXPIRE_DAYS: "7"
+      EMAIL_VERIFICATION_EXPIRE_HOURS: "24"
+      PASSWORD_RESET_EXPIRE_MINUTES: "30"
+      FIRST_ADMIN_EMAIL: ${FIRST_ADMIN_EMAIL}
+      FIRST_ADMIN_PASSWORD: ${FIRST_ADMIN_PASSWORD}
+    volumes:
+      - avatars:/srv/service/static/avatars
+    depends_on:
+      postgres: { condition: service_healthy }
+
+  catalog:
+    build: { context: ., dockerfile: services/catalog/Dockerfile }
+    environment:
+      <<: [*common-env, *postgres-env]
+      POSTGRES_DB: voyara_catalog
+      BOOKING_SERVICE_URL: http://booking:8003
+      AUTO_CREATE_TABLES: "True"
+    depends_on:
+      postgres: { condition: service_healthy }
+
+  booking:
+    build: { context: ., dockerfile: services/booking/Dockerfile }
+    environment:
+      <<: [*common-env, *postgres-env]
+      POSTGRES_DB: voyara_booking
+      CATALOG_SERVICE_URL: http://catalog:8002
+      AUTO_CREATE_TABLES: "True"
+    depends_on:
+      postgres: { condition: service_healthy }
+
+  payment:
+    build: { context: ., dockerfile: services/payment/Dockerfile }
+    environment:
+      <<: [*common-env, *postgres-env]
+      POSTGRES_DB: voyara_payment
+      BOOKING_SERVICE_URL: http://booking:8003
+      AUTO_CREATE_TABLES: "True"
+    depends_on:
+      postgres: { condition: service_healthy }
+
+  review:
+    build: { context: ., dockerfile: services/review/Dockerfile }
+    environment:
+      <<: [*common-env, *postgres-env]
+      POSTGRES_DB: voyara_review
+      CATALOG_SERVICE_URL: http://catalog:8002
+      BOOKING_SERVICE_URL: http://booking:8003
+      AUTO_CREATE_TABLES: "True"
+    depends_on:
+      postgres: { condition: service_healthy }
+
+  notification:
+    build: { context: ., dockerfile: services/notification/Dockerfile }
+    environment:
+      <<: *common-env
+      MAIL_USERNAME: ${MAIL_USERNAME}
+      MAIL_PASSWORD: ${MAIL_PASSWORD}
+      MAIL_FROM: ${MAIL_FROM}
+      MAIL_FROM_NAME: ${MAIL_FROM_NAME:-Voyara}
+      MAIL_SERVER: ${MAIL_SERVER:-smtp.gmail.com}
+      MAIL_PORT: ${MAIL_PORT:-587}
+      MAIL_STARTTLS: ${MAIL_STARTTLS:-True}
+      MAIL_SSL_TLS: ${MAIL_SSL_TLS:-False}
+      FRONTEND_URL: ${FRONTEND_URL:-http://localhost:5173}
+      ADMIN_URL: ${ADMIN_URL:-http://localhost:8080/admin}
+
+  admin:
+    build: { context: ., dockerfile: services/admin/Dockerfile }
+    environment:
+      <<: *common-env
+      AUTH_SERVICE_URL: http://auth:8001
+      CATALOG_SERVICE_URL: http://catalog:8002
+      BOOKING_SERVICE_URL: http://booking:8003
+      PAYMENT_SERVICE_URL: http://payment:8004
+      REVIEW_SERVICE_URL: http://review:8005
+    depends_on: [auth, catalog, booking, payment]
+
+  gateway:
+    build: { context: ., dockerfile: gateway/Dockerfile }
+    ports:
+      - "8000:8000"
+    environment:
+      AUTH_SERVICE_URL: http://auth:8001
+      CATALOG_SERVICE_URL: http://catalog:8002
+      BOOKING_SERVICE_URL: http://booking:8003
+      PAYMENT_SERVICE_URL: http://payment:8004
+      REVIEW_SERVICE_URL: http://review:8005
+      NOTIFICATION_SERVICE_URL: http://notification:8006
+      ADMIN_SERVICE_URL: http://admin:8007
+      CORS_ORIGINS: '["http://localhost:5173","http://localhost:5174","http://localhost:8080"]'
+    depends_on: [auth, catalog, booking, payment, review, notification, admin]
+
+  # Site client Next.js (SSR/SEO)
+  client:
+    build: { context: ., dockerfile: frontend/Dockerfile.client }
+    environment:
+      API_INTERNAL_URL: http://gateway:8000
+    depends_on: [gateway]
+
+  # nginx : une origine unique — / → client (Next), /admin/ → admin (statique), /api → gateway
+  web:
+    build: { context: ., dockerfile: frontend/Dockerfile }
+    ports:
+      - "8080:80"
+    depends_on: [gateway, client]
+
+volumes:
+  pgdata:
+    name: touribook_pgdata            # volume créé avant le renommage du projet : on garde les données
+  avatars:
+    name: touribook_avatars

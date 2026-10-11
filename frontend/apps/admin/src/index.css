@@ -1,0 +1,5 @@
+/* Design system partagé (thème Voyara + Tailwind) */
+@import "../../../packages/ui/src/styles.css";
+
+/* Tailwind doit scanner les classes utilisées dans les packages partagés */
+@source "../../../packages";

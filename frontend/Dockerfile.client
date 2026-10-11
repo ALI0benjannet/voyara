@@ -1,0 +1,27 @@
+# Site client Next.js (SSR/SEO) — contexte de build : racine du repo
+FROM node:22-alpine AS build
+
+WORKDIR /app
+# En Docker, le gateway est joignable via le réseau compose
+ENV API_INTERNAL_URL=http://gateway:8000
+
+COPY frontend/package.json frontend/package-lock.json ./
+COPY frontend/apps ./apps
+COPY frontend/packages ./packages
+RUN npm ci --no-audit --no-fund && npm run build -w @voyara/client
+
+# Image d'exécution minimale (sortie standalone de Next)
+FROM node:22-alpine
+
+WORKDIR /app
+ENV NODE_ENV=production \
+    API_INTERNAL_URL=http://gateway:8000 \
+    PORT=3000 \
+    HOSTNAME=0.0.0.0
+
+COPY --from=build /app/apps/client/.next/standalone ./
+COPY --from=build /app/apps/client/.next/static ./apps/client/.next/static
+COPY --from=build /app/apps/client/public ./apps/client/public
+
+EXPOSE 3000
+CMD ["node", "apps/client/server.js"]

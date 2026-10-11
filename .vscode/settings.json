@@ -1,0 +1,22 @@
+{
+  "css.lint.unknownAtRules": "ignore",
+
+  // Interpréteur du projet (venv à la racine) — sinon Pylance analyse avec le
+  // Python global, où aucune dépendance du backend n'est installée.
+  "python.defaultInterpreterPath": "${workspaceFolder}/.venv/Scripts/python.exe",
+
+  // `voyara_common` est installé en mode éditable (pip install -e libs/common).
+  // Pylance ne suit pas le finder dynamique généré par ce mode : on lui indique
+  // explicitement où trouver le paquet partagé et les applications des services.
+  "python.analysis.extraPaths": [
+    "${workspaceFolder}/libs/common",
+    "${workspaceFolder}/services/admin",
+    "${workspaceFolder}/services/auth",
+    "${workspaceFolder}/services/booking",
+    "${workspaceFolder}/services/catalog",
+    "${workspaceFolder}/services/notification",
+    "${workspaceFolder}/services/payment",
+    "${workspaceFolder}/services/review",
+    "${workspaceFolder}/gateway"
+  ]
+}

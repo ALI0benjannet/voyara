@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+{% block content %}
+<h2 style="color:#1C3641;">Réservation confirmée 🎉</h2>
+<p>Bonjour {{ name }},</p>
+<p>Votre paiement a bien été reçu — votre réservation est <b>confirmée</b> !</p>
+<table style="width:100%;border-collapse:collapse;margin:20px 0;background:#F6F0E4;border-radius:8px;">
+  <tr>
+    <td style="padding:12px 16px;color:#555;">Activité</td>
+    <td style="padding:12px 16px;font-weight:bold;color:#1C3641;">{{ activity }}</td>
+  </tr>
+  <tr>
+    <td style="padding:12px 16px;color:#555;">Date</td>
+    <td style="padding:12px 16px;font-weight:bold;color:#1C3641;">{{ date }}</td>
+  </tr>
+  <tr>
+    <td style="padding:12px 16px;color:#555;">Voyageurs</td>
+    <td style="padding:12px 16px;font-weight:bold;color:#1C3641;">{{ guests }}</td>
+  </tr>
+  <tr>
+    <td style="padding:12px 16px;color:#555;">Montant réglé</td>
+    <td style="padding:12px 16px;font-weight:bold;color:#0F7C8C;">{{ amount }} DT</td>
+  </tr>
+  <tr>
+    <td style="padding:12px 16px;color:#555;">Référence</td>
+    <td style="padding:12px 16px;font-weight:bold;color:#1C3641;">#{{ booking_id }}</td>
+  </tr>
+</table>
+<p>Présentez le <b>QR code</b> disponible dans « Mes réservations » le jour de l'activité.</p>
+<p style="margin-top:24px;">
+  <a href="{{ link }}" style="background:#C75B33;color:#fff;padding:12px 24px;border-radius:999px;text-decoration:none;font-weight:bold;">
+    Voir ma réservation
+  </a>
+</p>
+{% endblock %}

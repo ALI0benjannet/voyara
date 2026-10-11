@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(.venv/Scripts/python.exe -m pip install -r requirements-dev.txt --quiet)",
+      "Bash(.venv/Scripts/python.exe -m pip install -e libs/common --quiet)",
+      "Bash(.venv/Scripts/python.exe -c \"import fastapi, sqlalchemy, httpx, voyara_common; print\\('Dépendances OK'\\)\")",
+      "Bash(.venv/Scripts/python.exe scripts/create_databases.py)",
+      "Bash(powershell -NoProfile -Command \"Start-Process -FilePath 'C:\\\\Program Files\\\\Docker\\\\Docker\\\\Docker Desktop.exe' -WindowStyle Minimized\")",
+      "Bash(docker info *)",
+      "Bash(break)",
+      "Bash(python -)",
+      "Bash(npm run *)"
+    ]
+  }
+}

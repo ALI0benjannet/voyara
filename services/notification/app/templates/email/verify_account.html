@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+{% block content %}
+<h2>Bienvenue {{ name }} 👋</h2>
+<p>Un code de vérification à 4 chiffres a été envoyé à votre adresse e-mail.</p>
+<p style="font-size:24px;font-weight:bold;text-align:center;margin:24px 0;">{{ code }}</p>
+<p>Entrez ce code dans la page de confirmation pour accéder à votre compte.</p>
+<p style="margin:32px 0;text-align:center;">
+  <a href="{{ link }}" style="background:#0f766e;color:#fff;padding:14px 28px;border-radius:8px;text-decoration:none;">
+    Aller à la page de confirmation
+  </a>
+</p>
+<p style="font-size:13px;color:#666;">Ce code expire dans {{ hours }} heures.</p>
+<p style="font-size:12px;word-break:break-all;color:#999;">{{ link }}</p>
+{% endblock %}

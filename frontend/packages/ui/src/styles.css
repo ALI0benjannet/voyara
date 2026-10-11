@@ -1,0 +1,177 @@
+@import "tailwindcss";
+@plugin "tailwindcss-animate";
+
+@custom-variant dark (&:is(.dark *));
+
+:root {
+  --radius: 1rem;
+
+  /* ------------------------------------------------------------------
+   * Palette Voyara — inspirée du patrimoine tunisien.
+   * Bleu de Sidi Bou Saïd, blanc de chaux, terracotta du Sud, or du
+   * couchant. Toutes les valeurs sont vérifiées WCAG AA (4.5:1 pour le
+   * texte courant) dans leur contexte d'usage.
+   * ------------------------------------------------------------------ */
+  --background: #eef6fb; /* ciel de la médina, très lavé */
+  --foreground: #1c3641; /* encre — 12.5:1 sur carte */
+  --primary: #1668a8; /* bleu Sidi Bou Saïd — 5.4:1 sur blanc */
+  --primary-foreground: #ffffff;
+  --primary-hover: #0f4c6b; /* bleu profond des portes */
+  --secondary: #f4ede0; /* sable */
+  --secondary-foreground: #1c3641;
+  --accent: #b45c34; /* terracotta — 4.6:1 avec du blanc dessus */
+  --accent-foreground: #ffffff;
+  --accent-hover: #94491f;
+
+  /* Or : deux valeurs pour un seul rôle.
+   * `--gold` (vif) ne passe qu'à 2:1 sur fond clair — réservé aux fonds
+   * sombres (footer, hero) et aux grandes tailles ; `--gold-ink` est sa
+   * version lisible pour le petit texte sur fond clair (4.6:1). */
+  --gold: #fba14d;
+  --gold-ink: #8f6612;
+
+  --muted: #f4ede0;
+  --muted-foreground: rgba(28, 54, 65, 0.72); /* 4.6:1 — lisible en 13px */
+  --destructive: #b3261e;
+  --border: rgba(28, 54, 65, 0.12);
+  --input: rgba(28, 54, 65, 0.18);
+  --ring: #1668a8;
+  --card: #fcfcfa; /* blanc de chaux */
+  --card-foreground: var(--foreground);
+  --ink: #16303c; /* footer / aplats sombres */
+  --ink-foreground: rgba(246, 240, 228, 0.88);
+
+  /* Ombres : douces et colorées à l'encre plutôt qu'au noir pur, pour
+   * rester dans la gamme chaude de la palette. */
+  --shadow-card: 0 1px 2px rgb(28 54 65 / 0.05), 0 4px 16px rgb(28 54 65 / 0.06);
+  --shadow-card-hover: 0 2px 6px rgb(28 54 65 / 0.07), 0 14px 32px rgb(28 54 65 / 0.13);
+}
+
+.dark {
+  --background: #142830;
+  --foreground: #f2ede1;
+  --card: #1c3641;
+  --card-foreground: #f2ede1;
+  --secondary: #1f3d49;
+  --secondary-foreground: #f2ede1;
+  --muted: #1a333d;
+  --muted-foreground: rgba(242, 237, 225, 0.65);
+  --border: rgba(225, 234, 242, 0.14);
+  --input: rgba(242, 237, 225, 0.2);
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary-hover: var(--primary-hover);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent-hover: var(--accent-hover);
+  --color-gold: var(--gold);
+  --color-gold-ink: var(--gold-ink);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-destructive: var(--destructive);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-ink: var(--ink);
+  --color-ink-foreground: var(--ink-foreground);
+
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 6px);
+
+  --font-sans: "Albert Sans", "Noto Sans Arabic", system-ui, sans-serif;
+  --font-display: "Marcellus", "Albert Sans", serif;
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+  }
+  /* Ajustements RTL */
+  [dir="rtl"] {
+    font-family: "Noto Sans Arabic", "Albert Sans", sans-serif;
+  }
+}
+
+@layer utilities {
+  .font-display {
+    font-family: var(--font-display);
+    font-weight: 400;
+  }
+
+  /* ------------------------------------------------------------------
+   * Motif zellige — étoile à 8 branches des carreaux tunisiens, tracée en
+   * SVG inline (aucun fichier à charger). Volontairement à très faible
+   * opacité : c'est une texture de fond, jamais un élément lisible.
+   * `currentColor` permet de le teinter selon le contexte.
+   * ------------------------------------------------------------------ */
+  .zellige-pattern {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'%3E%3Cg fill='none' stroke='%231668a8' stroke-width='1'%3E%3Cpath d='M24 4 30 18 44 24 30 30 24 44 18 30 4 24 18 18Z'/%3E%3Crect x='14' y='14' width='20' height='20' transform='rotate(45 24 24)'/%3E%3C/g%3E%3C/svg%3E");
+    background-size: 48px 48px;
+  }
+
+  /* Bandeau de séparation : le motif s'estompe vers les bords pour ne pas
+     couper franchement la section. */
+  .zellige-divider {
+    height: 2.5rem;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cg fill='none' stroke='%23c1683f' stroke-width='1.2'%3E%3Cpath d='M20 3 25 15 37 20 25 25 20 37 15 25 3 20 15 15Z'/%3E%3C/g%3E%3C/svg%3E");
+    background-size: 40px 40px;
+    background-repeat: repeat-x;
+    background-position: center;
+    opacity: 0.18;
+    -webkit-mask-image: linear-gradient(90deg, transparent, #000 22%, #000 78%, transparent);
+    mask-image: linear-gradient(90deg, transparent, #000 22%, #000 78%, transparent);
+  }
+
+  /* Élévation partagée par toutes les cartes — une seule définition. */
+  .card-elevated {
+    box-shadow: var(--shadow-card);
+    transition:
+      box-shadow 0.2s ease,
+      transform 0.2s ease;
+  }
+  .card-elevated:hover {
+    box-shadow: var(--shadow-card-hover);
+    transform: translateY(-2px);
+  }
+  @keyframes fade-up {
+    from {
+      opacity: 0;
+      transform: translateY(14px);
+    }
+    to {
+      opacity: 1;
+      transform: none;
+    }
+  }
+  .animate-fade-up {
+    animation: fade-up 0.6s ease both;
+  }
+
+  /* Respecte le réglage système « réduire les animations » : mouvements
+     supprimés, mais rien ne disparaît de l'écran. */
+  @media (prefers-reduced-motion: reduce) {
+    .animate-fade-up {
+      animation: none;
+    }
+    .card-elevated {
+      transition: none;
+    }
+    .card-elevated:hover {
+      transform: none;
+    }
+  }
+}

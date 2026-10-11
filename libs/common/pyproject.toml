@@ -1,0 +1,15 @@
+[project]
+name = "voyara-common"
+version = "0.1.0"
+description = "Code partagé entre les microservices Voyara (sécurité, config, pagination, appels internes)"
+requires-python = ">=3.11"
+# Les dépendances runtime (fastapi, sqlalchemy, jose, passlib, httpx, pydantic-settings)
+# sont fournies par le requirements.txt de chaque service pour garder le contrôle des versions.
+dependencies = []
+
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+include = ["voyara_common*"]

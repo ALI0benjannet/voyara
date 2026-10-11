@@ -1,0 +1,43 @@
+# Environnement (secrets) — seuls les modèles .env.example sont versionnés
+.env
+.env.*
+!.env.example
+# Config frontend sans secret (URL, nom d'app) : nécessaire à un clone neuf
+!frontend/apps/*/.env.development
+!frontend/apps/*/.env.production
+!frontend/apps/*/.env.test
+
+# Photos de profil uploadées (données personnelles) — on garde juste le dossier
+services/auth/static/avatars/*
+!services/auth/static/avatars/.gitkeep
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+*.egg-info/
+
+# Node / builds frontend
+node_modules/
+dist/
+dist-ssr/
+.next/
+out/
+*.tsbuildinfo
+coverage/
+
+# Logs
+*.log
+logs/
+
+# Éditeurs / OS
+.idea/
+.DS_Store
+Thumbs.db
+.claude/settings.local.json

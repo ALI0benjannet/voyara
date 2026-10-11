@@ -1,0 +1,11 @@
+/* Design system partagé (thème Voyara + Tailwind) */
+@import "../../../../packages/ui/src/styles.css";
+
+/* Tailwind doit scanner les classes utilisées dans les packages partagés */
+@source "../../../../packages";
+
+/* Polices optimisées par next/font (noms de familles générés) */
+@theme inline {
+  --font-sans: var(--font-albert-sans), "Noto Sans Arabic", system-ui, sans-serif;
+  --font-display: var(--font-marcellus), serif;
+}

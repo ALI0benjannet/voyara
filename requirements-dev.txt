@@ -1,0 +1,42 @@
+# ============================================================
+# Environnement de DÉVELOPPEMENT unique pour tous les services
+# (chaque service garde son requirements.txt pour Docker)
+#
+#   python -m venv .venv
+#   .venv\Scripts\pip install -r requirements-dev.txt
+#   .venv\Scripts\pip install -e libs/common
+# ============================================================
+
+# API
+fastapi==0.141.1
+uvicorn[standard]==0.52.1
+pydantic==2.13.4
+pydantic-settings==2.14.2
+email-validator==2.3.0
+python-multipart==0.0.32
+
+# Base de données
+SQLAlchemy==2.0.51
+psycopg2-binary==2.9.12
+alembic==1.18.5
+
+# Sécurité
+python-jose==3.5.0
+passlib==1.7.4
+slowapi==0.1.10
+
+# HTTP inter-services
+httpx==0.28.1
+
+# E-mail
+fastapi-mail==1.6.5
+Jinja2==3.1.6
+
+# Divers
+python-dotenv==1.2.2
+qrcode==8.2
+stripe==15.5.0
+
+# Tests & qualité
+pytest~=8.3
+ruff~=0.9
