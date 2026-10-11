@@ -9,7 +9,7 @@
 [7. Bases de données](#7-bases-de-données-migrations--seeds) · [8. Démarrage](#8-démarrage) ·
 [9. Variables d'env](#9-variables-denvironnement) · [10. Sécurité](#10-sécurité) ·
 [11. Déploiement](#11-déploiement-docker-compose) · [12. Limites connues & risques](#12-limites-connues-risques--améliorations-ciblées) ·
-[13. Décisions d'architecture (ADR)](#13-décisions-darchitecture-adr) · [14. Feuille de route](#14-feuille-de-route-technique)
+[13. Décisions d'architecture (ADR)](#13-décisions-darchitecture-adr) (dont [ADR-007 — service `ai`](#adr-007--microservice-ai-dédié-pgvector-et-llm-hybride)) · [14. Feuille de route](#14-feuille-de-route-technique)
 
 ## 1. Vision générale
 
@@ -420,7 +420,9 @@ Les améliorations `planifié` sont des tâches du [plan.md](plan.md) (jalon ind
 ## 13. Décisions d'architecture (ADR)
 
 Format condensé : **Contexte → Décision → Alternatives écartées → Conséquences**.
-Ces décisions sont **déjà appliquées** dans le code.
+Les décisions ADR-001 à ADR-006 sont **déjà appliquées** dans le code. ADR-007 est **acceptée mais
+pas encore appliquée** : sa mise en œuvre commence aux étapes 1 et 3 de la phase « Moteur IA »
+([plan.md](plan.md)).
 
 ### ADR-001 — Microservices (7 services + gateway) plutôt que monolithe
 
@@ -521,6 +523,61 @@ Ces décisions sont **déjà appliquées** dans le code.
   maintenir, les packages partagés doivent rester compatibles Vite **et** Next (contrainte
   documentée §5, ex. guard `window` dans i18n).
 
+### ADR-007 — Microservice `ai` dédié, pgvector et LLM hybride
+
+> Statut : **acceptée le 11/10/2026 — non encore appliquée** (étapes 1 et 3 du
+> [guide moteur IA](../AgentIA_Voyara/Guide_Moteur_IA_Voyara.html)). Vision et modules : [docs/ia/README.md](ia/README.md).
+
+- **Contexte** : le projet devient aussi un projet *IA & Cognition* (5DS Data Science). Le moteur
+  décrit dans la [présentation](../AgentIA_Voyara/PresProjCom.pdf) — compréhension en langage
+  naturel, recherche sémantique, recommandation Top-5, itinéraire optimisé sous contraintes, agent
+  conversationnel — a besoin de données que personne ne possède aujourd'hui (points d'intérêt OSM,
+  cache météo, vecteurs d'embeddings, conversations, versions d'itinéraires, journal des appels LLM).
+  Il est **lent** (appels LLM de plusieurs secondes), **coûteux** (API payante) et dépend de services
+  externes, alors que la réservation et le paiement doivent rester disponibles en toutes
+  circonstances. L'ancienne Phase 10 (« recommandations par règles dans catalog, pas de 8ᵉ service »)
+  ne couvre plus ce périmètre.
+- **Décision** :
+  - nouveau microservice **`ai`** (`services/ai`, **port 8008**), construit sur le même socle que les
+    autres (`voyara_common` : config, auth, internal, database, pagination, exceptions, logging, limiter) ;
+  - base dédiée **`voyara_ai`** avec l'extension **pgvector** (index HNSW) : POI, cache météo,
+    `documents_index`, conversations, messages, versions d'itinéraires, `llm_appels`, paramètres IA.
+    L'image Postgres passe à `pgvector/pgvector:pg16` (même moteur PostgreSQL 16, extension en plus) ;
+  - les données métier sont lues par **appels HTTP synchrones** vers catalog, review et booking sur
+    `/internal/*` (`ServiceClient` + `X-Internal-Api-Key`), jamais par jointure SQL ; les endpoints
+    manquants (export d'activités enrichies, notes moyennes, historique) sont ajoutés **dans le service
+    propriétaire** ;
+  - le gateway route le préfixe **`/api/ai`** vers `ai` (blocage `/internal` conservé) ;
+  - **couche LLM hybride** derrière une interface unique `LLMProvider` : **Claude API par défaut**
+    (qualité de démo, tool use natif, sortie structurée), **Ollama local en secours** (coût nul,
+    hors-ligne) ; mode `auto` = Claude puis bascule sur Ollama en cas d'erreur ou de timeout ;
+    chaque appel est journalisé (fournisseur, modèle, tokens, latence, coût estimé, statut) ;
+  - le LLM **comprend et explique** ; les faits viennent des bases, le classement d'un score
+    mesurable, le planning d'un solveur (OR-Tools CP-SAT). L'agent ne réserve ni ne paie jamais seul.
+- **Alternatives écartées** :
+  - *IA intégrée au catalog-service* (ce que prévoyait l'ancienne Phase 10) — couple un domaine stable
+    et critique (catalogue, places, saga de réservation) à un composant lent, coûteux et expérimental ;
+    une panne ou une saturation du LLM dégraderait la consultation et la réservation ; catalog devrait
+    en plus lire review et booking et stocker des conversations, ce qui brise le découpage par domaine.
+  - *Base vectorielle externe (Qdrant, Weaviate, Pinecone)* — une technologie de plus à installer,
+    sauvegarder et superviser, et une synchronisation de plus à garantir, pour un volume de quelques
+    milliers de documents que pgvector traite sans difficulté ; pgvector permet aussi de combiner
+    filtres SQL (ville, prix, rayon) et similarité vectorielle dans une seule requête.
+  - *Un seul LLM* — Claude seul : pas de démo possible hors-ligne et coût proportionnel à l'usage ;
+    Ollama seul : qualité d'extraction et de tool use plus faible sur l'arabe et la darija ; dans les
+    deux cas, **aucune comparaison scientifique** possible entre modèles, alors que c'est un résultat
+    attendu du projet data science.
+- **Conséquences** :
+  - \+ isolation des pannes et des coûts : si `ai` tombe, réservation et paiement continuent ;
+    database-per-service respecté ; le moteur s'évalue et se teste isolément ; comparaison
+    Claude / Ollama chiffrable sur le même jeu de test ; démo possible hors-ligne.
+  - − un 9ᵉ processus à démarrer (`dev.ps1`, `stop-dev.ps1`, docker-compose à étendre) ; changement
+    d'image Postgres à vérifier sur les bases existantes (volume `pgdata` conservé) ; pipeline
+    d'indexation à garder synchronisé avec le catalogue (réindexation incrémentale par empreinte) ;
+    `ANTHROPIC_API_KEY` = nouveau secret à protéger et budget API à plafonner ; latence des appels
+    synchrones vers 3 services → timeouts et dégradation propre obligatoires (cf. §12 n° 1) ; Ollama
+    demande une machine avec assez de RAM pour le modèle choisi.
+
 ## 14. Feuille de route technique
 
 L'ordre, les priorités (`must/should/nice`), les efforts (S/M/L) et les jalons datés sont dans
@@ -532,5 +589,8 @@ L'ordre, les priorités (`must/should/nice`), les efforts (S/M/L) et les jalons 
 3. **J3 — Qualité & robustesse** : tests (saga, E2E), CI GitHub Actions, timeouts/retry,
    expiration des `pending`, `X-Request-ID`, sauvegardes pg_dump ; Leaflet et scan QR si le rythme tient
 4. **J4 — Gel & dossier PFE** : rapport, diagrammes, guide, slides, démo scriptée
-5. **Perspectives** (post-PFE) : RS256/JWKS, Alembic généralisé, broker de messages, SEO
-   multilingue (`/fr|/en|/ar` + hreflang), recommandations ML, panier multi-activités
+5. **Phase Moteur IA** (projet IA & Cognition 5DS, [ADR-007](#adr-007--microservice-ai-dédié-pgvector-et-llm-hybride)) :
+   service `ai`, 6 modules, évaluation chiffrée — étapes 0 à 13 dans [plan.md](plan.md), suivi dans
+   [docs/ia/](ia/README.md)
+6. **Perspectives** (post-PFE) : RS256/JWKS, Alembic généralisé, broker de messages, SEO
+   multilingue (`/fr|/en|/ar` + hreflang), panier multi-activités
