@@ -36,8 +36,8 @@ export function ActivityCard({ activity, rating }: { activity: Activity; rating?
         <ActivityImage src={activity.photos} label={`Photo — ${activity.localisation}`} />
         <FavoriteButton activityId={activity.id} />
         {activity.category && (
-          // Terracotta : identifie la catégorie sans concurrencer le bleu des
-          // actions. Blanc sur ce fond = 4.6:1, conforme AA.
+          // Terracotta : identifie la catégorie, dans la même famille chaude
+          // que l'orange des actions. Blanc sur ce fond = 4.6:1, conforme AA.
           <span className="bg-accent/95 text-accent-foreground absolute start-3 bottom-3 rounded-full px-3 py-1 text-xs font-semibold shadow-sm backdrop-blur-sm">
             {categoryName(activity.category, lang)}
           </span>

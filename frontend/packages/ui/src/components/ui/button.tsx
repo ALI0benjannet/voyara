@@ -25,8 +25,7 @@ const base =
   "disabled:pointer-events-none disabled:opacity-55";
 
 const variants: Record<Variant, string> = {
-  // Bleu Sidi Bou Saïd, aplat franc : plus lisible qu'un dégradé et fidèle
-  // aux façades de la médina.
+  // Orange brûlé du logo, aplat franc : plus lisible qu'un dégradé.
   primary:
     "bg-primary text-primary-foreground shadow-sm hover:bg-primary-hover hover:shadow-md active:scale-[.985]",
   secondary: "bg-secondary text-secondary-foreground hover:brightness-97 active:scale-[.985]",

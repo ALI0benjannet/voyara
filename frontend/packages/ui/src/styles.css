@@ -7,16 +7,17 @@
   --radius: 1rem;
 
   /* ------------------------------------------------------------------
-   * Palette Voyara — inspirée du patrimoine tunisien.
-   * Bleu de Sidi Bou Saïd, blanc de chaux, terracotta du Sud, or du
-   * couchant. Toutes les valeurs sont vérifiées WCAG AA (4.5:1 pour le
-   * texte courant) dans leur contexte d'usage.
+   * Palette Voyara — accordée au logo (V rouge-orangé).
+   * Orange brûlé, blanc de chaux, terracotta du Sud, or du couchant.
+   * Toutes les valeurs sont vérifiées WCAG AA (4.5:1 pour le texte
+   * courant) dans leur contexte d'usage. L'orange vif du logo (#ef4130)
+   * ne passe qu'à 3.8:1 sous du texte blanc : on l'assombrit d'un cran.
    * ------------------------------------------------------------------ */
-  --background: #eef6fb; /* ciel de la médina, très lavé */
+  --background: #fdf6f0; /* sable très lavé, teinté d'orange */
   --foreground: #1c3641; /* encre — 12.5:1 sur carte */
-  --primary: #1668a8; /* bleu Sidi Bou Saïd — 5.4:1 sur blanc */
+  --primary: #c2410c; /* orange brûlé — 5.2:1 sur blanc, 4.9:1 sur le fond */
   --primary-foreground: #ffffff;
-  --primary-hover: #0f4c6b; /* bleu profond des portes */
+  --primary-hover: #9a3412; /* orange profond — 7.3:1 */
   --secondary: #f4ede0; /* sable */
   --secondary-foreground: #1c3641;
   --accent: #b45c34; /* terracotta — 4.6:1 avec du blanc dessus */
@@ -35,7 +36,7 @@
   --destructive: #b3261e;
   --border: rgba(28, 54, 65, 0.12);
   --input: rgba(28, 54, 65, 0.18);
-  --ring: #1668a8;
+  --ring: #c2410c;
   --card: #fcfcfa; /* blanc de chaux */
   --card-foreground: var(--foreground);
   --ink: #16303c; /* footer / aplats sombres */
@@ -119,7 +120,7 @@
    * `currentColor` permet de le teinter selon le contexte.
    * ------------------------------------------------------------------ */
   .zellige-pattern {
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'%3E%3Cg fill='none' stroke='%231668a8' stroke-width='1'%3E%3Cpath d='M24 4 30 18 44 24 30 30 24 44 18 30 4 24 18 18Z'/%3E%3Crect x='14' y='14' width='20' height='20' transform='rotate(45 24 24)'/%3E%3C/g%3E%3C/svg%3E");
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='48' height='48' viewBox='0 0 48 48'%3E%3Cg fill='none' stroke='%23c2410c' stroke-width='1'%3E%3Cpath d='M24 4 30 18 44 24 30 30 24 44 18 30 4 24 18 18Z'/%3E%3Crect x='14' y='14' width='20' height='20' transform='rotate(45 24 24)'/%3E%3C/g%3E%3C/svg%3E");
     background-size: 48px 48px;
   }
 
