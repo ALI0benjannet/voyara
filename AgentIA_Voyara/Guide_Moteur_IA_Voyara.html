@@ -1,0 +1,608 @@
+<!doctype html>
+<html lang="fr"><head><meta charset="utf-8">
+<title>Guide Moteur IA Voyara</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Albert+Sans:wght@400;600;700&family=Marcellus&display=swap" rel="stylesheet">
+<style>
+@page { size: A4; margin: 16mm 15mm 18mm 15mm; }
+:root { --sable:#F6F0E4; --encre:#1C3641; --sarcelle:#0F7C8C; --terra:#C75B33; --or:#E4A93E; }
+* { box-sizing: border-box; }
+body { font-family: 'Albert Sans', 'Segoe UI', Arial, sans-serif; color: var(--encre); font-size: 10.2pt;
+       line-height: 1.5; margin: 0; background: #fff; }
+h1, h2, h3 { font-family: 'Marcellus', Georgia, serif; font-weight: 400; color: var(--encre); }
+h2 { font-size: 20pt; margin: 0 0 4mm; border-bottom: 2px solid var(--or); padding-bottom: 2mm; }
+h3 { font-size: 12.5pt; margin: 5mm 0 2mm; color: var(--sarcelle); }
+p { margin: 0 0 2.5mm; }
+.page { page-break-after: always; }
+.page:last-of-type { page-break-after: auto; }
+.cover { height: 262mm; background: var(--sable); padding: 30mm 18mm; position: relative; }
+.cover .eyebrow { color: var(--terra); letter-spacing: .18em; text-transform: uppercase; font-size: 9.5pt; font-weight: 600; }
+.cover h1 { font-size: 40pt; margin: 6mm 0 3mm; line-height: 1.1; }
+.cover .sous { font-size: 14pt; color: var(--sarcelle); margin-bottom: 14mm; }
+.cover .bande { height: 3mm; width: 60mm; background: linear-gradient(90deg, var(--sarcelle), var(--terra), var(--or)); margin: 8mm 0; }
+.cover .meta { position: absolute; bottom: 24mm; left: 18mm; right: 18mm; font-size: 10pt; color: #4a5d66; }
+.cover .modules { display: grid; grid-template-columns: 1fr 1fr; gap: 3mm; margin-top: 6mm; }
+.cover .modules div { background: #fff; border-left: 3px solid var(--sarcelle); padding: 2.5mm 4mm; font-size: 10pt; }
+table { width: 100%; border-collapse: collapse; margin: 2mm 0 4mm; font-size: 9.4pt; }
+th { background: var(--encre); color: #fff; text-align: left; padding: 2mm 3mm; font-weight: 600; }
+td { border-bottom: 1px solid #e4dccb; padding: 1.8mm 3mm; vertical-align: top; }
+tr:nth-child(even) td { background: #fbf8f1; }
+.note { background: var(--sable); border-left: 4px solid var(--or); padding: 3mm 4mm; margin: 3mm 0; }
+.alerte { background: #fbeee8; border-left: 4px solid var(--terra); padding: 3mm 4mm; margin: 3mm 0; }
+.etape-tete { display: flex; align-items: center; gap: 4mm; margin-bottom: 3mm; }
+.num { background: var(--sarcelle); color: #fff; font-family: 'Marcellus', Georgia, serif; font-size: 20pt;
+       width: 14mm; height: 14mm; border-radius: 50%; display: flex; align-items: center; justify-content: center; flex: none; }
+.etape-tete h2 { border: 0; margin: 0; padding: 0; }
+.badges span { display: inline-block; font-size: 8.5pt; padding: .6mm 2.5mm; border-radius: 3mm; margin-right: 2mm;
+               background: #e5f1f2; color: var(--sarcelle); font-weight: 600; }
+.badges span.d { background: #fbf1dc; color: #8a6312; }
+ul { margin: 1mm 0 3mm; padding-left: 5mm; }
+li { margin-bottom: 1mm; }
+.prompt { border: 1.5px solid var(--sarcelle); border-radius: 2mm; margin-top: 0; page-break-before: always; }
+.prompt .titre { background: var(--sarcelle); color: #fff; padding: 1.8mm 4mm; font-weight: 600; font-size: 9.5pt; }
+.prompt pre { margin: 0; padding: 3mm 4mm; white-space: pre-wrap; word-wrap: break-word;
+              font-family: Consolas, 'Cascadia Mono', monospace; font-size: 8.3pt; line-height: 1.42; background: #fdfcf9; }
+.prompt pre .ctx { color: #5b6d75; }
+.prompt pre .rap { color: var(--terra); }
+.toc td:first-child { width: 10mm; font-weight: 700; color: var(--sarcelle); }
+.archi { font-family: Consolas, monospace; font-size: 8.4pt; background: var(--encre); color: #f6f0e4;
+         padding: 4mm 5mm; border-radius: 2mm; white-space: pre; line-height: 1.35; }
+</style></head><body>
+
+<section class="page cover">
+  <div class="eyebrow">Projet IA &amp; Cognition · 5DS Data Science · ESPRIM</div>
+  <h1>Voyara — Guide de réalisation du moteur IA</h1>
+  <div class="sous">14 étapes, chacune avec son prompt prêt pour Claude Code</div>
+  <div class="bande"></div>
+  <p>De la demande en langage naturel à l'itinéraire personnalisé, cohérent et adaptable :
+     « Votre voyage. À votre façon. »</p>
+  <div class="modules">
+    <div><b>Module 1</b> · Compréhension du besoin → étape 4</div>
+    <div><b>Module 2</b> · Recherche &amp; collecte → étapes 1, 2, 5</div>
+    <div><b>Module 3</b> · Recommandation Top-5 → étape 6</div>
+    <div><b>Module 4</b> · Construction de l'itinéraire → étape 7</div>
+    <div><b>Module 5</b> · Budget &amp; optimisation → étape 7</div>
+    <div><b>Module 6</b> · Agent intelligent → étape 8</div>
+  </div>
+  <div class="meta">Équipe TravelMinds · Boutheina Rjab · Ali Ben Jannet · Ons Alouini · Ghayth Mahmoud<br>
+  Choix retenus : LLM hybride (Claude API + Ollama local) · données catalogue Voyara + OpenStreetMap + Open-Meteo</div>
+</section>
+
+<section class="page">
+  <h2>1. Point de départ et architecture cible</h2>
+  <p><b>Ce qui existe déjà :</b> une plateforme de réservation complète (7 microservices FastAPI, gateway, Next.js + admin Vite,
+  Stripe, i18n fr/en/ar). Le catalogue contient activités (prix, durée, localisation, latitude/longitude, catégorie),
+  créneaux, hébergements, vols, voitures et transferts.</p>
+  <p><b>Ce qui manque pour la présentation :</b> aucune brique IA n'existe encore ; pas de restaurants, plages, monuments
+  ni météo ; pas d'attributs comme « effort de marche » ou « public famille » sur les activités.</p>
+  <div class="note"><b>Principe directeur :</b> le LLM <i>comprend</i> et <i>explique</i> ; les <i>faits</i> viennent de la base,
+  le <i>classement</i> d'un score mesurable et le <i>planning</i> d'un solveur d'optimisation. C'est ce qui rend
+  l'itinéraire fiable, explicable et évaluable — et c'est la réponse d'un data scientist à la question « comment éviter les hallucinations ? ».</div>
+  <h3>Architecture cible</h3>
+  <div class="archi">  Navigateur (Next.js :5173 / admin Vite :5174)          nginx :8080 en Docker
+                     |
+                     v
+            API Gateway FastAPI :8000   (/api/ai -&gt; ai, /internal bloqué)
+                     |
+   +-------+-------+-+-----+--------+---------+-------------+--------------------+
+   |       |       |       |        |         |             |                    |
+  auth  catalog  booking payment  review  notification   admin (BFF)        &gt;&gt; ai :8008 &lt;&lt;
+  8001   8002     8003    8004     8005     8006           8007           base voyara_ai
+          ^         ^               ^                        |            (pgvector, pois,
+          |         |               |                        |             conversations,
+          +---------+---------------+--- /internal/* &lt;-------+------------ llm_appels...)
+                     (X-Internal-Api-Key, appels HTTP synchrones)                |
+                                                                                 v
+                                               Claude API (démo)  |  Ollama local (secours)
+                                               OpenStreetMap Overpass · Open-Meteo</div>
+  <h3>Pourquoi un nouveau microservice <code>ai</code> ?</h3>
+  <ul>
+    <li><b>Isolation :</b> le moteur peut être lent ou en panne sans bloquer la réservation et le paiement.</li>
+    <li><b>Database-per-service respecté :</b> vecteurs, POI, conversations et journaux LLM vivent dans <code>voyara_ai</code> ;
+        les données métier sont lues via <code>/internal/*</code>, jamais par jointure SQL.</li>
+    <li><b>pgvector plutôt qu'une base vectorielle externe :</b> une seule technologie de base à opérer, largement suffisante pour quelques milliers de documents.</li>
+    <li><b>LLM hybride :</b> Claude pour la qualité en démo, Ollama local pour le coût nul, le hors-ligne et la comparaison scientifique.</li>
+  </ul>
+  <h3>Les 14 étapes</h3>
+  <table class="toc"><tr><th>#</th><th>Étape</th><th>Module couvert</th><th>Durée</th></tr><tr><td>0</td><td>Cadrage, conventions et architecture cible</td><td>Transverse</td><td>½ journée</td></tr><tr><td>1</td><td>Données : points d&#x27;intérêt et météo</td><td>Module 2 — Recherche &amp; collecte</td><td>2 jours</td></tr><tr><td>2</td><td>Enrichissement sémantique du catalogue</td><td>Modules 2 &amp; 3</td><td>1–2 jours</td></tr><tr><td>3</td><td>Service ai et couche LLM hybride</td><td>Socle technique du moteur</td><td>2 jours</td></tr><tr><td>4</td><td>Module 1 — Comprendre le voyageur (NLU)</td><td>Module 1 — Compréhension du besoin</td><td>2–3 jours</td></tr><tr><td>5</td><td>Module 2 — Recherche sémantique et RAG</td><td>Module 2 — Recherche &amp; collecte</td><td>3 jours</td></tr><tr><td>6</td><td>Module 3 — Recommandation personnalisée Top-5</td><td>Module 3 — Recommandation personnalisée</td><td>2–3 jours</td></tr><tr><td>7</td><td>Modules 4 &amp; 5 — Itinéraire et optimisation sous contraintes</td><td>Module 4 — Itinéraire · Module 5 — Budget &amp; optimisation</td><td>3–4 jours</td></tr><tr><td>8</td><td>Module 6 — Agent intelligent</td><td>Module 6 — Adaptation intelligente</td><td>3 jours</td></tr><tr><td>9</td><td>Interface voyageur : « Planifier mon voyage »</td><td>Interface Voyageur</td><td>3 jours</td></tr><tr><td>10</td><td>Back-office : paramétrage et analytics IA</td><td>Back-office VOYARA (Paramétrage IA, Analytics)</td><td>2 jours</td></tr><tr><td>11</td><td>Évaluation globale, tests et CI</td><td>Démarche Data Science</td><td>2 jours</td></tr><tr><td>12</td><td>Sécurité, coûts et RGPD du moteur IA</td><td>Transverse</td><td>1–2 jours</td></tr><tr><td>13</td><td>Démo, rapport et soutenance</td><td>Livraison</td><td>2 jours</td></tr></table>
+</section>
+
+<section class="page">
+  <h2>2. Comment utiliser ce guide avec Claude Code</h2>
+  <h3>Le cycle d'une étape</h3>
+  <ol>
+    <li>Ouvre Claude Code dans le dossier <code>Voyara</code>, sur une branche dédiée (ex. <code>ia/etape-04</code>).</li>
+    <li>Active le <b>plan mode</b>, colle le prompt de l'étape tel quel.</li>
+    <li>Lis le plan proposé ; corrige-le si besoin ; valide.</li>
+    <li>Laisse Claude Code coder, lancer les tests et écrire le rapport.</li>
+    <li>Lis le rapport dans <code>docs/ia/rapports/</code>, vérifie toi-même la section 7 « Ce que je dois vérifier ».</li>
+    <li>Commit, puis ouvre une <b>nouvelle session</b> pour l'étape suivante (contexte propre ; les rapports font le lien).</li>
+  </ol>
+  <h3>Structure commune de chaque prompt</h3>
+  <ul>
+    <li><b>En-tête de contexte</b> (gris) : fichiers à lire, plan mode, contraintes permanentes du projet.</li>
+    <li><b>Corps</b> (noir) : ce qu'il faut construire, précisément.</li>
+    <li><b>Rapport obligatoire</b> (terracotta) : ce que Claude Code a fait, pourquoi, quelles alternatives il a écartées, comment il a vérifié.</li>
+  </ul>
+  <h3>Modèle de rapport (inscrit dans CLAUDE.md à l'étape 0)</h3>
+  <table>
+    <tr><th>Section</th><th>Contenu attendu</th></tr>
+    <tr><td>1. Objectif</td><td>Ce que l'étape devait accomplir.</td></tr>
+    <tr><td>2. Réalisé</td><td>Chaque fichier créé/modifié et son rôle.</td></tr>
+    <tr><td>3. Choix techniques</td><td>Option retenue, alternatives, raison de l'écart — pour chaque décision.</td></tr>
+    <tr><td>4. Vérification</td><td>Commandes PowerShell lancées et sortie réelle.</td></tr>
+    <tr><td>5. Métriques</td><td>Chiffres obtenus et jeu de données utilisé.</td></tr>
+    <tr><td>6. Limites</td><td>Dette technique, risques, cas non gérés.</td></tr>
+    <tr><td>7. À vérifier par moi</td><td>Pas à pas manuel pour l'étudiant.</td></tr>
+    <tr><td>8. Suite</td><td>Étape suivante recommandée.</td></tr>
+  </table>
+  <div class="alerte"><b>Règles d'or :</b> une étape à la fois ; ne jamais accepter « les tests passent » sans la sortie de commande ;
+  aucune clé API dans le code ou les rapports (fichier <code>.env</code> uniquement) ; les rapports d'étape sont la matière première du rapport de PFE.</div>
+  <h3>Ordre et priorités</h3>
+  <p><b>MVP de la présentation (must) :</b> étapes 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 — elles couvrent saisie de la demande, recherche,
+  recommandations, itinéraire, budget et modification. <b>Should :</b> 10, 11, 12. <b>Indispensable avant le jury :</b> 13.
+  Si le temps manque, garde l'étape 11 (évaluation) au moins en version réduite : sans chiffres, pas de démarche data science.</p>
+</section>
+
+
+<section class="page">
+  <div class="etape-tete"><div class="num">0</div><h2>Cadrage, conventions et architecture cible</h2></div>
+  <div class="badges"><span>Transverse</span><span class="d">Durée indicative : ½ journée</span></div>
+  <h3>Objectif</h3><p>Poser les règles du jeu avant d&#x27;écrire la moindre ligne d&#x27;IA : où vit le moteur, comment Claude Code doit travailler, et comment chaque étape est tracée.</p>
+  <h3>Pourquoi ce choix (regard d'expert)</h3><p>En data science, ce qui n'est pas tracé n'existe pas devant un jury. Un fichier CLAUDE.md garantit que chaque session de Claude Code respecte les mêmes règles (rapport obligatoire, français, pas de jointure entre services). Le nouveau service <b>ai</b> isole le moteur IA : il peut tomber sans casser la réservation.</p>
+  <h3>Livrables</h3><ul><li>CLAUDE.md à la racine (règles + convention de rapport)</li><li>docs/ia/README.md, docs/ia/journal.md, docs/ia/rapports/</li><li>ADR « Service ai + base voyara_ai + pgvector + LLM hybride » dans docs/architecture.md</li><li>Phase « Moteur IA » (étapes 1 à 13) ajoutée à docs/plan.md</li></ul>
+  <div class="note"><b>Critère de « fini » :</b> CLAUDE.md existe, l&#x27;ADR est rédigé, docs/plan.md liste les étapes avec effort/priorité.</div>
+  <div class="prompt"><div class="titre">Prompt à coller dans Claude Code — étape 0</div><pre><span class="ctx">Contexte : projet Voyara (dépôt actuel). Avant tout, lis CLAUDE.md, docs/architecture.md, docs/plan.md, docs/mcd.md, docs/ia/ et TOUS les rapports existants dans docs/ia/rapports/. Travaille en plan mode : propose d&#x27;abord ton plan (fichiers touchés, choix, risques) et attends ma validation avant d&#x27;écrire du code.
+Contraintes permanentes : code, commentaires et messages en français ; champs métier en français (nom, prix, ...) ; découpage par domaine, aucune jointure SQL entre services (appels HTTP /internal/* avec INTERNAL_API_KEY via ServiceClient) ; réutiliser libs/common/voyara_common (config, auth, internal, database, pagination, exceptions, logging, limiter) ; textes d&#x27;interface via i18n fr/en/ar ; je suis sous Windows/PowerShell.</span>
+
+Étape 0 — Cadrage du moteur IA de Voyara.
+Lis aussi AgentIA_Voyara/PresProjCom.pdf : c&#x27;est la présentation du moteur IA (6 modules : compréhension, recherche &amp; collecte, recommandation Top-5, itinéraire, budget &amp; optimisation, agent).
+
+À faire :
+1. Crée CLAUDE.md à la racine : résumé de l&#x27;architecture (7 services + gateway + front), conventions (français, database-per-service, /internal/* + INTERNAL_API_KEY, i18n fr/en/ar, voyara_common), commandes utiles (scripts/dev.ps1, tests), et la règle : « chaque tâche se termine par un rapport dans docs/ia/rapports/ selon le modèle de docs/ia/README.md ».
+2. Crée docs/ia/README.md (vision du moteur IA, schéma des 6 modules, modèle de rapport), docs/ia/journal.md et le dossier docs/ia/rapports/.
+3. Ajoute un ADR dans docs/architecture.md : nouveau microservice `ai` (port 8008, base `voyara_ai`, extension pgvector), appels synchrones vers catalog/review/booking via /internal/*, route gateway /api/ai, couche LLM hybride (Claude API par défaut, Ollama local en secours). Contexte, décision, alternatives (IA dans catalog, base vectorielle externe type Qdrant, LLM unique), conséquences.
+4. Ajoute à docs/plan.md une phase « Moteur IA » avec les étapes 1 à 13 de ce guide (effort S/M/L, priorité must/should/nice).
+N&#x27;écris aucun code applicatif à cette étape.
+
+<span class="rap">RAPPORT OBLIGATOIRE — à la fin, crée docs/ia/rapports/etape-00-cadrage.md avec :
+  1. Objectif de l&#x27;étape.
+  2. Ce que tu as fait : chaque fichier créé/modifié, avec son rôle en une ligne.
+  3. Choix techniques : pour CHAQUE décision, l&#x27;option retenue, les alternatives envisagées et pourquoi tu les as écartées.
+  4. Vérification : commandes PowerShell exécutées et sortie réelle (extraits). N&#x27;écris jamais qu&#x27;un test passe si tu ne l&#x27;as pas lancé ; si quelque chose échoue, dis-le.
+  5. Métriques obtenues (si applicable), avec le jeu de données utilisé.
+  6. Limites, dette technique, risques.
+  7. Ce que je dois vérifier moi-même (pas à pas).
+  8. Étape suivante recommandée.
+Mets aussi à jour docs/ia/journal.md (une ligne : date, étape, résumé) et coche la tâche dans docs/plan.md. Termine en affichant le résumé du rapport dans le chat et propose un message de commit.</span></pre></div>
+</section>
+<section class="page">
+  <div class="etape-tete"><div class="num">1</div><h2>Données : points d&#x27;intérêt et météo</h2></div>
+  <div class="badges"><span>Module 2 — Recherche &amp; collecte</span><span class="d">Durée indicative : 2 jours</span></div>
+  <h3>Objectif</h3><p>Le catalogue ne contient que des activités et des hébergements. Un itinéraire a aussi besoin de restaurants, plages, musées, monuments, souks, et de la météo.</p>
+  <h3>Pourquoi ce choix (regard d'expert)</h3><p>La qualité d'un système de recommandation est bornée par ses données. On collecte depuis OpenStreetMap (API Overpass, licence ODbL, légale et gratuite) plutôt que de scraper des sites commerciaux : c'est reproductible et défendable. La météo vient d'Open-Meteo (sans clé). Le notebook d'EDA montre au jury que tu connais tes données (couverture, valeurs manquantes, biais).</p>
+  <h3>Livrables</h3><ul><li>Table pois dans voyara_ai (type, nom, nom_en, nom_ar, ville, latitude, longitude, horaires, prix_moyen, tags, source, maj_le)</li><li>services/ai/scripts/collecter_pois.py (Overpass, par ville, idempotent)</li><li>Client Open-Meteo avec cache en base (prévisions par ville et date)</li><li>notebooks/01_eda_donnees.ipynb + figures exportées pour le rapport</li></ul>
+  <div class="note"><b>Critère de « fini » :</b> ≥ 300 POI répartis sur au moins 5 villes, météo disponible pour Djerba, notebook exécuté sans erreur.</div>
+  <div class="prompt"><div class="titre">Prompt à coller dans Claude Code — étape 1</div><pre><span class="ctx">Contexte : projet Voyara (dépôt actuel). Avant tout, lis CLAUDE.md, docs/architecture.md, docs/plan.md, docs/mcd.md, docs/ia/ et TOUS les rapports existants dans docs/ia/rapports/. Travaille en plan mode : propose d&#x27;abord ton plan (fichiers touchés, choix, risques) et attends ma validation avant d&#x27;écrire du code.
+Contraintes permanentes : code, commentaires et messages en français ; champs métier en français (nom, prix, ...) ; découpage par domaine, aucune jointure SQL entre services (appels HTTP /internal/* avec INTERNAL_API_KEY via ServiceClient) ; réutiliser libs/common/voyara_common (config, auth, internal, database, pagination, exceptions, logging, limiter) ; textes d&#x27;interface via i18n fr/en/ar ; je suis sous Windows/PowerShell.</span>
+
+Étape 1 — Collecte des données touristiques (POI + météo).
+Le service `ai` n&#x27;existe pas encore : crée seulement le minimum dans services/ai/ (models.py, database.py, config.py calqués sur services/catalog/app) pour porter la table, le scaffold complet viendra à l&#x27;étape 3. Ajoute la base `voyara_ai` à infra/init.sql et à scripts/create_databases.py.
+
+À faire :
+1. Modèle SQLAlchemy `Poi` : type (restaurant | plage | musee | monument | souk | parc | cafe), nom, nom_en, nom_ar, ville, latitude, longitude, horaires_ouverture (texte OSM brut + version normalisée JSON), prix_moyen (nullable), tags (JSON), source, source_id (unique), maj_le.
+2. Script services/ai/scripts/collecter_pois.py : requêtes Overpass par ville (Djerba/Houmt Souk, Tunis, Sidi Bou Saïd, Sousse, Hammamet, Monastir, Tozeur, Kairouan), mapping des tags OSM vers nos types, upsert idempotent sur source_id, respect du rate limit Overpass (pause + retry), option --ville.
+3. Client météo services/ai/app/meteo.py (Open-Meteo, sans clé) avec cache en table `meteo_cache` (ville, date, temp_min, temp_max, precipitations, code_meteo, maj_le) et expiration 6 h.
+4. Notebook notebooks/01_eda_donnees.ipynb : volumes par ville/type, taux de valeurs manquantes (horaires, nom_ar, prix), carte des points, doublons ; exporte les figures dans docs/ia/figures/.
+5. Tests pytest du mapping OSM → Poi et du cache météo (httpx mocké).
+Explique dans le rapport pourquoi OSM plutôt que du scraping de TripAdvisor/Google (licence, CGU, stabilité).
+
+<span class="rap">RAPPORT OBLIGATOIRE — à la fin, crée docs/ia/rapports/etape-01-donnees-poi-meteo.md avec :
+  1. Objectif de l&#x27;étape.
+  2. Ce que tu as fait : chaque fichier créé/modifié, avec son rôle en une ligne.
+  3. Choix techniques : pour CHAQUE décision, l&#x27;option retenue, les alternatives envisagées et pourquoi tu les as écartées.
+  4. Vérification : commandes PowerShell exécutées et sortie réelle (extraits). N&#x27;écris jamais qu&#x27;un test passe si tu ne l&#x27;as pas lancé ; si quelque chose échoue, dis-le.
+  5. Métriques obtenues (si applicable), avec le jeu de données utilisé.
+  6. Limites, dette technique, risques.
+  7. Ce que je dois vérifier moi-même (pas à pas).
+  8. Étape suivante recommandée.
+Mets aussi à jour docs/ia/journal.md (une ligne : date, étape, résumé) et coche la tâche dans docs/plan.md. Termine en affichant le résumé du rapport dans le chat et propose un message de commit.</span></pre></div>
+</section>
+<section class="page">
+  <div class="etape-tete"><div class="num">2</div><h2>Enrichissement sémantique du catalogue</h2></div>
+  <div class="badges"><span>Modules 2 &amp; 3</span><span class="d">Durée indicative : 1–2 jours</span></div>
+  <h3>Objectif</h3><p>Donner à chaque activité des attributs exploitables par l&#x27;IA : public visé, effort de marche, intérieur/extérieur, moment idéal de la journée, thèmes.</p>
+  <h3>Pourquoi ce choix (regard d'expert)</h3><p>Le scénario « je préfère moins marcher » de la présentation est impossible sans un attribut <i>niveau_marche</i>. On fait un pré-étiquetage par LLM (rapide) puis une validation humaine dans l'admin (fiable) : c'est la démarche classique « weak labelling + human in the loop ». Le catalogue reste propriétaire de ses données : les tags vivent dans catalog, pas dans ai.</p>
+  <h3>Livrables</h3><ul><li>Colonnes/tabl. de tags dans catalog (thèmes, public, niveau_marche 1–3, interieur, moment_ideal, duree déjà existante)</li><li>Endpoint /internal/activities/export (paginé, champs complets : description, lat/lng, catégorie, tags)</li><li>Script de pré-étiquetage LLM produisant un CSV à valider</li><li>Écran admin de validation des tags (fr/en/ar)</li></ul>
+  <div class="note"><b>Critère de « fini » :</b> 100 % des activités actives ont des tags validés ; export interne testé.</div>
+  <div class="prompt"><div class="titre">Prompt à coller dans Claude Code — étape 2</div><pre><span class="ctx">Contexte : projet Voyara (dépôt actuel). Avant tout, lis CLAUDE.md, docs/architecture.md, docs/plan.md, docs/mcd.md, docs/ia/ et TOUS les rapports existants dans docs/ia/rapports/. Travaille en plan mode : propose d&#x27;abord ton plan (fichiers touchés, choix, risques) et attends ma validation avant d&#x27;écrire du code.
+Contraintes permanentes : code, commentaires et messages en français ; champs métier en français (nom, prix, ...) ; découpage par domaine, aucune jointure SQL entre services (appels HTTP /internal/* avec INTERNAL_API_KEY via ServiceClient) ; réutiliser libs/common/voyara_common (config, auth, internal, database, pagination, exceptions, logging, limiter) ; textes d&#x27;interface via i18n fr/en/ar ; je suis sous Windows/PowerShell.</span>
+
+Étape 2 — Enrichissement du catalogue pour l&#x27;IA.
+Le service catalog (services/catalog/app/models.py) a Activity avec titre, description, prix, duree, localisation, latitude, longitude, category_id. L&#x27;endpoint actuel /internal/activities/batch ne renvoie que id/titre/prix/photos : il ne suffit pas.
+
+À faire :
+1. Dans catalog, ajoute les attributs IA d&#x27;une activité : themes (liste parmi plage, culture, histoire, nature, gastronomie, aventure, detente, shopping, nautique, desert), public (famille, couple, solo, groupe, enfants), niveau_marche (1 faible, 2 moyen, 3 élevé), interieur (bool), moment_ideal (matin, apres_midi, soir, indifferent), tags_valides (bool). Choisis colonnes JSON ou table d&#x27;association et justifie-le. Migration propre (catalog n&#x27;utilise pas Alembic : explique comment tu migres sans perdre les données).
+2. Endpoint /internal/activities/export paginé (protégé par require_internal_key) renvoyant toutes les infos utiles à l&#x27;IA, + paramètre modifie_depuis pour la synchronisation incrémentale.
+3. Script services/catalog/scripts/pre_etiqueter.py : envoie titre+description à un LLM (pour l&#x27;instant appel direct simple, la couche hybride arrive à l&#x27;étape 3), écrit un CSV de propositions, sans rien écrire en base.
+4. Route admin + écran dans frontend/apps/admin : liste des activités, tags proposés, édition, bouton « Valider » ; textes via @voyara/i18n (fr/en/ar).
+5. Tests : export interne (clé absente → 401/403), validation des valeurs autorisées.
+
+<span class="rap">RAPPORT OBLIGATOIRE — à la fin, crée docs/ia/rapports/etape-02-enrichissement-catalogue.md avec :
+  1. Objectif de l&#x27;étape.
+  2. Ce que tu as fait : chaque fichier créé/modifié, avec son rôle en une ligne.
+  3. Choix techniques : pour CHAQUE décision, l&#x27;option retenue, les alternatives envisagées et pourquoi tu les as écartées.
+  4. Vérification : commandes PowerShell exécutées et sortie réelle (extraits). N&#x27;écris jamais qu&#x27;un test passe si tu ne l&#x27;as pas lancé ; si quelque chose échoue, dis-le.
+  5. Métriques obtenues (si applicable), avec le jeu de données utilisé.
+  6. Limites, dette technique, risques.
+  7. Ce que je dois vérifier moi-même (pas à pas).
+  8. Étape suivante recommandée.
+Mets aussi à jour docs/ia/journal.md (une ligne : date, étape, résumé) et coche la tâche dans docs/plan.md. Termine en affichant le résumé du rapport dans le chat et propose un message de commit.</span></pre></div>
+</section>
+<section class="page">
+  <div class="etape-tete"><div class="num">3</div><h2>Service ai et couche LLM hybride</h2></div>
+  <div class="badges"><span>Socle technique du moteur</span><span class="d">Durée indicative : 2 jours</span></div>
+  <h3>Objectif</h3><p>Créer le microservice ai et une abstraction LLM unique, avec Claude en mode démo et Ollama en secours local gratuit.</p>
+  <h3>Pourquoi ce choix (regard d'expert)</h3><p>Une interface <i>LLMProvider</i> découple le métier du fournisseur : on peut comparer les deux modèles sur le même jeu de test (argument scientifique fort) et la démo survit à une panne réseau. Journaliser latence, tokens et coût dès le départ permet de chiffrer le système dans le rapport.</p>
+  <h3>Livrables</h3><ul><li>services/ai/ complet (main.py, config, routes /health, Dockerfile, requirements)</li><li>app/llm/ : base.py (interface), claude.py, ollama.py, fabrique + fallback</li><li>Table llm_appels (provider, modele, tokens_entree, tokens_sortie, latence_ms, cout_estime, statut)</li><li>Gateway : préfixe /api/ai → ai:8008 ; docker-compose (image pgvector/pgvector:pg16, profil ollama) ; dev.ps1/stop-dev.ps1</li></ul>
+  <div class="note"><b>Critère de « fini » :</b> GET /api/ai/health OK via le gateway ; un appel test fonctionne avec Claude ET avec Ollama ; le fallback se déclenche quand la clé Claude est absente.</div>
+  <div class="prompt"><div class="titre">Prompt à coller dans Claude Code — étape 3</div><pre><span class="ctx">Contexte : projet Voyara (dépôt actuel). Avant tout, lis CLAUDE.md, docs/architecture.md, docs/plan.md, docs/mcd.md, docs/ia/ et TOUS les rapports existants dans docs/ia/rapports/. Travaille en plan mode : propose d&#x27;abord ton plan (fichiers touchés, choix, risques) et attends ma validation avant d&#x27;écrire du code.
+Contraintes permanentes : code, commentaires et messages en français ; champs métier en français (nom, prix, ...) ; découpage par domaine, aucune jointure SQL entre services (appels HTTP /internal/* avec INTERNAL_API_KEY via ServiceClient) ; réutiliser libs/common/voyara_common (config, auth, internal, database, pagination, exceptions, logging, limiter) ; textes d&#x27;interface via i18n fr/en/ar ; je suis sous Windows/PowerShell.</span>
+
+Étape 3 — Microservice `ai` + couche LLM hybride.
+
+À faire :
+1. Scaffold services/ai calqué sur services/catalog (structure app/, config via voyara_common.config, database, logging, limiter slowapi, Dockerfile, requirements). Port 8008, base voyara_ai. Active l&#x27;extension pgvector (passe l&#x27;image Postgres de docker-compose à pgvector/pgvector:pg16 et vérifie que les autres bases ne sont pas impactées).
+2. Gateway : route le préfixe /api/ai vers le service ai (même mécanisme que les autres préfixes, blocage /internal conservé).
+3. Couche LLM dans services/ai/app/llm/ :
+   - base.py : interface LLMProvider avec generer(messages, systeme, outils=None, schema_sortie=None, max_tokens, temperature) → réponse normalisée (texte, appels_outils, tokens, latence).
+   - claude.py : SDK officiel anthropic, modèle configurable (défaut claude-sonnet-5-5), tool use natif, sortie structurée.
+   - ollama.py : API HTTP d&#x27;Ollama (modèle configurable, ex. qwen), mode JSON.
+   - fabrique.py : choix par variable LLM_PROVIDER (claude | ollama | auto) ; en mode auto, Claude puis bascule sur Ollama en cas d&#x27;erreur/timeout.
+   Utilise le skill claude-api si disponible pour vérifier les identifiants de modèles et les paramètres.
+4. Journalise chaque appel dans la table llm_appels (provider, modèle, tokens, latence_ms, coût estimé, statut, erreur).
+5. docker-compose : service ai + service ollama sous un profil optionnel ; .env.example avec ANTHROPIC_API_KEY, LLM_PROVIDER, OLLAMA_URL, OLLAMA_MODEL. Ajoute ai à scripts/dev.ps1 et stop-dev.ps1.
+6. Tests pytest avec providers simulés (aucun appel réseau réel dans les tests) + un script services/ai/scripts/essai_llm.py pour un test manuel des deux providers.
+Ne mets jamais de clé API dans le code ni dans le rapport.
+
+<span class="rap">RAPPORT OBLIGATOIRE — à la fin, crée docs/ia/rapports/etape-03-service-ai-llm-hybride.md avec :
+  1. Objectif de l&#x27;étape.
+  2. Ce que tu as fait : chaque fichier créé/modifié, avec son rôle en une ligne.
+  3. Choix techniques : pour CHAQUE décision, l&#x27;option retenue, les alternatives envisagées et pourquoi tu les as écartées.
+  4. Vérification : commandes PowerShell exécutées et sortie réelle (extraits). N&#x27;écris jamais qu&#x27;un test passe si tu ne l&#x27;as pas lancé ; si quelque chose échoue, dis-le.
+  5. Métriques obtenues (si applicable), avec le jeu de données utilisé.
+  6. Limites, dette technique, risques.
+  7. Ce que je dois vérifier moi-même (pas à pas).
+  8. Étape suivante recommandée.
+Mets aussi à jour docs/ia/journal.md (une ligne : date, étape, résumé) et coche la tâche dans docs/plan.md. Termine en affichant le résumé du rapport dans le chat et propose un message de commit.</span></pre></div>
+</section>
+<section class="page">
+  <div class="etape-tete"><div class="num">4</div><h2>Module 1 — Comprendre le voyageur (NLU)</h2></div>
+  <div class="badges"><span>Module 1 — Compréhension du besoin</span><span class="d">Durée indicative : 2–3 jours</span></div>
+  <h3>Objectif</h3><p>Transformer « Je vais à Djerba 3 jours, 300 DT, en famille, culture et plage » en une demande structurée et validée.</p>
+  <h3>Pourquoi ce choix (regard d'expert)</h3><p>C'est de l'extraction d'information : on impose au LLM un schéma (sortie structurée / tool use) au lieu de parser du texte libre, ce qui supprime la majorité des erreurs de format. Un jeu de test annoté (fr, en, ar, darija) et un F1 par champ transforment une démo en résultat mesurable. Quand une information manque, le système pose une question au lieu d'inventer.</p>
+  <h3>Livrables</h3><ul><li>Schéma Pydantic DemandeVoyage (destination, date_debut, duree_jours, budget_total_dt, nb_adultes, nb_enfants, type_voyage, preferences, contraintes, niveau_marche_max, langue)</li><li>POST /api/ai/comprendre → demande + champs_manquants + question_clarification</li><li>data/eval/nlu_demandes.jsonl : 100 demandes annotées (≥ 20 en arabe/darija)</li><li>scripts/evaluer_nlu.py : exactitude et F1 par champ, par langue et par provider</li></ul>
+  <div class="note"><b>Critère de « fini » :</b> F1 moyen ≥ 0,85 avec Claude sur le jeu de test ; tableau comparatif Claude vs Ollama dans le rapport.</div>
+  <div class="prompt"><div class="titre">Prompt à coller dans Claude Code — étape 4</div><pre><span class="ctx">Contexte : projet Voyara (dépôt actuel). Avant tout, lis CLAUDE.md, docs/architecture.md, docs/plan.md, docs/mcd.md, docs/ia/ et TOUS les rapports existants dans docs/ia/rapports/. Travaille en plan mode : propose d&#x27;abord ton plan (fichiers touchés, choix, risques) et attends ma validation avant d&#x27;écrire du code.
+Contraintes permanentes : code, commentaires et messages en français ; champs métier en français (nom, prix, ...) ; découpage par domaine, aucune jointure SQL entre services (appels HTTP /internal/* avec INTERNAL_API_KEY via ServiceClient) ; réutiliser libs/common/voyara_common (config, auth, internal, database, pagination, exceptions, logging, limiter) ; textes d&#x27;interface via i18n fr/en/ar ; je suis sous Windows/PowerShell.</span>
+
+Étape 4 — Module 1 : compréhension de la demande en langage naturel.
+
+À faire dans services/ai :
+1. Schéma Pydantic DemandeVoyage : destination (ville normalisée parmi les villes connues de catalog/pois, + texte brut), date_debut (optionnelle), duree_jours, budget_total_dt, nb_adultes, nb_enfants, type_voyage (famille | couple | solo | amis), preferences (thèmes de l&#x27;étape 2), contraintes (texte + champs : niveau_marche_max, mobilite_reduite, horaires), langue détectée. Validateurs (budget &gt; 0, durée 1–14, etc.).
+2. Service d&#x27;extraction : prompt système en français + sortie structurée (tool use côté Claude, mode JSON côté Ollama) via la couche LLM de l&#x27;étape 3. Normalisation post-LLM (« 300 dinars », « 300dt » → 300 ; « Jerba » → Djerba ; « 3 nuits » → 3 jours, justifie la règle).
+3. Gestion des manques : renvoyer champs_manquants et une question_clarification dans la langue du voyageur ; ne jamais inventer un budget.
+4. Endpoint POST /api/ai/comprendre (auth optionnelle via get_current_identity, rate limit).
+5. Jeu d&#x27;évaluation data/eval/nlu_demandes.jsonl : 100 demandes variées et annotées à la main (fautes, darija en lettres latines « 3 jours f Jerba », arabe, anglais, demandes incomplètes, demandes hors sujet). Propose-les, je les relirai.
+6. scripts/evaluer_nlu.py : exactitude par champ, F1 sur les listes, matrice d&#x27;erreurs, résultats par langue et par provider, temps et coût moyens ; sortie Markdown + CSV dans docs/ia/resultats/.
+7. Tests pytest (normalisation, validateurs, provider simulé).
+
+<span class="rap">RAPPORT OBLIGATOIRE — à la fin, crée docs/ia/rapports/etape-04-module1-comprehension.md avec :
+  1. Objectif de l&#x27;étape.
+  2. Ce que tu as fait : chaque fichier créé/modifié, avec son rôle en une ligne.
+  3. Choix techniques : pour CHAQUE décision, l&#x27;option retenue, les alternatives envisagées et pourquoi tu les as écartées.
+  4. Vérification : commandes PowerShell exécutées et sortie réelle (extraits). N&#x27;écris jamais qu&#x27;un test passe si tu ne l&#x27;as pas lancé ; si quelque chose échoue, dis-le.
+  5. Métriques obtenues (si applicable), avec le jeu de données utilisé.
+  6. Limites, dette technique, risques.
+  7. Ce que je dois vérifier moi-même (pas à pas).
+  8. Étape suivante recommandée.
+Mets aussi à jour docs/ia/journal.md (une ligne : date, étape, résumé) et coche la tâche dans docs/plan.md. Termine en affichant le résumé du rapport dans le chat et propose un message de commit.</span></pre></div>
+</section>
+<section class="page">
+  <div class="etape-tete"><div class="num">5</div><h2>Module 2 — Recherche sémantique et RAG</h2></div>
+  <div class="badges"><span>Module 2 — Recherche &amp; collecte</span><span class="d">Durée indicative : 3 jours</span></div>
+  <h3>Objectif</h3><p>Retrouver les activités, hébergements et POI pertinents même quand les mots diffèrent (« découvrir le patrimoine » ↔ « visite de la Ghriba »).</p>
+  <h3>Pourquoi ce choix (regard d'expert)</h3><p>Les embeddings capturent le sens, BM25 capture les noms propres : la recherche <b>hybride</b> (fusion RRF) bat chacune des deux seules, et on le prouve avec Recall@k et nDCG. Un modèle multilingue local (bge-m3 ou multilingual-e5) gère fr/en/ar sans coût d'API. pgvector évite une base de plus. Les filtres durs (ville, rayon, prix) s'appliquent avant le classement.</p>
+  <h3>Livrables</h3><ul><li>Table documents_index (source, source_id, type, ville, lat/lng, prix, texte, embedding vector, maj_le)</li><li>Pipeline d&#x27;indexation incrémental depuis /internal/activities/export + hébergements + pois</li><li>POST /api/ai/rechercher (requête + filtres) → résultats avec score détaillé</li><li>data/eval/recherche_requetes.jsonl + scripts/evaluer_recherche.py (Recall@5/10, nDCG@10, MRR)</li></ul>
+  <div class="note"><b>Critère de « fini » :</b> Hybride &gt; vecteur seul &gt; BM25 seul sur le jeu de test, chiffres dans le rapport ; réindexation &lt; 2 min.</div>
+  <div class="prompt"><div class="titre">Prompt à coller dans Claude Code — étape 5</div><pre><span class="ctx">Contexte : projet Voyara (dépôt actuel). Avant tout, lis CLAUDE.md, docs/architecture.md, docs/plan.md, docs/mcd.md, docs/ia/ et TOUS les rapports existants dans docs/ia/rapports/. Travaille en plan mode : propose d&#x27;abord ton plan (fichiers touchés, choix, risques) et attends ma validation avant d&#x27;écrire du code.
+Contraintes permanentes : code, commentaires et messages en français ; champs métier en français (nom, prix, ...) ; découpage par domaine, aucune jointure SQL entre services (appels HTTP /internal/* avec INTERNAL_API_KEY via ServiceClient) ; réutiliser libs/common/voyara_common (config, auth, internal, database, pagination, exceptions, logging, limiter) ; textes d&#x27;interface via i18n fr/en/ar ; je suis sous Windows/PowerShell.</span>
+
+Étape 5 — Module 2 : recherche sémantique hybride (RAG).
+
+À faire dans services/ai :
+1. Compare brièvement 2–3 modèles d&#x27;embeddings multilingues exécutables en local (ex. BAAI/bge-m3, intfloat/multilingual-e5-base) sur un mini-jeu fr/en/ar, choisis-en un et justifie (qualité, taille, vitesse CPU sous Windows).
+2. Table documents_index (pgvector) : source (activite | hebergement | poi), source_id, type, ville, latitude, longitude, prix, texte_indexe (titre + description + tags, dans les trois langues si disponibles), embedding, empreinte (hash pour réindexation incrémentale), maj_le. Index HNSW.
+3. Pipeline scripts/indexer.py + endpoint interne /internal/reindexer : récupère activités (/internal/activities/export de catalog), hébergements et POI, ne recalcule que ce qui a changé.
+4. Recherche hybride : filtres durs (ville, rayon en km autour d&#x27;un point via haversine, prix max, type), puis BM25 (PostgreSQL full-text ou rank_bm25) + similarité cosinus, fusion Reciprocal Rank Fusion. Renvoie pour chaque résultat les scores partiels (explicabilité).
+5. Endpoint POST /api/ai/rechercher.
+6. Évaluation : data/eval/recherche_requetes.jsonl (≥ 40 requêtes avec documents pertinents annotés), scripts/evaluer_recherche.py comparant BM25 seul / vecteur seul / hybride : Recall@5, Recall@10, nDCG@10, MRR, latence p50/p95 → docs/ia/resultats/.
+7. Tests pytest (haversine, RRF, filtres).
+
+<span class="rap">RAPPORT OBLIGATOIRE — à la fin, crée docs/ia/rapports/etape-05-module2-recherche-semantique.md avec :
+  1. Objectif de l&#x27;étape.
+  2. Ce que tu as fait : chaque fichier créé/modifié, avec son rôle en une ligne.
+  3. Choix techniques : pour CHAQUE décision, l&#x27;option retenue, les alternatives envisagées et pourquoi tu les as écartées.
+  4. Vérification : commandes PowerShell exécutées et sortie réelle (extraits). N&#x27;écris jamais qu&#x27;un test passe si tu ne l&#x27;as pas lancé ; si quelque chose échoue, dis-le.
+  5. Métriques obtenues (si applicable), avec le jeu de données utilisé.
+  6. Limites, dette technique, risques.
+  7. Ce que je dois vérifier moi-même (pas à pas).
+  8. Étape suivante recommandée.
+Mets aussi à jour docs/ia/journal.md (une ligne : date, étape, résumé) et coche la tâche dans docs/plan.md. Termine en affichant le résumé du rapport dans le chat et propose un message de commit.</span></pre></div>
+</section>
+<section class="page">
+  <div class="etape-tete"><div class="num">6</div><h2>Module 3 — Recommandation personnalisée Top-5</h2></div>
+  <div class="badges"><span>Module 3 — Recommandation personnalisée</span><span class="d">Durée indicative : 2–3 jours</span></div>
+  <h3>Objectif</h3><p>Passer de 50 résultats pertinents aux 5 expériences qui correspondent vraiment au voyageur : goûts, budget, localisation, profil, temps disponible.</p>
+  <h3>Pourquoi ce choix (regard d'expert)</h3><p>On choisit un <b>score hybride explicable</b> (content-based + signaux de popularité + historique) plutôt qu'un filtrage collaboratif : avec peu d'utilisateurs, le collaboratif souffre du démarrage à froid. Chaque composante du score sert ensuite de justification à l'agent (scénario 3). MMR évite de proposer cinq plages identiques.</p>
+  <h3>Livrables</h3><ul><li>app/recommandation.py : score = Σ poids × (pertinence, budget, distance, profil, note, popularité, favoris)</li><li>Poids configurables (table parametres_ia) + re-classement MMR</li><li>Appels /internal/* vers review (notes, favoris) et booking (historique) — à créer s&#x27;ils manquent</li><li>POST /api/ai/recommander → Top-N avec raisons ; évaluation hors-ligne (précision@5, couverture, diversité)</li></ul>
+  <div class="note"><b>Critère de « fini » :</b> Top-5 renvoyé en &lt; 1 s avec raisons lisibles ; rapport avec ablation (effet de chaque composante).</div>
+  <div class="prompt"><div class="titre">Prompt à coller dans Claude Code — étape 6</div><pre><span class="ctx">Contexte : projet Voyara (dépôt actuel). Avant tout, lis CLAUDE.md, docs/architecture.md, docs/plan.md, docs/mcd.md, docs/ia/ et TOUS les rapports existants dans docs/ia/rapports/. Travaille en plan mode : propose d&#x27;abord ton plan (fichiers touchés, choix, risques) et attends ma validation avant d&#x27;écrire du code.
+Contraintes permanentes : code, commentaires et messages en français ; champs métier en français (nom, prix, ...) ; découpage par domaine, aucune jointure SQL entre services (appels HTTP /internal/* avec INTERNAL_API_KEY via ServiceClient) ; réutiliser libs/common/voyara_common (config, auth, internal, database, pagination, exceptions, logging, limiter) ; textes d&#x27;interface via i18n fr/en/ar ; je suis sous Windows/PowerShell.</span>
+
+Étape 6 — Module 3 : recommandation personnalisée Top-5.
+
+À faire :
+1. Dans services/ai/app/recommandation.py, un score explicable par candidat (issu de la recherche de l&#x27;étape 5) : pertinence_semantique, adequation_budget (prix / budget restant par jour et par personne), proximite (distance à l&#x27;hébergement ou au centre de la ville), adequation_profil (public famille/enfants, niveau_marche ≤ niveau_marche_max, thèmes), note_moyenne et nb_avis (lissage bayésien), popularite (nb réservations), bonus_favoris_historique. Normalise chaque composante dans [0,1].
+2. Poids stockés dans une table parametres_ia (modifiables depuis l&#x27;admin à l&#x27;étape 10), valeurs par défaut justifiées.
+3. Diversité : re-classement MMR (lambda configurable) pour éviter les doublons de thème/lieu.
+4. Données externes : si review et booking n&#x27;exposent pas déjà des endpoints /internal/*/batch utiles (notes moyennes par activité, favoris d&#x27;un utilisateur, activités réservées), ajoute-les dans ces services, protégés par require_internal_key, avec appels groupés (asyncio.gather) et timeouts. Si un service est indisponible, la recommandation se dégrade proprement.
+5. Chaque recommandation renvoie raisons : liste de phrases générées à partir des composantes dominantes (pas par le LLM), en fr/en/ar.
+6. Endpoint POST /api/ai/recommander (DemandeVoyage en entrée).
+7. Évaluation scripts/evaluer_reco.py : précision@5 sur des profils synthétiques annotés, couverture du catalogue, diversité intra-liste, et une ablation (score sans chaque composante). Résultats dans docs/ia/resultats/.
+
+<span class="rap">RAPPORT OBLIGATOIRE — à la fin, crée docs/ia/rapports/etape-06-module3-recommandation.md avec :
+  1. Objectif de l&#x27;étape.
+  2. Ce que tu as fait : chaque fichier créé/modifié, avec son rôle en une ligne.
+  3. Choix techniques : pour CHAQUE décision, l&#x27;option retenue, les alternatives envisagées et pourquoi tu les as écartées.
+  4. Vérification : commandes PowerShell exécutées et sortie réelle (extraits). N&#x27;écris jamais qu&#x27;un test passe si tu ne l&#x27;as pas lancé ; si quelque chose échoue, dis-le.
+  5. Métriques obtenues (si applicable), avec le jeu de données utilisé.
+  6. Limites, dette technique, risques.
+  7. Ce que je dois vérifier moi-même (pas à pas).
+  8. Étape suivante recommandée.
+Mets aussi à jour docs/ia/journal.md (une ligne : date, étape, résumé) et coche la tâche dans docs/plan.md. Termine en affichant le résumé du rapport dans le chat et propose un message de commit.</span></pre></div>
+</section>
+<section class="page">
+  <div class="etape-tete"><div class="num">7</div><h2>Modules 4 &amp; 5 — Itinéraire et optimisation sous contraintes</h2></div>
+  <div class="badges"><span>Module 4 — Itinéraire · Module 5 — Budget &amp; optimisation</span><span class="d">Durée indicative : 3–4 jours</span></div>
+  <h3>Objectif</h3><p>Construire un planning jour par jour (matin, midi, après-midi, soir) réalisable : budget total, temps, distances, horaires, places disponibles, repas, hébergement.</p>
+  <h3>Pourquoi ce choix (regard d'expert)</h3><p>C'est un problème d'optimisation combinatoire, pas un problème de langage : le LLM ne doit pas « inventer » l'itinéraire. On le modélise avec <b>OR-Tools CP-SAT</b> (variables d'affectation activité→créneau, contraintes dures de budget/horaires/compatibilité, objectif = somme des scores du module 3 moins pénalité de distance), avec un algorithme glouton en secours. Le résultat est garanti cohérent : « un voyage réalisable, pas seulement idéal ».</p>
+  <h3>Livrables</h3><ul><li>app/itineraire/ : modele.py (Itineraire, Jour, Creneau, Etape, Budget), solveur_cpsat.py, glouton.py</li><li>Ventilation du budget : hébergement, repas, activités, déplacements (estimation par km)</li><li>Vérification des créneaux réels (availabilities de catalog) et de la météo (activités intérieures si pluie)</li><li>POST /api/ai/itineraire + tests de propriétés (hypothesis)</li></ul>
+  <div class="note"><b>Critère de « fini » :</b> Pour le scénario Djerba/3 jours/300 DT/famille : itinéraire valide en &lt; 3 s, total ≤ budget, aucune incohérence horaire ; tests de propriétés verts.</div>
+  <div class="prompt"><div class="titre">Prompt à coller dans Claude Code — étape 7</div><pre><span class="ctx">Contexte : projet Voyara (dépôt actuel). Avant tout, lis CLAUDE.md, docs/architecture.md, docs/plan.md, docs/mcd.md, docs/ia/ et TOUS les rapports existants dans docs/ia/rapports/. Travaille en plan mode : propose d&#x27;abord ton plan (fichiers touchés, choix, risques) et attends ma validation avant d&#x27;écrire du code.
+Contraintes permanentes : code, commentaires et messages en français ; champs métier en français (nom, prix, ...) ; découpage par domaine, aucune jointure SQL entre services (appels HTTP /internal/* avec INTERNAL_API_KEY via ServiceClient) ; réutiliser libs/common/voyara_common (config, auth, internal, database, pagination, exceptions, logging, limiter) ; textes d&#x27;interface via i18n fr/en/ar ; je suis sous Windows/PowerShell.</span>
+
+Étape 7 — Modules 4 et 5 : construction de l&#x27;itinéraire et optimisation du budget.
+
+À faire dans services/ai/app/itineraire/ :
+1. Modèles Pydantic : Itineraire (demande, jours, budget, score_global, avertissements), Jour (date, creneaux), Creneau (matin | midi | apres_midi | soir), Etape (type activite | repas | detente | trajet, source, source_id, heure_debut, duree_min, cout_estime_dt, distance_depuis_precedent_km, raisons).
+2. Budget : estimation hébergement (prix_nuit × nuits, capacité compatible avec le groupe), repas (prix_moyen des POI restaurants ou forfait par personne configurable), activités (prix × nb personnes, tarif enfant si disponible), déplacements (coût par km configurable). Ventilation renvoyée comme dans la présentation (Hébergement / Restaurants / Activités / Déplacements / Total).
+3. Solveur OR-Tools CP-SAT : variables binaires activité×jour×créneau ; contraintes dures : au plus une activité par créneau, durée compatible, moment_ideal, horaires d&#x27;ouverture, budget total, chaque activité au plus une fois, places disponibles sur la date (appel /internal/availabilities ou export), niveau_marche ≤ max, activités intérieures privilégiées si la météo prévoit de la pluie ; objectif : maximiser Σ score_reco − α × distance totale − β × écart d&#x27;équilibre entre les jours. Limite de temps 2 s. Repas placés au midi et au soir près de l&#x27;étape précédente.
+4. Glouton de secours si CP-SAT échoue ou dépasse le temps ; le rapport compare qualité et temps des deux.
+5. Si aucune solution n&#x27;existe (budget trop faible), renvoyer un avertissement clair et la meilleure solution relâchée (ex. moins d&#x27;activités payantes) au lieu d&#x27;une erreur.
+6. Endpoint POST /api/ai/itineraire (DemandeVoyage + options).
+7. Tests pytest + hypothesis : total ≤ budget, pas de chevauchement horaire, chaque activité unique, distances cohérentes. Ajoute le cas Djerba 3 jours 300 DT famille culture+plage comme test de référence.
+
+<span class="rap">RAPPORT OBLIGATOIRE — à la fin, crée docs/ia/rapports/etape-07-modules4-5-itineraire-budget.md avec :
+  1. Objectif de l&#x27;étape.
+  2. Ce que tu as fait : chaque fichier créé/modifié, avec son rôle en une ligne.
+  3. Choix techniques : pour CHAQUE décision, l&#x27;option retenue, les alternatives envisagées et pourquoi tu les as écartées.
+  4. Vérification : commandes PowerShell exécutées et sortie réelle (extraits). N&#x27;écris jamais qu&#x27;un test passe si tu ne l&#x27;as pas lancé ; si quelque chose échoue, dis-le.
+  5. Métriques obtenues (si applicable), avec le jeu de données utilisé.
+  6. Limites, dette technique, risques.
+  7. Ce que je dois vérifier moi-même (pas à pas).
+  8. Étape suivante recommandée.
+Mets aussi à jour docs/ia/journal.md (une ligne : date, étape, résumé) et coche la tâche dans docs/plan.md. Termine en affichant le résumé du rapport dans le chat et propose un message de commit.</span></pre></div>
+</section>
+<section class="page">
+  <div class="etape-tete"><div class="num">8</div><h2>Module 6 — Agent intelligent</h2></div>
+  <div class="badges"><span>Module 6 — Adaptation intelligente</span><span class="d">Durée indicative : 3 jours</span></div>
+  <h3>Objectif</h3><p>Orchestrer les modules dans une conversation : planifier, modifier (« je préfère moins marcher »), justifier (« pourquoi cette activité ? »).</p>
+  <h3>Pourquoi ce choix (regard d'expert)</h3><p>L'agent est un LLM qui <b>choisit des outils</b> (nos modules) au lieu de répondre de mémoire : les faits viennent de la base, les calculs du solveur, le LLM ne fait que comprendre et expliquer. C'est ce qui limite les hallucinations. L'état de la conversation est persistant pour que les modifications soient incrémentales. L'agent propose ; il ne réserve et ne paie jamais seul.</p>
+  <h3>Livrables</h3><ul><li>app/agent/ : boucle à outils (analyser_demande, rechercher, recommander, construire_itineraire, modifier_itineraire, justifier_choix, meteo), garde-fous (max itérations, budget tokens)</li><li>Tables conversations, messages, itineraires_versions</li><li>POST /api/ai/agent/messages en streaming SSE</li><li>Tests des 3 scénarios de la présentation (planifier, modifier, justifier)</li></ul>
+  <div class="note"><b>Critère de « fini » :</b> Les 3 scénarios passent de bout en bout avec Claude et avec Ollama ; chaque justification correspond à des valeurs réelles du score.</div>
+  <div class="prompt"><div class="titre">Prompt à coller dans Claude Code — étape 8</div><pre><span class="ctx">Contexte : projet Voyara (dépôt actuel). Avant tout, lis CLAUDE.md, docs/architecture.md, docs/plan.md, docs/mcd.md, docs/ia/ et TOUS les rapports existants dans docs/ia/rapports/. Travaille en plan mode : propose d&#x27;abord ton plan (fichiers touchés, choix, risques) et attends ma validation avant d&#x27;écrire du code.
+Contraintes permanentes : code, commentaires et messages en français ; champs métier en français (nom, prix, ...) ; découpage par domaine, aucune jointure SQL entre services (appels HTTP /internal/* avec INTERNAL_API_KEY via ServiceClient) ; réutiliser libs/common/voyara_common (config, auth, internal, database, pagination, exceptions, logging, limiter) ; textes d&#x27;interface via i18n fr/en/ar ; je suis sous Windows/PowerShell.</span>
+
+Étape 8 — Module 6 : agent conversationnel à outils.
+
+À faire dans services/ai/app/agent/ :
+1. Définis les outils (schémas JSON) qui appellent les modules existants, sans dupliquer leur logique : analyser_demande (étape 4), rechercher (5), recommander (6), construire_itineraire et modifier_itineraire (7), justifier_choix (renvoie les composantes de score d&#x27;une étape), obtenir_meteo (1), proposer_reservation (renvoie seulement un lien vers la page activité/créneau du site, ne crée rien).
+2. Boucle agentique via la couche LLM (tool use Claude ; pour Ollama, outils en mode JSON) : max 8 itérations, budget de tokens par tour, journal de chaque appel d&#x27;outil. Prompt système en français : rôle, règles (n&#x27;affirme aucun prix/horaire qui ne vient pas d&#x27;un outil, réponds dans la langue de l&#x27;utilisateur, demande une précision si nécessaire, ne réserve jamais).
+3. Persistance : tables conversations (utilisateur_id nullable, langue, cree_le), messages, itineraires_versions (JSON + version) ; la modification part toujours de la dernière version.
+4. Modification : « je préfère moins marcher » → niveau_marche_max diminue, remplacement des activités concernées, recalcul des distances et du planning, réponse qui liste les changements (diff entre versions).
+5. Justification : « pourquoi Guellala ? » → réponse construite à partir de justifier_choix (budget respecté, distance à l&#x27;activité précédente, thème…).
+6. Endpoint POST /api/ai/agent/messages en Server-Sent Events (texte en streaming + événements itineraire_mis_a_jour), GET /api/ai/agent/conversations/{id}. Auth optionnelle, rate limit plus strict.
+7. Tests : les 3 scénarios de la présentation avec un provider simulé déterministe, + un script manuel scripts/scenario_demo.py qui les joue avec le vrai provider et enregistre la transcription dans docs/ia/resultats/.
+
+<span class="rap">RAPPORT OBLIGATOIRE — à la fin, crée docs/ia/rapports/etape-08-module6-agent.md avec :
+  1. Objectif de l&#x27;étape.
+  2. Ce que tu as fait : chaque fichier créé/modifié, avec son rôle en une ligne.
+  3. Choix techniques : pour CHAQUE décision, l&#x27;option retenue, les alternatives envisagées et pourquoi tu les as écartées.
+  4. Vérification : commandes PowerShell exécutées et sortie réelle (extraits). N&#x27;écris jamais qu&#x27;un test passe si tu ne l&#x27;as pas lancé ; si quelque chose échoue, dis-le.
+  5. Métriques obtenues (si applicable), avec le jeu de données utilisé.
+  6. Limites, dette technique, risques.
+  7. Ce que je dois vérifier moi-même (pas à pas).
+  8. Étape suivante recommandée.
+Mets aussi à jour docs/ia/journal.md (une ligne : date, étape, résumé) et coche la tâche dans docs/plan.md. Termine en affichant le résumé du rapport dans le chat et propose un message de commit.</span></pre></div>
+</section>
+<section class="page">
+  <div class="etape-tete"><div class="num">9</div><h2>Interface voyageur : « Planifier mon voyage »</h2></div>
+  <div class="badges"><span>Interface Voyageur</span><span class="d">Durée indicative : 3 jours</span></div>
+  <h3>Objectif</h3><p>Donner vie au moteur côté client : champ « Décrivez votre voyage… », chat, itinéraire, carte, budget, réservation, partage.</p>
+  <h3>Pourquoi ce choix (regard d'expert)</h3><p>Le jury jugera d'abord ce qu'il voit. Le streaming rend l'agent vivant, la carte rend la cohérence géographique évidente, le bouton Réserver relie l'IA au cœur métier existant (booking + Stripe) : c'est la vision globale « de la planification à la réalisation ».</p>
+  <h3>Livrables</h3><ul><li>frontend/apps/client : page /planifier (client component), composants Chat, TimelineJour, CarteItineraire (MapLibre déjà utilisé), BudgetVentilation</li><li>Client API dans @voyara/api (SSE) ; textes fr/en/ar + RTL dans @voyara/i18n</li><li>Partage par lien + export PDF/impression de l&#x27;itinéraire</li><li>Feedback 👍/👎 par itinéraire (envoyé au service ai)</li></ul>
+  <div class="note"><b>Critère de « fini » :</b> Scénario Djerba joué entièrement dans le navigateur en fr et en ar (RTL correct), sur mobile et desktop.</div>
+  <div class="prompt"><div class="titre">Prompt à coller dans Claude Code — étape 9</div><pre><span class="ctx">Contexte : projet Voyara (dépôt actuel). Avant tout, lis CLAUDE.md, docs/architecture.md, docs/plan.md, docs/mcd.md, docs/ia/ et TOUS les rapports existants dans docs/ia/rapports/. Travaille en plan mode : propose d&#x27;abord ton plan (fichiers touchés, choix, risques) et attends ma validation avant d&#x27;écrire du code.
+Contraintes permanentes : code, commentaires et messages en français ; champs métier en français (nom, prix, ...) ; découpage par domaine, aucune jointure SQL entre services (appels HTTP /internal/* avec INTERNAL_API_KEY via ServiceClient) ; réutiliser libs/common/voyara_common (config, auth, internal, database, pagination, exceptions, logging, limiter) ; textes d&#x27;interface via i18n fr/en/ar ; je suis sous Windows/PowerShell.</span>
+
+Étape 9 — Interface voyageur « Planifier mon voyage » (Next.js, apps/client).
+
+À faire :
+1. Page /planifier (App Router ; page serveur pour le SEO + composant client pour le chat), lien dans la navbar et sur la page d&#x27;accueil (« Décrivez votre voyage… » + bouton « Générer mon voyage »), suggestions d&#x27;exemples.
+2. Client SSE dans @voyara/api (compatible Vite et Next, refresh du token conservé) pour POST /api/ai/agent/messages.
+3. Composants dans le style existant (Tailwind v4, palette sable/encre/sarcelle/terracotta/or, Marcellus/Albert Sans, @voyara/ui) : Chat (streaming, indicateur « l&#x27;agent recherche… » par outil), TimelineJour (matin/midi/après-midi/soir, coût, distance, raisons dépliables), CarteItineraire (réutilise l&#x27;intégration MapLibre/OpenFreeMap existante, tracé par jour), BudgetVentilation (barres par poste vs budget), bouton Réserver vers la page activité/créneau existante.
+4. Partage : lien public en lecture seule (/planifier/[id]) et impression/export PDF propre (CSS print).
+5. Feedback 👍/👎 + commentaire, envoyé à un endpoint POST /api/ai/feedback (à créer).
+6. Toutes les chaînes dans @voyara/i18n (fr/en/ar), vérifie le RTL en arabe ; états vides, erreurs, chargement ; accessibilité clavier.
+7. Vérifie dans le navigateur (dev server) le scénario Djerba en fr puis en ar et ajoute des captures dans docs/ia/figures/.
+
+<span class="rap">RAPPORT OBLIGATOIRE — à la fin, crée docs/ia/rapports/etape-09-interface-voyageur.md avec :
+  1. Objectif de l&#x27;étape.
+  2. Ce que tu as fait : chaque fichier créé/modifié, avec son rôle en une ligne.
+  3. Choix techniques : pour CHAQUE décision, l&#x27;option retenue, les alternatives envisagées et pourquoi tu les as écartées.
+  4. Vérification : commandes PowerShell exécutées et sortie réelle (extraits). N&#x27;écris jamais qu&#x27;un test passe si tu ne l&#x27;as pas lancé ; si quelque chose échoue, dis-le.
+  5. Métriques obtenues (si applicable), avec le jeu de données utilisé.
+  6. Limites, dette technique, risques.
+  7. Ce que je dois vérifier moi-même (pas à pas).
+  8. Étape suivante recommandée.
+Mets aussi à jour docs/ia/journal.md (une ligne : date, étape, résumé) et coche la tâche dans docs/plan.md. Termine en affichant le résumé du rapport dans le chat et propose un message de commit.</span></pre></div>
+</section>
+<section class="page">
+  <div class="etape-tete"><div class="num">10</div><h2>Back-office : paramétrage et analytics IA</h2></div>
+  <div class="badges"><span>Back-office VOYARA (Paramétrage IA, Analytics)</span><span class="d">Durée indicative : 2 jours</span></div>
+  <h3>Objectif</h3><p>Permettre à l&#x27;administrateur de piloter le moteur : fournisseur LLM, poids du scoring, validation des tags, suivi de l&#x27;usage et de la qualité.</p>
+  <h3>Pourquoi ce choix (regard d'expert)</h3><p>Un système d'IA en production se surveille : coût, latence, taux d'erreur, satisfaction. Le BFF admin existant agrège déjà les services avec asyncio.gather : on suit ce patron.</p>
+  <h3>Livrables</h3><ul><li>Endpoints admin du service ai (require_admin) : paramètres, statistiques, conversations anonymisées</li><li>Agrégation dans le BFF admin (services/admin)</li><li>Écrans Vite : Paramétrage IA, Analytics IA (graphiques), Qualité (feedback)</li></ul>
+  <div class="note"><b>Critère de « fini » :</b> Changer un poids dans l&#x27;admin modifie immédiatement le classement ; tableau de bord affiché avec données réelles.</div>
+  <div class="prompt"><div class="titre">Prompt à coller dans Claude Code — étape 10</div><pre><span class="ctx">Contexte : projet Voyara (dépôt actuel). Avant tout, lis CLAUDE.md, docs/architecture.md, docs/plan.md, docs/mcd.md, docs/ia/ et TOUS les rapports existants dans docs/ia/rapports/. Travaille en plan mode : propose d&#x27;abord ton plan (fichiers touchés, choix, risques) et attends ma validation avant d&#x27;écrire du code.
+Contraintes permanentes : code, commentaires et messages en français ; champs métier en français (nom, prix, ...) ; découpage par domaine, aucune jointure SQL entre services (appels HTTP /internal/* avec INTERNAL_API_KEY via ServiceClient) ; réutiliser libs/common/voyara_common (config, auth, internal, database, pagination, exceptions, logging, limiter) ; textes d&#x27;interface via i18n fr/en/ar ; je suis sous Windows/PowerShell.</span>
+
+Étape 10 — Back-office IA (apps/admin + BFF admin).
+
+À faire :
+1. Service ai : endpoints protégés par require_admin : GET/PUT /parametres (provider, modèle, température, poids du scoring, lambda MMR, coûts unitaires repas/km), GET /statistiques (requêtes/jour, latence p50/p95, tokens et coût par provider, taux de fallback, taux d&#x27;échec du solveur, taux de 👍), GET /conversations (anonymisées, paginées via voyara_common.pagination).
+2. BFF services/admin : agrège ces statistiques avec celles des réservations (taux de conversion itinéraire → réservation) via asyncio.gather et les endpoints /internal/*/batch, sur le modèle existant.
+3. apps/admin : pages « Paramétrage IA » (formulaire validé, aperçu de l&#x27;effet sur une demande test), « Analytics IA » (graphiques), « Qualité » (feedbacks, conversations), plus l&#x27;écran de validation des tags de l&#x27;étape 2 s&#x27;il n&#x27;est pas déjà intégré. i18n fr/en/ar.
+4. Tests des endpoints (admin requis, valeurs bornées).
+
+<span class="rap">RAPPORT OBLIGATOIRE — à la fin, crée docs/ia/rapports/etape-10-back-office-ia.md avec :
+  1. Objectif de l&#x27;étape.
+  2. Ce que tu as fait : chaque fichier créé/modifié, avec son rôle en une ligne.
+  3. Choix techniques : pour CHAQUE décision, l&#x27;option retenue, les alternatives envisagées et pourquoi tu les as écartées.
+  4. Vérification : commandes PowerShell exécutées et sortie réelle (extraits). N&#x27;écris jamais qu&#x27;un test passe si tu ne l&#x27;as pas lancé ; si quelque chose échoue, dis-le.
+  5. Métriques obtenues (si applicable), avec le jeu de données utilisé.
+  6. Limites, dette technique, risques.
+  7. Ce que je dois vérifier moi-même (pas à pas).
+  8. Étape suivante recommandée.
+Mets aussi à jour docs/ia/journal.md (une ligne : date, étape, résumé) et coche la tâche dans docs/plan.md. Termine en affichant le résumé du rapport dans le chat et propose un message de commit.</span></pre></div>
+</section>
+<section class="page">
+  <div class="etape-tete"><div class="num">11</div><h2>Évaluation globale, tests et CI</h2></div>
+  <div class="badges"><span>Démarche Data Science</span><span class="d">Durée indicative : 2 jours</span></div>
+  <h3>Objectif</h3><p>Prouver scientifiquement que le moteur fonctionne : métriques reproductibles par module et de bout en bout, tests automatisés, intégration continue.</p>
+  <h3>Pourquoi ce choix (regard d'expert)</h3><p>C'est ce qui distingue un projet de data science d'une démo. On évalue chaque module isolément (NLU, recherche, reco, solveur), puis l'itinéraire complet : contraintes respectées (vérifiable automatiquement) et qualité perçue (LLM-as-judge avec grille, recoupé par une petite évaluation humaine).</p>
+  <h3>Livrables</h3><ul><li>scripts/evaluer_tout.py → docs/ia/resultats/synthese.md (tableaux pour le rapport)</li><li>Évaluation bout en bout sur 30 scénarios : taux de faisabilité, respect budget, distance moyenne, diversité, note LLM-as-judge, note humaine (5 personnes)</li><li>Comparaison Claude vs Ollama (qualité, latence, coût)</li><li>Tests pytest du service ai dans la CI GitHub Actions</li></ul>
+  <div class="note"><b>Critère de « fini » :</b> Une seule commande régénère tous les chiffres du rapport ; CI verte.</div>
+  <div class="prompt"><div class="titre">Prompt à coller dans Claude Code — étape 11</div><pre><span class="ctx">Contexte : projet Voyara (dépôt actuel). Avant tout, lis CLAUDE.md, docs/architecture.md, docs/plan.md, docs/mcd.md, docs/ia/ et TOUS les rapports existants dans docs/ia/rapports/. Travaille en plan mode : propose d&#x27;abord ton plan (fichiers touchés, choix, risques) et attends ma validation avant d&#x27;écrire du code.
+Contraintes permanentes : code, commentaires et messages en français ; champs métier en français (nom, prix, ...) ; découpage par domaine, aucune jointure SQL entre services (appels HTTP /internal/* avec INTERNAL_API_KEY via ServiceClient) ; réutiliser libs/common/voyara_common (config, auth, internal, database, pagination, exceptions, logging, limiter) ; textes d&#x27;interface via i18n fr/en/ar ; je suis sous Windows/PowerShell.</span>
+
+Étape 11 — Évaluation globale, tests et CI.
+
+À faire :
+1. scripts/evaluer_tout.py (racine services/ai) : lance les évaluations des étapes 4, 5, 6, 7 et une évaluation bout en bout, avec graines aléatoires fixées, et produit docs/ia/resultats/synthese.md + CSV.
+2. Bout en bout : data/eval/scenarios.jsonl (30 demandes réalistes, dont budgets serrés et demandes en arabe) ; métriques automatiques : taux de compréhension correcte, taux d&#x27;itinéraires faisables, respect du budget, distance moyenne par jour, diversité des thèmes, temps de réponse, coût.
+3. LLM-as-judge : grille notée 1–5 (pertinence vs demande, cohérence, réalisme, équilibre), juge = modèle différent de celui qui génère si possible ; documente les biais connus. Prépare aussi un formulaire d&#x27;évaluation humaine (5 évaluateurs) et la méthode pour calculer l&#x27;accord juge/humains.
+4. Comparaison Claude vs Ollama sur tous les scénarios (qualité, latence, coût) avec un tableau et un graphique.
+5. CI GitHub Actions : tests pytest du service ai (providers simulés, Postgres pgvector en service), lint ; l&#x27;évaluation complète reste manuelle (coût API).
+6. Liste les résultats honnêtement, y compris les échecs et leurs causes.
+
+<span class="rap">RAPPORT OBLIGATOIRE — à la fin, crée docs/ia/rapports/etape-11-evaluation-qualite.md avec :
+  1. Objectif de l&#x27;étape.
+  2. Ce que tu as fait : chaque fichier créé/modifié, avec son rôle en une ligne.
+  3. Choix techniques : pour CHAQUE décision, l&#x27;option retenue, les alternatives envisagées et pourquoi tu les as écartées.
+  4. Vérification : commandes PowerShell exécutées et sortie réelle (extraits). N&#x27;écris jamais qu&#x27;un test passe si tu ne l&#x27;as pas lancé ; si quelque chose échoue, dis-le.
+  5. Métriques obtenues (si applicable), avec le jeu de données utilisé.
+  6. Limites, dette technique, risques.
+  7. Ce que je dois vérifier moi-même (pas à pas).
+  8. Étape suivante recommandée.
+Mets aussi à jour docs/ia/journal.md (une ligne : date, étape, résumé) et coche la tâche dans docs/plan.md. Termine en affichant le résumé du rapport dans le chat et propose un message de commit.</span></pre></div>
+</section>
+<section class="page">
+  <div class="etape-tete"><div class="num">12</div><h2>Sécurité, coûts et RGPD du moteur IA</h2></div>
+  <div class="badges"><span>Transverse</span><span class="d">Durée indicative : 1–2 jours</span></div>
+  <h3>Objectif</h3><p>Rendre le moteur sûr et maîtrisé : injection de prompt, abus, coûts, données personnelles.</p>
+  <h3>Pourquoi ce choix (regard d'expert)</h3><p>Un agent connecté à des outils est une surface d'attaque. Les garde-fous (outils en lecture seule, aucune action irréversible, plafonds) et la conformité RGPD (la suppression par anonymisation existe déjà dans auth) sont attendus par un jury d'ingénieurs.</p>
+  <h3>Livrables</h3><ul><li>Tests d&#x27;injection de prompt (jeu adversarial) et mesures correctives</li><li>Plafonds : tokens par message, messages par jour et par IP/utilisateur, coût journalier max</li><li>Masquage des PII dans les journaux ; durée de conservation des conversations</li><li>Extension de la suppression RGPD de auth aux conversations du service ai</li></ul>
+  <div class="note"><b>Critère de « fini » :</b> Jeu adversarial sans fuite du prompt système ni action non autorisée ; suppression RGPD testée.</div>
+  <div class="prompt"><div class="titre">Prompt à coller dans Claude Code — étape 12</div><pre><span class="ctx">Contexte : projet Voyara (dépôt actuel). Avant tout, lis CLAUDE.md, docs/architecture.md, docs/plan.md, docs/mcd.md, docs/ia/ et TOUS les rapports existants dans docs/ia/rapports/. Travaille en plan mode : propose d&#x27;abord ton plan (fichiers touchés, choix, risques) et attends ma validation avant d&#x27;écrire du code.
+Contraintes permanentes : code, commentaires et messages en français ; champs métier en français (nom, prix, ...) ; découpage par domaine, aucune jointure SQL entre services (appels HTTP /internal/* avec INTERNAL_API_KEY via ServiceClient) ; réutiliser libs/common/voyara_common (config, auth, internal, database, pagination, exceptions, logging, limiter) ; textes d&#x27;interface via i18n fr/en/ar ; je suis sous Windows/PowerShell.</span>
+
+Étape 12 — Sécurité, maîtrise des coûts et RGPD du service ai.
+
+À faire :
+1. Revue de sécurité du service ai et de l&#x27;agent : vérifie que tous les outils sont en lecture seule ou sans effet irréversible, que les endpoints /internal/* restent inaccessibles via le gateway, que les entrées sont bornées (longueur des messages, taille des conversations).
+2. Jeu adversarial data/eval/injections.jsonl (20+ tentatives : révéler le prompt système, ignorer les règles, faire réserver/payer, injecter des instructions dans une description d&#x27;activité ou de POI). Mesure le taux de résistance avant/après corrections.
+3. Plafonds : rate limit slowapi par IP et par utilisateur, max tokens par tour, coût journalier maximal (au-delà : bascule automatique sur Ollama ou message d&#x27;indisponibilité), configurable.
+4. Données personnelles : masquage des e-mails/téléphones dans les journaux et llm_appels, durée de conservation configurable des conversations anonymes, purge planifiée.
+5. RGPD : quand un compte est supprimé (anonymisation existante dans auth), le service ai doit anonymiser ses conversations — ajoute l&#x27;appel interne et un test.
+6. Ajoute une section « Limites connues du moteur IA » dans docs/architecture.md.
+
+<span class="rap">RAPPORT OBLIGATOIRE — à la fin, crée docs/ia/rapports/etape-12-securite-couts-rgpd.md avec :
+  1. Objectif de l&#x27;étape.
+  2. Ce que tu as fait : chaque fichier créé/modifié, avec son rôle en une ligne.
+  3. Choix techniques : pour CHAQUE décision, l&#x27;option retenue, les alternatives envisagées et pourquoi tu les as écartées.
+  4. Vérification : commandes PowerShell exécutées et sortie réelle (extraits). N&#x27;écris jamais qu&#x27;un test passe si tu ne l&#x27;as pas lancé ; si quelque chose échoue, dis-le.
+  5. Métriques obtenues (si applicable), avec le jeu de données utilisé.
+  6. Limites, dette technique, risques.
+  7. Ce que je dois vérifier moi-même (pas à pas).
+  8. Étape suivante recommandée.
+Mets aussi à jour docs/ia/journal.md (une ligne : date, étape, résumé) et coche la tâche dans docs/plan.md. Termine en affichant le résumé du rapport dans le chat et propose un message de commit.</span></pre></div>
+</section>
+<section class="page">
+  <div class="etape-tete"><div class="num">13</div><h2>Démo, rapport et soutenance</h2></div>
+  <div class="badges"><span>Livraison</span><span class="d">Durée indicative : 2 jours</span></div>
+  <h3>Objectif</h3><p>Préparer une démonstration fiable des 3 scénarios et intégrer le moteur IA au rapport de PFE.</p>
+  <h3>Pourquoi ce choix (regard d'expert)</h3><p>Une démo en direct dépendant d'une API externe peut échouer : on prévoit un jeu de données figé, le mode Ollama hors-ligne et une vidéo de secours. Le rapport s'appuie sur les rapports d'étape et les chiffres générés à l'étape 11.</p>
+  <h3>Livrables</h3><ul><li>Script de seed de démo (activités Djerba taguées, POI, créneaux, comptes)</li><li>docs/ia/demo.md : déroulé minuté des 3 scénarios + plan B</li><li>Chapitre « Moteur IA » dans docs/rapport.tex (architecture, méthodes, résultats, limites)</li><li>Diagrammes : architecture du service ai, séquence de l&#x27;agent, modèle de données voyara_ai</li></ul>
+  <div class="note"><b>Critère de « fini » :</b> Démo jouée 3 fois sans erreur, en ligne et hors-ligne ; chapitre du rapport relu.</div>
+  <div class="prompt"><div class="titre">Prompt à coller dans Claude Code — étape 13</div><pre><span class="ctx">Contexte : projet Voyara (dépôt actuel). Avant tout, lis CLAUDE.md, docs/architecture.md, docs/plan.md, docs/mcd.md, docs/ia/ et TOUS les rapports existants dans docs/ia/rapports/. Travaille en plan mode : propose d&#x27;abord ton plan (fichiers touchés, choix, risques) et attends ma validation avant d&#x27;écrire du code.
+Contraintes permanentes : code, commentaires et messages en français ; champs métier en français (nom, prix, ...) ; découpage par domaine, aucune jointure SQL entre services (appels HTTP /internal/* avec INTERNAL_API_KEY via ServiceClient) ; réutiliser libs/common/voyara_common (config, auth, internal, database, pagination, exceptions, logging, limiter) ; textes d&#x27;interface via i18n fr/en/ar ; je suis sous Windows/PowerShell.</span>
+
+Étape 13 — Démo et intégration au rapport de PFE.
+
+À faire :
+1. Script scripts/seed_demo_ia.py : données de démo cohérentes (Djerba : activités taguées avec créneaux sur les dates de soutenance, hébergements famille, POI restaurants/plages), comptes de démo ; idempotent.
+2. docs/ia/demo.md : déroulé minuté des 3 scénarios de la présentation (planifier « 3 jours à Djerba, 300 DT, famille, culture + plage » ; modifier « je préfère moins marcher » ; justifier « pourquoi cette activité ? »), phrases exactes à taper, résultat attendu, plan B (Ollama hors-ligne, vidéo).
+3. Diagrammes (Mermaid ou PlantUML) : architecture avec le service ai, séquence d&#x27;un message de l&#x27;agent, modèle de données voyara_ai ; exporte-les pour LaTeX.
+4. Rédige un chapitre « Moteur IA » dans docs/rapport.tex à partir des rapports d&#x27;étape et de docs/ia/resultats/synthese.md : problématique, état de l&#x27;art (Tripadvisor, Booking, GetYourGuide, Google Travel), architecture, méthodes par module, résultats chiffrés, comparaison des LLM, limites, perspectives (application mobile, interaction vocale, apprentissage des préférences). N&#x27;invente aucun chiffre : cite uniquement les résultats présents dans docs/ia/resultats/.
+5. Vérifie que le projet démarre de zéro avec scripts/dev.ps1 et avec Docker (port 8080) et que la démo fonctionne dans les deux cas.
+
+<span class="rap">RAPPORT OBLIGATOIRE — à la fin, crée docs/ia/rapports/etape-13-demo-soutenance.md avec :
+  1. Objectif de l&#x27;étape.
+  2. Ce que tu as fait : chaque fichier créé/modifié, avec son rôle en une ligne.
+  3. Choix techniques : pour CHAQUE décision, l&#x27;option retenue, les alternatives envisagées et pourquoi tu les as écartées.
+  4. Vérification : commandes PowerShell exécutées et sortie réelle (extraits). N&#x27;écris jamais qu&#x27;un test passe si tu ne l&#x27;as pas lancé ; si quelque chose échoue, dis-le.
+  5. Métriques obtenues (si applicable), avec le jeu de données utilisé.
+  6. Limites, dette technique, risques.
+  7. Ce que je dois vérifier moi-même (pas à pas).
+  8. Étape suivante recommandée.
+Mets aussi à jour docs/ia/journal.md (une ligne : date, étape, résumé) et coche la tâche dans docs/plan.md. Termine en affichant le résumé du rapport dans le chat et propose un message de commit.</span></pre></div>
+</section>
+
+<section class="page">
+  <h2>Annexe A — Glossaire IA</h2>
+  <table><tr><th>Terme</th><th>Définition</th></tr><tr><td><b>LLM</b></td><td>Grand modèle de langage (Claude, Qwen…) ; ici utilisé pour comprendre et expliquer, pas pour calculer.</td></tr><tr><td><b>Sortie structurée / tool use</b></td><td>Le LLM remplit un schéma JSON ou appelle une fonction au lieu d&#x27;écrire du texte libre.</td></tr><tr><td><b>Embedding</b></td><td>Vecteur numérique représentant le sens d&#x27;un texte ; deux textes proches ont des vecteurs proches.</td></tr><tr><td><b>pgvector</b></td><td>Extension PostgreSQL pour stocker des vecteurs et chercher les plus proches (index HNSW).</td></tr><tr><td><b>BM25</b></td><td>Score de recherche lexicale classique, fort sur les noms propres et mots exacts.</td></tr><tr><td><b>RRF</b></td><td>Reciprocal Rank Fusion : fusion de plusieurs classements par la somme de 1/(k + rang).</td></tr><tr><td><b>RAG</b></td><td>Retrieval-Augmented Generation : le LLM répond à partir de documents récupérés dans nos données.</td></tr><tr><td><b>MMR</b></td><td>Maximal Marginal Relevance : re-classement qui équilibre pertinence et diversité.</td></tr><tr><td><b>Démarrage à froid</b></td><td>Absence d&#x27;historique pour un nouvel utilisateur ou une nouvelle activité.</td></tr><tr><td><b>CP-SAT</b></td><td>Solveur de programmation par contraintes d&#x27;OR-Tools (Google) pour les problèmes combinatoires.</td></tr><tr><td><b>Agent</b></td><td>Boucle où le LLM choisit des outils, observe le résultat et décide de l&#x27;étape suivante.</td></tr><tr><td><b>LLM-as-judge</b></td><td>Évaluation d&#x27;une sortie par un LLM selon une grille ; à recouper avec des humains.</td></tr><tr><td><b>Recall@k / nDCG</b></td><td>Métriques de recherche : part des documents pertinents trouvés dans le top k / qualité de l&#x27;ordre.</td></tr><tr><td><b>F1</b></td><td>Moyenne harmonique de la précision et du rappel, utilisée pour l&#x27;extraction de champs.</td></tr></table>
+  <h2 style="margin-top:8mm">Annexe B — Checklist avant soutenance</h2>
+  <ul>
+    <li>☐ Les 3 scénarios de la présentation fonctionnent (planifier, modifier, justifier), en ligne et hors-ligne.</li>
+    <li>☐ docs/ia/resultats/synthese.md régénéré avec les données finales.</li>
+    <li>☐ Comparaison Claude vs Ollama chiffrée (qualité, latence, coût).</li>
+    <li>☐ Un rapport par étape dans docs/ia/rapports/, journal à jour.</li>
+    <li>☐ Démo lancée de zéro avec scripts/dev.ps1 et avec Docker (port 8080).</li>
+    <li>☐ Aucune clé API dans le dépôt (vérifier l'historique git).</li>
+    <li>☐ Interface vérifiée en fr, en et ar (RTL), mobile et desktop.</li>
+    <li>☐ Limites connues documentées dans docs/architecture.md.</li>
+  </ul>
+</section>
+</body></html>

@@ -46,6 +46,8 @@ Les tâches jugées **surdimensionnées pour un PFE solo** ont été déplacées
 5. **L'IA (Phase 10) passe en dernier** — dans le plan initial elle précédait l'espace admin, alors
    qu'elle n'a aucune dépendance entrante et une valeur de démo faible comparée au paiement. Version
    « règles » uniquement, et seulement si J3 est atteint en avance.
+   *(Màj 11/10/2026 : remplacée par la [phase Moteur IA](#-phase-moteur-ia--projet-ia--cognition-5ds),
+   qui a son propre calendrier, indépendant des jalons J1–J4.)*
 
 ---
 
@@ -69,7 +71,7 @@ Les tâches jugées **surdimensionnées pour un PFE solo** ont été déplacées
 | Cartes | Carte interactive OSM (MapLibre GL + OpenFreeMap) | **Fait** — libellés fr / en / ar |
 | E-mail | notification-service (fastapi-mail + SMTP Gmail) | Vérification de compte, reset mot de passe |
 | QR Code | `qrcode` (Python) | *À intégrer — Phase 9 (jalon J2)* |
-| IA | Recommandations par règles | *Phase 10 — nice, version règles uniquement* |
+| IA | Service `ai` (FastAPI) + pgvector + LLM hybride Claude API / Ollama + OR-Tools | *Phase Moteur IA — étapes 0 à 13 (ADR-007)* |
 | Déploiement | Docker Compose (11 conteneurs) + nginx | ✅ en place · CI/CD GitHub Actions à faire (J3) |
 | Dossier PFE | Rapport + UML/C4 + slides + guide | *Phase 14 — en continu, ~1 j/semaine* |
 
@@ -297,9 +299,13 @@ Les tâches jugées **surdimensionnées pour un PFE solo** ont été déplacées
 
 ---
 
-## 🤖 Phase 10 — Fonctionnalités intelligentes — recadrée `nice`
+## 🤖 Phase 10 — Fonctionnalités intelligentes — ~~recadrée `nice`~~ → **remplacée par la phase Moteur IA (ADR-007)**
 
-> **Surdimensionné pour 6 semaines.** À ne lancer que si J3 est atteint en avance. La version
+> 🔁 **Remplacée le 11/10/2026 par la [phase Moteur IA](#-phase-moteur-ia--projet-ia--cognition-5ds)
+> ([ADR-007](architecture.md#adr-007--microservice-ai-dédié-pgvector-et-llm-hybride)).** Conservée
+> ci-dessous pour l'historique : le cadrage « règles dans catalog, pas de 8ᵉ service » ne s'applique plus.
+
+> *(Historique)* **Surdimensionné pour 6 semaines.** À ne lancer que si J3 est atteint en avance. La version
 > « règles » se démontre aussi bien que du ML, s'explique mieux au jury, et ne demande ni données
 > d'entraînement (8 activités !) ni pipeline. Si la « recommandation IA » figure dans ton cahier des
 > charges initial, la v1 règles y répond ; sinon, présenter la Phase 10 en « perspectives ».
@@ -382,6 +388,40 @@ Les tâches jugées **surdimensionnées pour un PFE solo** ont été déplacées
 
 ---
 
+## 🧠 Phase Moteur IA — projet IA & Cognition 5DS
+
+> **Date de présentation IA : à confirmer.**
+> Les jalons J1–J4 ci-dessus concernent la **soutenance de la plateforme**, pas cette phase :
+> elle n'a pas de date cible tant que la présentation IA n'est pas fixée (seuls les efforts sont estimés).
+>
+> Décision d'architecture : [ADR-007](architecture.md#adr-007--microservice-ai-dédié-pgvector-et-llm-hybride) ·
+> vision, modules, modèle de rapport : [docs/ia/README.md](ia/README.md) · historique : [docs/ia/journal.md](ia/journal.md) ·
+> source des étapes : [Guide_Moteur_IA_Voyara.html](../AgentIA_Voyara/Guide_Moteur_IA_Voyara.html) +
+> [PresProjCom.pdf](../AgentIA_Voyara/PresProjCom.pdf).
+> Chaque étape = une branche `ia/etape-NN` + un rapport dans `docs/ia/rapports/`.
+> MVP de la présentation : étapes 0 à 9 (+ la version réduite de l'étape 11).
+
+- [x]  **0 — Cadrage, conventions et architecture cible** (CLAUDE.md, docs/ia/, ADR-007, cette phase) `S · must` — [rapport](ia/rapports/etape-00-cadrage.md)
+- [ ]  **1 — Données : points d'intérêt, météo et catalogue de démo** (module 2) — table `pois` dans `voyara_ai`, collecte automatisée de données web OSM/Overpass (≥ 300 POI, ≥ 5 villes) + Open-Meteo avec cache, notebook d'EDA `M · must` *(effort à réévaluer en L avec le seed ci-dessous)*
+    - [x]  **Seed réaliste et idempotent du catalogue** (décision du 11/10/2026 — 8 activités ne suffisent pas pour évaluer recherche, recommandation et solveur) : **≥ 30 activités à Djerba**, **60 à 100 au total sur 5 villes**, avec coordonnées GPS, prix en DT, durées, catégories et **créneaux sur 4 semaines**, traduits **fr / en / ar** (`titre_en/ar`, `description_en/ar`). Script dans `services/catalog/scripts/` (catalog reste propriétaire de ses données), sans écraser les activités existantes `must` — `seed_catalogue_demo.py` : 86 activités (32 à Djerba), 3 664 créneaux — [rapport](ia/rapports/etape-01-seed-catalogue.md)
+- [ ]  **2 — Enrichissement sémantique du catalogue** (modules 2 & 3) — attributs IA dans catalog (thèmes, public, `niveau_marche`, intérieur, moment idéal), `/internal/activities/export`, pré-étiquetage LLM + validation admin `M · must`
+- [ ]  **3 — Service `ai` et couche LLM hybride** — scaffold :8008, gateway `/api/ai`, `LLMProvider` Claude/Ollama + fallback, table `llm_appels`, image `pgvector/pgvector:pg16` `M · must`
+    - ⚠ **À trancher à l'étape 3** : changement d'image global (`postgres:16-alpine` → `pgvector/pgvector:pg16`, risque de collation/`REINDEX` sur les bases existantes) **ou** conteneur Postgres **dédié au service ai** (`pgvector/pgvector:pg16`, port hôte **5435**), qui laisse les 5 bases existantes intactes
+- [ ]  **4 — Module 1 : comprendre le voyageur (NLU)** — `DemandeVoyage`, `POST /api/ai/comprendre`, 100 demandes annotées (≥ 20 ar/darija), F1 par champ (cible ≥ 0,85 avec Claude) `L · must`
+- [ ]  **5 — Module 2 : recherche sémantique et RAG** — `documents_index` pgvector, BM25 + embeddings + RRF, `POST /api/ai/rechercher`, Recall@k / nDCG / MRR `L · must`
+- [ ]  **6 — Module 3 : recommandation personnalisée Top-5** — score explicable pondéré + MMR, `POST /api/ai/recommander`, précision@5 + ablation `L · must`
+- [ ]  **7 — Modules 4 & 5 : itinéraire et optimisation sous contraintes** — OR-Tools CP-SAT + glouton de secours, ventilation du budget, `POST /api/ai/itineraire`, tests de propriétés (cas Djerba 3 j / 300 DT / famille) `L · must`
+- [ ]  **8 — Module 6 : agent intelligent** — boucle à outils, conversations persistées, SSE `POST /api/ai/agent/messages`, 3 scénarios (planifier, modifier, justifier) `L · must`
+- [ ]  **9 — Interface voyageur « Planifier mon voyage »** — page `/planifier` (Next), chat streaming, timeline, carte, budget, partage, feedback, fr/en/ar + RTL `L · must`
+- [ ]  **10 — Back-office : paramétrage et analytics IA** — paramètres, statistiques, qualité ; agrégation BFF admin ; écrans Vite `M · should`
+- [ ]  **11 — Évaluation globale, tests et CI** `M`
+    - [ ]  Version réduite : évaluations **NLU, recherche et itinéraire** chiffrées et reproductibles (`docs/ia/resultats/`) `must`
+    - [ ]  Reste : bout en bout sur 30 scénarios, LLM-as-judge + évaluation humaine, comparaison Claude vs Ollama complète, CI GitHub Actions du service `ai` `should`
+- [ ]  **12 — Sécurité, coûts et RGPD du moteur IA** — jeu adversarial d'injection de prompt, plafonds tokens/coût, masquage PII, suppression RGPD étendue aux conversations `M · should`
+- [ ]  **13 — Démo, rapport et soutenance** — seed de démo, `docs/ia/demo.md` + plan B hors-ligne, diagrammes, chapitre « Moteur IA » dans `rapport.tex` `M · must`
+
+---
+
 ## ✅ Livrables attendus
 
 - [x]  Application web responsive multilingue (FR/EN/AR + RTL)
@@ -394,7 +434,7 @@ Les tâches jugées **surdimensionnées pour un PFE solo** ont été déplacées
 - [ ]  Paiement Stripe opérationnel (montant total) + e-mail + QR code (J2)
 - [ ]  Suite de tests + CI verte (J3)
 - [ ]  Rapport de PFE + guide d'utilisation + slides (J4)
-- [ ]  Recommandations v1 par règles *(optionnel — uniquement si avance)*
+- [ ]  ~~Recommandations v1 par règles~~ → remplacé par le moteur IA (voir la [phase Moteur IA](#-phase-moteur-ia--projet-ia--cognition-5ds))
 
 ---
 
@@ -404,10 +444,16 @@ Volontairement **coupé** du périmètre PFE — à présenter comme perspective
 
 - Panier / réservation multi-activités (saga multi-lignes + paiement groupé)
 - Paiement par avance/acompte + gestion des remboursements Stripe
-- ML scikit-learn (filtrage collaboratif) — pas de données d'entraînement réelles
 - Broker de messages (RabbitMQ/Redis) pour l'asynchrone
 - RS256 + JWKS (remplacement du secret HS256 partagé)
 - Alembic généralisé à tous les services (aujourd'hui : auth seulement, `AUTO_CREATE_TABLES` ailleurs)
 - Routes localisées `/fr|/en|/ar` + hreflang (SEO multilingue)
 - PostgreSQL managé, monitoring/observabilité complets (traces distribuées)
 - Cartographie avancée (itinéraires, clusters de marqueurs)
+- Moteur IA — perspectives de la présentation : **interface Prestataires** (gestion des offres par les
+  partenaires), **application mobile**, **interaction vocale**, extension multi-destinations,
+  apprentissage des préférences
+
+> *Retiré le 11/10/2026* : les lignes IA/ML (« ML scikit-learn — filtrage collaboratif ») ne sont plus
+> des perspectives, car le projet est désormais aussi un projet **IA & Cognition 5DS** dont le moteur IA
+> est le livrable principal ([phase Moteur IA](#-phase-moteur-ia--projet-ia--cognition-5ds)).
