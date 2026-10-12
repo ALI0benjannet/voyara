@@ -324,7 +324,11 @@ En Docker : copié et installé dans chaque image.
     tunisiennes géolocalisées, ~88 créneaux de disponibilité ;
   - `services/catalog/scripts/seed_catalogue_demo.py` — catalogue de démonstration du moteur IA :
     86 activités (Djerba, Tunis / Sidi Bou Saïd, Sousse / Monastir, Hammamet, Tozeur) en fr/en/ar,
-    créneaux sur les 28 jours suivant l'exécution (`--verifier` : contrôle sans base).
+    créneaux sur les 28 jours suivant l'exécution (`--verifier` : contrôle sans base) ;
+  - `services/catalog/scripts/seed_photos_demo.py` — photos de ces 86 activités (Wikimedia Commons,
+    licences libres) **versionnées** dans `static/activities/demo/<slug-du-titre>.jpg` ; relie les fichiers
+    en base sans réseau, sans écraser une photo existante (`--verifier`, `--telecharger` pour le mainteneur).
+    L'upload admin ne supprime jamais un fichier de `demo/`.
 
 ## 8. Démarrage
 

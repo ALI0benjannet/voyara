@@ -202,6 +202,10 @@ async def delete_activity(activity_id: int, db: Session = Depends(get_db)):
 # ---------------------------------------------------------------------------
 
 def _delete_photo_file(activity: Activity) -> None:
+    # Les photos de démo (scripts/seed_photos_demo.py) sont versionnées dans Git :
+    # on ne supprime jamais un fichier partagé par tous les postes.
+    if activity.photos and activity.photos.startswith("/static/activities/demo/"):
+        return
     if activity.photos and activity.photos.startswith("/static/activities/"):
         old = PHOTO_DIR / activity.photos.split("/static/activities/", 1)[1]
         if old.exists():
