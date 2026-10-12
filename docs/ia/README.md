@@ -160,3 +160,4 @@ de PFE (étape 13).
 | Étape | Rapport |
 |---|---|
 | 0 · Cadrage | [etape-00-cadrage.md](rapports/etape-00-cadrage.md) |
+| 1 · Seed du catalogue (sous-tâche) | [etape-01-seed-catalogue.md](rapports/etape-01-seed-catalogue.md) |

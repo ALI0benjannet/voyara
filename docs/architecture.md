@@ -321,7 +321,10 @@ En Docker : copié et installé dans chaque image.
   - `services/auth/scripts/seed_admin.py` — compte admin initial
     (`FIRST_ADMIN_EMAIL` / `FIRST_ADMIN_PASSWORD`) ;
   - `services/catalog/scripts/seed_catalog.py` — 5 catégories, 8 activités
-    tunisiennes géolocalisées, ~88 créneaux de disponibilité.
+    tunisiennes géolocalisées, ~88 créneaux de disponibilité ;
+  - `services/catalog/scripts/seed_catalogue_demo.py` — catalogue de démonstration du moteur IA :
+    86 activités (Djerba, Tunis / Sidi Bou Saïd, Sousse / Monastir, Hammamet, Tozeur) en fr/en/ar,
+    créneaux sur les 28 jours suivant l'exécution (`--verifier` : contrôle sans base).
 
 ## 8. Démarrage
 
