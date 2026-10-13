@@ -218,6 +218,43 @@ erDiagram
 > `FAVORITES` : contrainte d'unicité `(user_id, activity_id)` — un favori par
 > utilisateur et par activité.
 
+## 5 bis. Base `voyara_ai` — moteur IA (conteneur `postgres-ai`, port 5435)
+
+> Ajoutée à l'étape 1 du moteur IA (13/10/2026, [ADR-007](architecture.md#adr-007--microservice-ai-dédié-pgvector-et-llm-hybride)).
+> Modèles : `services/ai/app/models.py`. Aucune référence vers les autres bases : une activité
+> du catalogue est rapprochée d'un POI par ses coordonnées GPS, jamais par clé.
+
+```mermaid
+erDiagram
+    POIS {
+        int id PK
+        string type "restaurant|plage|musee|monument|souk|parc|cafe"
+        string nom
+        string nom_en "nullable"
+        string nom_ar "nullable"
+        string ville "index (ville, type)"
+        float latitude
+        float longitude
+        text horaires_ouverture "OSM opening_hours brut, nullable"
+        json horaires_normalises "par jour, nullable si non analysable"
+        float prix_moyen "DT, nullable"
+        json tags "tags OSM complets"
+        string source "osm"
+        string source_id UK "node/123, way/456 : cle de l'upsert"
+        datetime maj_le
+    }
+    METEO_CACHE {
+        int id PK
+        string ville "unique (ville, date)"
+        date date
+        float temp_min "nullable"
+        float temp_max "nullable"
+        float precipitations "mm, nullable"
+        int code_meteo "WMO, nullable"
+        datetime maj_le "expire apres 6 h"
+    }
+```
+
 ## 6. Vue d'ensemble — relations inter-services (logiques, sans FK)
 
 ```mermaid

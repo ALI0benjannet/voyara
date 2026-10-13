@@ -63,6 +63,7 @@ découpée de bout en bout :
  │  (DB)   ││ catalog  ││ booking  ││ payment  ││ review   ││ (pas de DB)│
  └─────────┘└──────────┘└──────────┘└──────────┘└──────────┘└────────────┘
         PostgreSQL 16 (Docker, port hôte 5434) — une base par service
+        + conteneur dédié `postgres-ai` (pgvector, port 5435) : base `voyara_ai` du moteur IA (ADR-007)
 
  ┌────────────────────┐        Appels internes : HTTP + X-Internal-Api-Key
  │ NOTIFICATION :8006 │◄────── (jamais exposés par le gateway)
@@ -339,8 +340,9 @@ python -m venv .venv
 .venv\Scripts\pip install -r requirements-dev.txt
 .venv\Scripts\pip install -e libs/common
 
-# 2. Base de données (Postgres sur localhost:5434)
-docker compose up -d postgres
+# 2. Base de données (Postgres sur localhost:5434 ; moteur IA : postgres-ai sur 5435,
+#    aussi démarré par dev.ps1)
+docker compose up -d postgres postgres-ai
 
 # 3. Backend : gateway + 7 services (-Seed crée l'admin la 1re fois)
 .\scripts\dev.ps1 -Seed
@@ -398,6 +400,7 @@ docker-compose lit les secrets dans le `.env` racine.
 | Conteneur | Image | Rôle |
 |---|---|---|
 | `postgres` | postgres:16-alpine | 5 bases (`voyara` via `POSTGRES_DB` + 4 via `init.sql`), volume `pgdata`, port hôte 5434 |
+| `postgres-ai` | pgvector/pgvector:pg16 | base `voyara_ai` du moteur IA (via `POSTGRES_DB`), volume `voyara_pgdata_ai`, port hôte 5435 — [ADR-007](#adr-007--microservice-ai-dédié-pgvector-et-llm-hybride) |
 | `auth`…`admin` | `services/*/Dockerfile` | un conteneur par microservice |
 | `gateway` | `gateway/Dockerfile` | port 8000 exposé |
 | `client` | `frontend/Dockerfile.client` | **Next standalone** (SSR), `API_INTERNAL_URL=http://gateway:8000` |
@@ -427,9 +430,9 @@ Les améliorations `planifié` sont des tâches du [plan.md](plan.md) (jalon ind
 ## 13. Décisions d'architecture (ADR)
 
 Format condensé : **Contexte → Décision → Alternatives écartées → Conséquences**.
-Les décisions ADR-001 à ADR-006 sont **déjà appliquées** dans le code. ADR-007 est **acceptée mais
-pas encore appliquée** : sa mise en œuvre commence aux étapes 1 et 3 de la phase « Moteur IA »
-([plan.md](plan.md)).
+Les décisions ADR-001 à ADR-006 sont **déjà appliquées** dans le code. ADR-007 est **partiellement
+appliquée** : la base `voyara_ai` (conteneur `postgres-ai`) existe depuis l'étape 1 ; le service
+lui-même arrive à l'étape 3 de la phase « Moteur IA » ([plan.md](plan.md)).
 
 ### ADR-001 — Microservices (7 services + gateway) plutôt que monolithe
 
@@ -532,8 +535,9 @@ pas encore appliquée** : sa mise en œuvre commence aux étapes 1 et 3 de la ph
 
 ### ADR-007 — Microservice `ai` dédié, pgvector et LLM hybride
 
-> Statut : **acceptée le 11/10/2026 — non encore appliquée** (étapes 1 et 3 du
-> [guide moteur IA](../AgentIA_Voyara/Guide_Moteur_IA_Voyara.html)). Vision et modules : [docs/ia/README.md](ia/README.md).
+> Statut : **acceptée le 11/10/2026 — partiellement appliquée le 13/10/2026** (étape 1 : conteneur
+> `postgres-ai`, base `voyara_ai`, tables `pois` et `meteo_cache` ; le scaffold du service vient à
+> l'étape 3 du [guide moteur IA](../AgentIA_Voyara/Guide_Moteur_IA_Voyara.html)). Vision et modules : [docs/ia/README.md](ia/README.md).
 
 - **Contexte** : le projet devient aussi un projet *IA & Cognition* (5DS Data Science). Le moteur
   décrit dans la [présentation](../AgentIA_Voyara/PresProjCom.pdf) — compréhension en langage
@@ -549,7 +553,10 @@ pas encore appliquée** : sa mise en œuvre commence aux étapes 1 et 3 de la ph
     autres (`voyara_common` : config, auth, internal, database, pagination, exceptions, logging, limiter) ;
   - base dédiée **`voyara_ai`** avec l'extension **pgvector** (index HNSW) : POI, cache météo,
     `documents_index`, conversations, messages, versions d'itinéraires, `llm_appels`, paramètres IA.
-    L'image Postgres passe à `pgvector/pgvector:pg16` (même moteur PostgreSQL 16, extension en plus) ;
+    *(Décidé le 13/10/2026, étape 1)* : `voyara_ai` vit dans un **conteneur Postgres dédié**
+    `postgres-ai` (image `pgvector/pgvector:pg16`, même moteur PostgreSQL 16 + extension, **port hôte
+    5435**, volume `voyara_pgdata_ai`). Le conteneur `postgres` (`postgres:16-alpine`, port 5434) et
+    ses 5 bases restent **inchangés** ;
   - les données métier sont lues par **appels HTTP synchrones** vers catalog, review et booking sur
     `/internal/*` (`ServiceClient` + `X-Internal-Api-Key`), jamais par jointure SQL ; les endpoints
     manquants (export d'activités enrichies, notes moyennes, historique) sont ajoutés **dans le service
@@ -570,6 +577,12 @@ pas encore appliquée** : sa mise en œuvre commence aux étapes 1 et 3 de la ph
     sauvegarder et superviser, et une synchronisation de plus à garantir, pour un volume de quelques
     milliers de documents que pgvector traite sans difficulté ; pgvector permet aussi de combiner
     filtres SQL (ville, prix, rayon) et similarité vectorielle dans une seule requête.
+  - *Changer l'image du Postgres principal* (`postgres:16-alpine` → `pgvector/pgvector:pg16`, une
+    seule instance pour les 6 bases) — l'image alpine utilise musl, l'image pgvector est basée sur
+    Debian (glibc) : les collations des 5 bases existantes peuvent changer d'ordre de tri, ce qui
+    impose un `REINDEX` et fait courir un risque sur des données en service, pour un gain nul (aucun
+    service existant n'utilise pgvector). Le conteneur dédié isole aussi la charge et les sauvegardes
+    du moteur IA, conformément à l'isolation des pannes visée par cette ADR.
   - *Un seul LLM* — Claude seul : pas de démo possible hors-ligne et coût proportionnel à l'usage ;
     Ollama seul : qualité d'extraction et de tool use plus faible sur l'arabe et la darija ; dans les
     deux cas, **aucune comparaison scientifique** possible entre modèles, alors que c'est un résultat
@@ -578,8 +591,9 @@ pas encore appliquée** : sa mise en œuvre commence aux étapes 1 et 3 de la ph
   - \+ isolation des pannes et des coûts : si `ai` tombe, réservation et paiement continuent ;
     database-per-service respecté ; le moteur s'évalue et se teste isolément ; comparaison
     Claude / Ollama chiffrable sur le même jeu de test ; démo possible hors-ligne.
-  - − un 9ᵉ processus à démarrer (`dev.ps1`, `stop-dev.ps1`, docker-compose à étendre) ; changement
-    d'image Postgres à vérifier sur les bases existantes (volume `pgdata` conservé) ; pipeline
+  - − un 9ᵉ processus à démarrer (`dev.ps1`, `stop-dev.ps1`, docker-compose à étendre) et un second
+    conteneur Postgres (`postgres-ai`, ~150 Mo d'image, démarré et arrêté par `dev.ps1` /
+    `stop-dev.ps1`) avec son propre volume à sauvegarder ; pipeline
     d'indexation à garder synchronisé avec le catalogue (réindexation incrémentale par empreinte) ;
     `ANTHROPIC_API_KEY` = nouveau secret à protéger et budget API à plafonner ; latence des appels
     synchrones vers 3 services → timeouts et dégradation propre obligatoires (cf. §12 n° 1) ; Ollama

@@ -46,3 +46,15 @@ for ($pass = 1; $pass -le 5; $pass++) {
 }
 
 Write-Host "$stopped processus arretes." -ForegroundColor Green
+
+# Base du moteur IA demarree par dev.ps1 : arretee, les donnees restent dans le
+# volume voyara_pgdata_ai. Le Postgres principal (5434) n'est pas touche.
+if (Get-Command docker -ErrorAction SilentlyContinue) {
+    Push-Location (Split-Path -Parent $PSScriptRoot)
+    $conteneur = docker compose ps -q postgres-ai 2>$null
+    if ($conteneur) {
+        docker compose stop postgres-ai 2>$null | Out-Null
+        Write-Host "postgres-ai arrete (donnees conservees)." -ForegroundColor Green
+    }
+    Pop-Location
+}

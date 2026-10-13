@@ -39,6 +39,24 @@ services:
       timeout: 3s
       retries: 10
 
+  # Base du moteur IA (ADR-007) : conteneur dédié avec l'extension pgvector.
+  # Séparé de `postgres` pour ne pas changer l'image des 5 bases existantes.
+  postgres-ai:
+    image: pgvector/pgvector:pg16
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: voyara_ai
+    ports:
+      - "5435:5432"                   # 5435 : à côté du Postgres principal (5434)
+    volumes:
+      - pgdata_ai:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d voyara_ai"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
   auth:
     build: { context: ., dockerfile: services/auth/Dockerfile }
     environment:
@@ -155,5 +173,7 @@ services:
 volumes:
   pgdata:
     name: touribook_pgdata            # volume créé avant le renommage du projet : on garde les données
+  pgdata_ai:
+    name: voyara_pgdata_ai
   avatars:
     name: touribook_avatars

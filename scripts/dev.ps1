@@ -28,6 +28,31 @@ if ($LASTEXITCODE -ne 0) {
     exit 1
 }
 
+Write-Host "1b) Base du moteur IA (conteneur postgres-ai, port 5435)..." -ForegroundColor Cyan
+# Non bloquant : sans Docker, les 7 services et le gateway demarrent quand meme.
+$docker = Get-Command docker -ErrorAction SilentlyContinue
+if (-not $docker) {
+    Write-Host "   Docker introuvable : postgres-ai non demarre (moteur IA indisponible)." -ForegroundColor Yellow
+} else {
+    Push-Location $Root
+    docker compose up -d postgres-ai 2>$null | Out-Null
+    $etat = ""
+    if ($LASTEXITCODE -eq 0) {
+        $conteneur = docker compose ps -q postgres-ai
+        for ($i = 0; $i -lt 15; $i++) {
+            $etat = docker inspect -f "{{.State.Health.Status}}" $conteneur 2>$null
+            if ($etat -eq "healthy") { break }
+            Start-Sleep -Seconds 2
+        }
+    }
+    Pop-Location
+    if ($etat -eq "healthy") {
+        Write-Host "   postgres-ai pret (voyara_ai sur localhost:5435)"
+    } else {
+        Write-Host "   postgres-ai non pret (Docker Desktop demarre ?) : moteur IA indisponible." -ForegroundColor Yellow
+    }
+}
+
 if ($Seed) {
     Write-Host "2) Seed du compte admin..." -ForegroundColor Cyan
     Push-Location (Join-Path $Root "services\auth")
