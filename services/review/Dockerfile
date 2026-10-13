@@ -1,5 +1,7 @@
 # Contexte de build attendu : racine du repo (voir docker-compose.yml)
-FROM python:3.12-slim
+FROM python:3.11-slim
+
+ENV PIP_DEFAULT_TIMEOUT=120 PIP_RETRIES=10
 
 WORKDIR /srv
 
