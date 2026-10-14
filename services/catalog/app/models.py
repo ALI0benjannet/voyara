@@ -44,6 +44,14 @@ class Activity(Base):
     longitude: Mapped[float | None] = mapped_column(Float, nullable=True)
     photos: Mapped[str | None] = mapped_column(Text, nullable=True)
     category_id: Mapped[int] = mapped_column(ForeignKey("categories.id"))
+    # Espace prestataire : une activité proposée par un prestataire reste
+    # « en_attente » jusqu'à la modération admin (« publiee » ou « refusee »).
+    # Les activités créées par l'admin sont publiées directement.
+    statut: Mapped[str] = mapped_column(
+        String(20), default="publiee", server_default="publiee", index=True
+    )
+    # user_id (auth-service) du prestataire — simple entier, pas de FK (ADR-002).
+    prestataire_id: Mapped[int | None] = mapped_column(Integer, nullable=True, index=True)
 
     category = relationship("Category", back_populates="activities")
     availabilities = relationship("Availability", back_populates="activity")
@@ -65,6 +73,26 @@ class Availability(Base):
     places_totales: Mapped[int] = mapped_column(Integer, default=0, server_default="0")
 
     activity = relationship("Activity", back_populates="availabilities")
+
+
+class Annonce(Base):
+    """Opportunité publiée par un prestataire : annonce libre (partenariat,
+    emploi saisonnier, événement…), visible des voyageurs après modération."""
+
+    __tablename__ = "annonces"
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    prestataire_id: Mapped[int] = mapped_column(Integer, index=True)
+    titre: Mapped[str] = mapped_column(String(200))
+    type: Mapped[str] = mapped_column(String(30))  # partenariat | emploi | evenement | autre
+    description: Mapped[str] = mapped_column(Text)
+    localisation: Mapped[str | None] = mapped_column(String(255), nullable=True)
+    contact: Mapped[str] = mapped_column(String(255))
+    date_limite: Mapped[date | None] = mapped_column(Date, nullable=True)
+    statut: Mapped[str] = mapped_column(
+        String(20), default="en_attente", server_default="en_attente", index=True
+    )
+    cree_le: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
 
 
 # ---------------------------------------------------------------------------

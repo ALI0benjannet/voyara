@@ -89,6 +89,7 @@ découpée de bout en bout :
 |---|---|
 | `/api/v1/auth/*`, `/static/*` (avatars — sauf `/static/activities`) | auth |
 | `/api/v1/activities*`, `/api/v1/categories*`, `/api/v1/availabilities*`, `/static/activities/*` (photos) | catalog |
+| `/api/v1/prestataire/*` (espace prestataire, JWT), `/api/v1/annonces` (public), `/api/v1/moderation/*` (admin) | catalog |
 | `/api/v1/bookings*` | booking |
 | `/api/v1/payments*` | payment |
 | `/api/v1/reviews*`, `/api/v1/favorites*` | review |

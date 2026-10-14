@@ -1,4 +1,4 @@
-from datetime import date, time
+from datetime import date, datetime, time
 
 from pydantic import BaseModel, ConfigDict
 
@@ -30,6 +30,7 @@ class ActivityRead(ORMModel):
     photos: str | None = None
     category_id: int
     category: CategoryRead | None = None
+    statut: str = "publiee"
 
 
 class AvailabilityRead(ORMModel):
@@ -40,3 +41,16 @@ class AvailabilityRead(ORMModel):
     places_disponibles: int
     # Capacité d'origine : permet au client d'afficher « 6 places sur 8 ».
     places_totales: int = 0
+
+
+class AnnonceRead(ORMModel):
+    id: int
+    prestataire_id: int
+    titre: str
+    type: str
+    description: str
+    localisation: str | None = None
+    contact: str
+    date_limite: date | None = None
+    statut: str
+    cree_le: datetime

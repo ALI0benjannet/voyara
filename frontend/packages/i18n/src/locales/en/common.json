@@ -60,7 +60,10 @@
     "stays": "Stays",
     "flights": "Flights",
     "carRentals": "Car rentals",
-    "transfers": "Airport taxis"
+    "transfers": "Airport taxis",
+    "travelerSpace": "Traveler space",
+    "providerSpace": "Provider space",
+    "opportunities": "Opportunities"
   },
   "activities": {
     "description": "Browse the best activities to book near you."
@@ -364,7 +367,8 @@
       "stays": "Stays",
       "flights": "Flights",
       "carRentals": "Car rentals",
-      "transfers": "Transfers"
+      "transfers": "Transfers",
+      "moderation": "Moderation"
     },
     "common": {
       "loading": "Loading…",
@@ -643,6 +647,15 @@
         "berline": "Sedan",
         "minibus": "Minibus"
       }
+    },
+    "moderation": {
+      "title": "Moderation",
+      "subtitle": "Provider posts awaiting review.",
+      "activities": "Proposed activities",
+      "annonces": "Opportunities",
+      "approve": "Publish",
+      "reject": "Reject",
+      "empty": "Nothing pending."
     }
   },
   "comingSoon": {
@@ -653,5 +666,51 @@
     "flights": "Flights to and from Tunisia.",
     "carRentals": "Rent a car and travel at your own pace.",
     "transfers": "Private rides between the airport and your hotel."
+  },
+  "provider": {
+    "title": "Provider space",
+    "subtitle": "List your activities and post opportunities for Voyara travelers.",
+    "tabs": {
+      "activity": "Post an activity",
+      "annonce": "Post an opportunity",
+      "mine": "My posts"
+    },
+    "fields": {
+      "title": "Title",
+      "description": "Description",
+      "price": "Price (TND)",
+      "duration": "Duration (minutes)",
+      "category": "Category",
+      "location": "Location",
+      "photo": "Photo (JPG, PNG or WebP)",
+      "type": "Type",
+      "contact": "Contact (email or phone)",
+      "deadline": "Deadline"
+    },
+    "types": {
+      "partenariat": "Partnership",
+      "emploi": "Seasonal job",
+      "evenement": "Event",
+      "autre": "Other"
+    },
+    "statut": {
+      "en_attente": "Pending",
+      "publiee": "Published",
+      "refusee": "Rejected"
+    },
+    "kind": {
+      "activity": "Activity"
+    },
+    "submit": "Submit for review",
+    "submitted": "Post submitted: it will be visible once approved by the Voyara team.",
+    "moderationNote": "Every post is reviewed by the Voyara team before travelers can see it.",
+    "empty": "You haven't posted anything yet.",
+    "delete": "Delete"
+  },
+  "opportunities": {
+    "subtitle": "Partnerships, seasonal jobs and events posted by providers.",
+    "all": "All",
+    "empty": "No opportunities yet.",
+    "until": "Until"
   }
 }

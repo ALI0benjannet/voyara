@@ -60,7 +60,10 @@
     "stays": "Séjours",
     "flights": "Vols",
     "carRentals": "Voitures de location",
-    "transfers": "Transferts"
+    "transfers": "Transferts",
+    "travelerSpace": "Espace voyageur",
+    "providerSpace": "Espace prestataire",
+    "opportunities": "Opportunités"
   },
   "activities": {
     "description": "Découvrez les meilleures activités à réserver près de chez vous."
@@ -364,7 +367,8 @@
       "stays": "Séjours",
       "flights": "Vols",
       "carRentals": "Voitures de location",
-      "transfers": "Transferts"
+      "transfers": "Transferts",
+      "moderation": "Modération"
     },
     "common": {
       "loading": "Chargement…",
@@ -643,6 +647,15 @@
         "berline": "Berline",
         "minibus": "Minibus"
       }
+    },
+    "moderation": {
+      "title": "Modération",
+      "subtitle": "Publications de l'espace prestataire en attente de validation.",
+      "activities": "Activités proposées",
+      "annonces": "Opportunités",
+      "approve": "Publier",
+      "reject": "Refuser",
+      "empty": "Rien en attente."
     }
   },
   "comingSoon": {
@@ -653,5 +666,51 @@
     "flights": "Vols vers et depuis la Tunisie.",
     "carRentals": "Louez une voiture et partez à votre rythme.",
     "transfers": "Trajets avec chauffeur entre l'aéroport et votre hôtel."
+  },
+  "provider": {
+    "title": "Espace prestataire",
+    "subtitle": "Proposez vos activités et publiez vos opportunités auprès des voyageurs Voyara.",
+    "tabs": {
+      "activity": "Publier une activité",
+      "annonce": "Publier une opportunité",
+      "mine": "Mes publications"
+    },
+    "fields": {
+      "title": "Titre",
+      "description": "Description",
+      "price": "Prix (DT)",
+      "duration": "Durée (minutes)",
+      "category": "Catégorie",
+      "location": "Lieu",
+      "photo": "Photo (JPG, PNG ou WebP)",
+      "type": "Type",
+      "contact": "Contact (e-mail ou téléphone)",
+      "deadline": "Date limite"
+    },
+    "types": {
+      "partenariat": "Partenariat",
+      "emploi": "Emploi saisonnier",
+      "evenement": "Événement",
+      "autre": "Autre"
+    },
+    "statut": {
+      "en_attente": "En attente",
+      "publiee": "Publiée",
+      "refusee": "Refusée"
+    },
+    "kind": {
+      "activity": "Activité"
+    },
+    "submit": "Envoyer pour validation",
+    "submitted": "Publication envoyée : elle sera visible après validation par l'équipe Voyara.",
+    "moderationNote": "Chaque publication est vérifiée par l'équipe Voyara avant d'être visible des voyageurs.",
+    "empty": "Vous n'avez encore rien publié.",
+    "delete": "Supprimer"
+  },
+  "opportunities": {
+    "subtitle": "Partenariats, emplois saisonniers et événements proposés par les prestataires.",
+    "all": "Toutes",
+    "empty": "Aucune opportunité pour le moment.",
+    "until": "Jusqu'au"
   }
 }

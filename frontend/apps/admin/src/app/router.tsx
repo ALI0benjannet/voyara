@@ -17,6 +17,7 @@ const CategoriesPage = lazy(() => import("@/pages/CategoriesPage"));
 const PaymentsPage = lazy(() => import("@/pages/PaymentsPage"));
 const ForbiddenPage = lazy(() => import("@/pages/ForbiddenPage"));
 const TravelOffersPage = lazy(() => import("@/pages/TravelOffersPage"));
+const ModerationPage = lazy(() => import("@/pages/ModerationPage"));
 
 const TRAVEL_ROUTES: [string, TravelResource][] = [
   ["/stays", "stays"],
@@ -51,6 +52,7 @@ export const router = createBrowserRouter(
                 { path: "/activities/new", element: withSuspense(<ActivityFormPage />) },
                 { path: "/activities/:id/edit", element: withSuspense(<ActivityFormPage />) },
                 { path: "/categories", element: withSuspense(<CategoriesPage />) },
+                { path: "/moderation", element: withSuspense(<ModerationPage />) },
                 { path: "/payments", element: withSuspense(<PaymentsPage />) },
                 // Même composant pour les 4 offres : `key` remet son état à zéro
                 // quand on passe de l'une à l'autre.

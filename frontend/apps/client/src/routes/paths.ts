@@ -5,6 +5,8 @@ export const paths = {
   flights: "/flights",
   carRentals: "/car-rentals",
   transfers: "/transfers",
+  opportunities: "/opportunities",
+  provider: "/provider",
   favorites: "/favorites",
   bookings: "/bookings",
   login: "/login",

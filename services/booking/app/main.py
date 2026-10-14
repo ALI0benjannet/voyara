@@ -23,6 +23,10 @@ async def lifespan(_app: FastAPI):
     La tâche est annulée proprement à l'arrêt, sinon uvicorn attendrait
     indéfiniment une boucle qui ne se termine jamais.
     """
+    if settings.AUTO_CREATE_TABLES:
+        Base.metadata.create_all(bind=engine)
+        logger.info("Tables vérifiées/créées (AUTO_CREATE_TABLES=true)")
+
     sweeper: asyncio.Task | None = None
     if settings.BOOKING_EXPIRY_ENABLED:
         sweeper = asyncio.create_task(expiry_sweeper())
@@ -51,13 +55,6 @@ app = FastAPI(
 )
 
 register_exception_handlers(app)
-
-
-@app.on_event("startup")
-def init_db() -> None:
-    if settings.AUTO_CREATE_TABLES:
-        Base.metadata.create_all(bind=engine)
-        logger.info("Tables vérifiées/créées (AUTO_CREATE_TABLES=true)")
 
 
 @app.get("/health", tags=["Système"])

@@ -60,7 +60,10 @@
     "stays": "الإقامات",
     "flights": "الرحلات الجوية",
     "carRentals": "تأجير السيارات",
-    "transfers": "التنقلات"
+    "transfers": "التنقلات",
+    "travelerSpace": "فضاء المسافر",
+    "providerSpace": "فضاء مقدّم الخدمة",
+    "opportunities": "الفرص"
   },
   "activities": {
     "description": "استعرض أفضل الأنشطة للحجز بالقرب منك."
@@ -364,7 +367,8 @@
       "stays": "الإقامات",
       "flights": "الرحلات الجوية",
       "carRentals": "تأجير السيارات",
-      "transfers": "التنقلات"
+      "transfers": "التنقلات",
+      "moderation": "الإشراف"
     },
     "common": {
       "loading": "جارٍ التحميل…",
@@ -643,6 +647,15 @@
         "berline": "سيدان",
         "minibus": "حافلة صغيرة"
       }
+    },
+    "moderation": {
+      "title": "الإشراف",
+      "subtitle": "منشورات مقدّمي الخدمات في انتظار المراجعة.",
+      "activities": "الأنشطة المقترحة",
+      "annonces": "الفرص",
+      "approve": "نشر",
+      "reject": "رفض",
+      "empty": "لا شيء في الانتظار."
     }
   },
   "comingSoon": {
@@ -653,5 +666,51 @@
     "flights": "رحلات جوية من وإلى تونس.",
     "carRentals": "استأجر سيارة وتنقّل على راحتك.",
     "transfers": "تنقلات مع سائق بين المطار وفندقك."
+  },
+  "provider": {
+    "title": "فضاء مقدّم الخدمة",
+    "subtitle": "اعرض أنشطتك وانشر فرصك لمسافري Voyara.",
+    "tabs": {
+      "activity": "نشر نشاط",
+      "annonce": "نشر فرصة",
+      "mine": "منشوراتي"
+    },
+    "fields": {
+      "title": "العنوان",
+      "description": "الوصف",
+      "price": "السعر (د.ت)",
+      "duration": "المدة (بالدقائق)",
+      "category": "الفئة",
+      "location": "المكان",
+      "photo": "صورة (JPG أو PNG أو WebP)",
+      "type": "النوع",
+      "contact": "التواصل (بريد إلكتروني أو هاتف)",
+      "deadline": "آخر أجل"
+    },
+    "types": {
+      "partenariat": "شراكة",
+      "emploi": "عمل موسمي",
+      "evenement": "فعالية",
+      "autre": "أخرى"
+    },
+    "statut": {
+      "en_attente": "قيد المراجعة",
+      "publiee": "منشور",
+      "refusee": "مرفوض"
+    },
+    "kind": {
+      "activity": "نشاط"
+    },
+    "submit": "إرسال للمراجعة",
+    "submitted": "تم إرسال المنشور: سيظهر بعد موافقة فريق Voyara.",
+    "moderationNote": "يراجع فريق Voyara كل منشور قبل أن يظهر للمسافرين.",
+    "empty": "لم تنشر أي شيء بعد.",
+    "delete": "حذف"
+  },
+  "opportunities": {
+    "subtitle": "شراكات وأعمال موسمية وفعاليات يقترحها مقدّمو الخدمات.",
+    "all": "الكل",
+    "empty": "لا توجد فرص حالياً.",
+    "until": "حتى"
   }
 }

@@ -212,14 +212,9 @@ def _delete_photo_file(activity: Activity) -> None:
             old.unlink()
 
 
-@admin_router.post("/activities/{activity_id}/photo", response_model=ActivityRead)
-async def upload_activity_photo(
-    activity_id: int,
-    photo: UploadFile = File(...),
-    db: Session = Depends(get_db),
-):
-    activity = _get_or_404(db, Activity, activity_id, "Activité")
-
+async def save_activity_photo(activity: Activity, photo: UploadFile) -> None:
+    """Valide et enregistre la photo, remplace l'ancienne (commit à la charge
+    de l'appelant). Partagé avec l'espace prestataire."""
     if not photo.content_type or not photo.content_type.startswith("image/"):
         raise HTTPException(status_code=415, detail="Le fichier doit être une image")
     extension = Path(photo.filename or "").suffix.lower() or ".jpg"
@@ -227,11 +222,21 @@ async def upload_activity_photo(
         raise HTTPException(status_code=415, detail="Format non supporté (JPG, PNG ou WebP)")
 
     PHOTO_DIR.mkdir(parents=True, exist_ok=True)
-    filename = f"{activity_id}-{uuid4().hex}{extension}"
+    filename = f"{activity.id}-{uuid4().hex}{extension}"
     (PHOTO_DIR / filename).write_bytes(await photo.read())
 
     _delete_photo_file(activity)
     activity.photos = f"/static/activities/{filename}"
+
+
+@admin_router.post("/activities/{activity_id}/photo", response_model=ActivityRead)
+async def upload_activity_photo(
+    activity_id: int,
+    photo: UploadFile = File(...),
+    db: Session = Depends(get_db),
+):
+    activity = _get_or_404(db, Activity, activity_id, "Activité")
+    await save_activity_photo(activity, photo)
     db.commit()
     return db.scalar(
         select(Activity).options(joinedload(Activity.category)).where(Activity.id == activity_id)

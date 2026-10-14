@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import date, datetime, timezone
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy import func, select, update
@@ -8,8 +8,8 @@ from voyara_common.internal import require_internal_key
 from voyara_common.pagination import Page, paginate
 
 from app.database import get_db
-from app.models import Activity, Availability, Category
-from app.schemas import ActivityRead, AvailabilityRead, CategoryRead
+from app.models import Activity, Annonce, Availability, Category
+from app.schemas import ActivityRead, AnnonceRead, AvailabilityRead, CategoryRead
 
 # ---------------------------------------------------------------------------
 # Routes publiques (exposées par le gateway)
@@ -31,7 +31,12 @@ def list_activities(
     category_id: int | None = None,
     search: str | None = Query(None, min_length=1, max_length=100),
 ):
-    stmt = select(Activity).options(joinedload(Activity.category))
+    # Seules les activités modérées sont visibles (voir espace prestataire).
+    stmt = (
+        select(Activity)
+        .options(joinedload(Activity.category))
+        .where(Activity.statut == "publiee")
+    )
     if category_id:
         stmt = stmt.where(Activity.category_id == category_id)
     if search:
@@ -60,7 +65,7 @@ def get_activity(activity_id: int, db: Session = Depends(get_db)):
     activity = db.scalar(
         select(Activity)
         .options(joinedload(Activity.category))
-        .where(Activity.id == activity_id)
+        .where(Activity.id == activity_id, Activity.statut == "publiee")
     )
     if not activity:
         raise HTTPException(status_code=404, detail="Activité introuvable")
@@ -74,6 +79,18 @@ def list_activity_availabilities(activity_id: int, db: Session = Depends(get_db)
         .where(Availability.activity_id == activity_id)
         .order_by(Availability.date, Availability.heure)
     ).all()
+
+
+@public_router.get("/annonces", response_model=list[AnnonceRead], tags=["Annonces"])
+def list_annonces(db: Session = Depends(get_db), type: str | None = None):
+    """Opportunités publiées par les prestataires (modérées, non expirées)."""
+    stmt = select(Annonce).where(
+        Annonce.statut == "publiee",
+        (Annonce.date_limite.is_(None)) | (Annonce.date_limite >= date.today()),
+    )
+    if type:
+        stmt = stmt.where(Annonce.type == type)
+    return db.scalars(stmt.order_by(Annonce.cree_le.desc()).limit(100)).all()
 
 
 # ---------------------------------------------------------------------------
@@ -122,6 +139,7 @@ def internal_list_activities(
             "duree": a.duree,
             "localisation": a.localisation,
             "category": category_name,
+            "statut": a.statut,
         }
         for a, category_name in rows
     ]

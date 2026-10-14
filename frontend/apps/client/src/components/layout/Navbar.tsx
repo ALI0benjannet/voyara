@@ -4,9 +4,11 @@ import {
   BedDouble,
   Car,
   CarTaxiFront,
+  Briefcase,
   FerrisWheel,
   Heart,
   LogIn,
+  Megaphone,
   Plane,
   ShoppingCart,
 } from "lucide-react";
@@ -47,6 +49,7 @@ const TRAVEL_TABS = [
   { href: paths.carRentals, labelKey: "nav.carRentals", Icon: Car },
   { href: paths.activities, labelKey: "nav.activities", Icon: FerrisWheel },
   { href: paths.transfers, labelKey: "nav.transfers", Icon: CarTaxiFront },
+  { href: paths.opportunities, labelKey: "nav.opportunities", Icon: Megaphone },
 ] as const;
 
 const ICON_TAB_CLASS =
@@ -114,8 +117,31 @@ export function Navbar() {
         : "border-transparent text-foreground/70 hover:border-border hover:text-foreground",
     );
 
+  // Deux espaces : voyageur (le site de réservation) et prestataire (publication
+  // d'activités et d'annonces, soumises à la modération admin).
+  const inProviderSpace = pathname?.startsWith(paths.provider) ?? false;
+  const spaceClass = (active: boolean) =>
+    cn(
+      "flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold transition-colors",
+      active ? "bg-primary text-primary-foreground" : "text-foreground/70 hover:text-primary",
+    );
+
   return (
     <header className="border-border bg-card sticky top-0 z-50 border-b shadow-sm">
+      {/* Rangée 0 : bascule entre l'espace voyageur et l'espace prestataire. */}
+      <div className="border-border bg-muted/50 border-b">
+        <div className="mx-auto flex max-w-7xl items-center justify-center gap-2 px-4 py-1.5 sm:px-8">
+          <Link href={paths.home} className={spaceClass(!inProviderSpace)}>
+            <FerrisWheel className="size-3.5" />
+            {t("nav.travelerSpace")}
+          </Link>
+          <Link href={paths.provider} className={spaceClass(inProviderSpace)}>
+            <Briefcase className="size-3.5" />
+            {t("nav.providerSpace")}
+          </Link>
+        </div>
+      </div>
+
       {/* Rangée 1 : logo — recherche (une fois condensé) — actions du compte. */}
       <div className="mx-auto flex h-[72px] max-w-7xl items-center gap-6 px-4 sm:px-8">
         <Link
