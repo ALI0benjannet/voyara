@@ -2,8 +2,7 @@
 
 `create_all` ne modifie pas une table existante : ce script applique
 `statut` (modération) et `prestataire_id` (propriétaire). Les activités déjà
-en base restent publiées. La table `annonces` est créée au démarrage du
-service par `create_all`.
+en base restent publiées.
 
 Usage (depuis services/catalog) :
     python scripts/add_prestataire_columns.py

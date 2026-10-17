@@ -31,7 +31,6 @@ ROUTES: list[tuple[str, str, str]] = [
     ("/api/v1/flights", settings.CATALOG_SERVICE_URL, "catalog"),
     ("/api/v1/car-rentals", settings.CATALOG_SERVICE_URL, "catalog"),
     ("/api/v1/transfers", settings.CATALOG_SERVICE_URL, "catalog"),
-    ("/api/v1/annonces", settings.CATALOG_SERVICE_URL, "catalog"),
     ("/api/v1/prestataire", settings.CATALOG_SERVICE_URL, "catalog"),
     ("/api/v1/moderation", settings.CATALOG_SERVICE_URL, "catalog"),
     ("/api/v1/bookings", settings.BOOKING_SERVICE_URL, "booking"),

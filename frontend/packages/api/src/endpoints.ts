@@ -43,19 +43,14 @@ export const endpoints = {
     add: "/api/v1/favorites",
     remove: (activityId: string | number) => `/api/v1/favorites/${activityId}`,
   },
-  annonces: { list: "/api/v1/annonces" },
   prestataire: {
     activities: "/api/v1/prestataire/activities",
     activity: (id: string | number) => `/api/v1/prestataire/activities/${id}`,
     activityPhoto: (id: string | number) => `/api/v1/prestataire/activities/${id}/photo`,
-    annonces: "/api/v1/prestataire/annonces",
-    annonce: (id: string | number) => `/api/v1/prestataire/annonces/${id}`,
   },
   moderation: {
     activities: "/api/v1/moderation/activities",
     activity: (id: string | number) => `/api/v1/moderation/activities/${id}`,
-    annonces: "/api/v1/moderation/annonces",
-    annonce: (id: string | number) => `/api/v1/moderation/annonces/${id}`,
   },
   reviews: { list: "/api/v1/reviews", create: "/api/v1/reviews", stats: "/api/v1/reviews/stats" },
 } as const;

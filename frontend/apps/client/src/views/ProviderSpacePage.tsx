@@ -1,7 +1,7 @@
 import { useState, type FormEvent, type ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 import { toast } from "sonner";
-import { FerrisWheel, ListChecks, Megaphone, Trash2 } from "lucide-react";
+import { FerrisWheel, ListChecks, Trash2 } from "lucide-react";
 
 import { toApiError } from "@voyara/api/errors";
 import { cn } from "@voyara/ui/lib/utils";
@@ -10,18 +10,13 @@ import { useCategories } from "@/features/catalog/hooks";
 import { categoryName } from "@/features/catalog/i18n-content";
 import { formatPrice } from "@/features/catalog/format";
 import {
-  ANNONCE_TYPES,
   useCreateActivity,
-  useCreateAnnonce,
   useDeleteActivity,
-  useDeleteAnnonce,
   useMyActivities,
-  useMyAnnonces,
-  type AnnonceType,
   type Statut,
 } from "@/features/prestataire/hooks";
 
-type Tab = "activity" | "annonce" | "mine";
+type Tab = "activity" | "mine";
 
 const FIELD_CLASS =
   "border-border bg-card w-full rounded-xl border px-4 py-3 text-sm transition focus-visible:ring-ring focus:outline-none focus-visible:ring-2";
@@ -172,112 +167,29 @@ function ActivityForm({ onDone }: { onDone: () => void }) {
   );
 }
 
-function AnnonceForm({ onDone }: { onDone: () => void }) {
-  const { t } = useTranslation();
-  const createAnnonce = useCreateAnnonce();
-
-  const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
-    const form = new FormData(event.currentTarget);
-    const optional = (key: string) => String(form.get(key) ?? "").trim() || null;
-    createAnnonce.mutate(
-      {
-        titre: String(form.get("titre")),
-        type: form.get("type") as AnnonceType,
-        description: String(form.get("description")),
-        localisation: optional("localisation"),
-        contact: String(form.get("contact")),
-        date_limite: optional("date_limite"),
-      },
-      {
-        onSuccess: () => {
-          toast.success(t("provider.submitted"));
-          onDone();
-        },
-        onError: (error) => toast.error(errorMessage(t, error)),
-      },
-    );
-  };
-
-  return (
-    <form onSubmit={handleSubmit} className="space-y-5">
-      <div className="grid gap-5 sm:grid-cols-[2fr_1fr]">
-        <Field label={t("provider.fields.title")}>
-          <input name="titre" required minLength={3} maxLength={200} className={FIELD_CLASS} />
-        </Field>
-        <Field label={t("provider.fields.type")}>
-          <select name="type" required className={FIELD_CLASS}>
-            {ANNONCE_TYPES.map((type) => (
-              <option key={type} value={type}>
-                {t(`provider.types.${type}`)}
-              </option>
-            ))}
-          </select>
-        </Field>
-      </div>
-      <Field label={t("provider.fields.description")}>
-        <textarea
-          name="description"
-          required
-          minLength={10}
-          maxLength={5000}
-          rows={5}
-          className={FIELD_CLASS}
-        />
-      </Field>
-      <div className="grid gap-5 sm:grid-cols-3">
-        <Field label={t("provider.fields.contact")}>
-          <input name="contact" required minLength={3} maxLength={255} className={FIELD_CLASS} />
-        </Field>
-        <Field label={t("provider.fields.location")}>
-          <input name="localisation" maxLength={255} className={FIELD_CLASS} />
-        </Field>
-        <Field label={t("provider.fields.deadline")}>
-          <input name="date_limite" type="date" className={FIELD_CLASS} />
-        </Field>
-      </div>
-      <div className="flex justify-end">
-        <SubmitButton pending={createAnnonce.isPending}>{t("provider.submit")}</SubmitButton>
-      </div>
-    </form>
-  );
-}
-
 function MyPublications() {
   const { t } = useTranslation();
-  const { data: activities, isLoading: loadingActivities } = useMyActivities();
-  const { data: annonces, isLoading: loadingAnnonces } = useMyAnnonces();
+  const { data: activities, isLoading } = useMyActivities();
   const deleteActivity = useDeleteActivity();
-  const deleteAnnonce = useDeleteAnnonce();
 
   const onDeleteError = (error: unknown) => toast.error(errorMessage(t, error));
 
-  if (loadingActivities || loadingAnnonces) {
+  if (isLoading) {
     return <div className="bg-muted h-40 animate-pulse rounded-2xl" />;
   }
 
-  const rows = [
-    ...(activities ?? []).map((a) => ({
-      key: `a-${a.id}`,
-      kind: t("provider.kind.activity"),
-      title: a.titre,
-      detail: formatPrice(a.prix),
-      statut: a.statut,
-      // Une activité publiée peut avoir des réservations : suppression via l'admin.
-      onDelete:
-        a.statut === "publiee"
-          ? null
-          : () => deleteActivity.mutate(a.id, { onError: onDeleteError }),
-    })),
-    ...(annonces ?? []).map((n) => ({
-      key: `n-${n.id}`,
-      kind: t(`provider.types.${n.type}`),
-      title: n.titre,
-      detail: n.contact,
-      statut: n.statut,
-      onDelete: () => deleteAnnonce.mutate(n.id, { onError: onDeleteError }),
-    })),
-  ];
+  const rows = (activities ?? []).map((a) => ({
+    key: `a-${a.id}`,
+    kind: t("provider.kind.activity"),
+    title: a.titre,
+    detail: formatPrice(a.prix),
+    statut: a.statut,
+    // Une activité publiée peut avoir des réservations : suppression via l'admin.
+    onDelete:
+      a.statut === "publiee"
+        ? null
+        : () => deleteActivity.mutate(a.id, { onError: onDeleteError }),
+  }));
 
   if (rows.length === 0) {
     return (
@@ -319,7 +231,6 @@ export default function ProviderSpacePage() {
 
   const tabs = [
     { id: "activity" as const, label: t("provider.tabs.activity"), Icon: FerrisWheel },
-    { id: "annonce" as const, label: t("provider.tabs.annonce"), Icon: Megaphone },
     { id: "mine" as const, label: t("provider.tabs.mine"), Icon: ListChecks },
   ];
 
@@ -348,7 +259,6 @@ export default function ProviderSpacePage() {
       </div>
 
       {tab === "activity" && <ActivityForm onDone={() => setTab("mine")} />}
-      {tab === "annonce" && <AnnonceForm onDone={() => setTab("mine")} />}
       {tab === "mine" && <MyPublications />}
 
       {tab !== "mine" && (

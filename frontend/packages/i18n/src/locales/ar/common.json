@@ -78,8 +78,7 @@
     "carRentals": "تأجير السيارات",
     "transfers": "التنقلات",
     "travelerSpace": "فضاء المسافر",
-    "providerSpace": "فضاء مقدّم الخدمة",
-    "opportunities": "الفرص"
+    "providerSpace": "فضاء مقدّم الخدمة"
   },
   "activities": {
     "description": "استعرض أفضل الأنشطة للحجز بالقرب منك."
@@ -670,7 +669,6 @@
       "title": "الإشراف",
       "subtitle": "منشورات مقدّمي الخدمات في انتظار المراجعة.",
       "activities": "الأنشطة المقترحة",
-      "annonces": "الفرص",
       "approve": "نشر",
       "reject": "رفض",
       "empty": "لا شيء في الانتظار."
@@ -687,10 +685,9 @@
   },
   "provider": {
     "title": "فضاء مقدّم الخدمة",
-    "subtitle": "اعرض أنشطتك وانشر فرصك لمسافري Voyara.",
+    "subtitle": "اعرض أنشطتك على مسافري Voyara.",
     "tabs": {
       "activity": "نشر نشاط",
-      "annonce": "نشر فرصة",
       "mine": "منشوراتي"
     },
     "fields": {
@@ -703,16 +700,7 @@
       "photo": "صورة (JPG أو PNG أو WebP)",
       "chooseFile": "اختر صورة",
       "noFile": "لم يتم اختيار أي ملف",
-      "locationPlaceholder": "جربة، حومة السوق",
-      "type": "النوع",
-      "contact": "التواصل (بريد إلكتروني أو هاتف)",
-      "deadline": "آخر أجل"
-    },
-    "types": {
-      "partenariat": "شراكة",
-      "emploi": "عمل موسمي",
-      "evenement": "فعالية",
-      "autre": "أخرى"
+      "locationPlaceholder": "جربة، حومة السوق"
     },
     "statut": {
       "en_attente": "قيد المراجعة",
@@ -727,11 +715,5 @@
     "moderationNote": "يراجع فريق Voyara كل منشور قبل أن يظهر للمسافرين.",
     "empty": "لم تنشر أي شيء بعد.",
     "delete": "حذف"
-  },
-  "opportunities": {
-    "subtitle": "شراكات وأعمال موسمية وفعاليات يقترحها مقدّمو الخدمات.",
-    "all": "الكل",
-    "empty": "لا توجد فرص حالياً.",
-    "until": "حتى"
   }
 }

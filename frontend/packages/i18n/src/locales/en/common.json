@@ -78,8 +78,7 @@
     "carRentals": "Car rentals",
     "transfers": "Airport taxis",
     "travelerSpace": "Traveler space",
-    "providerSpace": "Provider space",
-    "opportunities": "Opportunities"
+    "providerSpace": "Provider space"
   },
   "activities": {
     "description": "Browse the best activities to book near you."
@@ -670,7 +669,6 @@
       "title": "Moderation",
       "subtitle": "Provider posts awaiting review.",
       "activities": "Proposed activities",
-      "annonces": "Opportunities",
       "approve": "Publish",
       "reject": "Reject",
       "empty": "Nothing pending."
@@ -687,10 +685,9 @@
   },
   "provider": {
     "title": "Provider space",
-    "subtitle": "List your activities and post opportunities for Voyara travelers.",
+    "subtitle": "List your activities for Voyara travelers.",
     "tabs": {
       "activity": "Post an activity",
-      "annonce": "Post an opportunity",
       "mine": "My posts"
     },
     "fields": {
@@ -703,16 +700,7 @@
       "photo": "Photo (JPG, PNG or WebP)",
       "chooseFile": "Choose a photo",
       "noFile": "No file chosen",
-      "locationPlaceholder": "Djerba, Houmt Souk",
-      "type": "Type",
-      "contact": "Contact (email or phone)",
-      "deadline": "Deadline"
-    },
-    "types": {
-      "partenariat": "Partnership",
-      "emploi": "Seasonal job",
-      "evenement": "Event",
-      "autre": "Other"
+      "locationPlaceholder": "Djerba, Houmt Souk"
     },
     "statut": {
       "en_attente": "Pending",
@@ -727,11 +715,5 @@
     "moderationNote": "Every post is reviewed by the Voyara team before travelers can see it.",
     "empty": "You haven't posted anything yet.",
     "delete": "Delete"
-  },
-  "opportunities": {
-    "subtitle": "Partnerships, seasonal jobs and events posted by providers.",
-    "all": "All",
-    "empty": "No opportunities yet.",
-    "until": "Until"
   }
 }

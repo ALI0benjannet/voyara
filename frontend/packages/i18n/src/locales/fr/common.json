@@ -78,8 +78,7 @@
     "carRentals": "Voitures de location",
     "transfers": "Transferts",
     "travelerSpace": "Espace voyageur",
-    "providerSpace": "Espace prestataire",
-    "opportunities": "Opportunités"
+    "providerSpace": "Espace prestataire"
   },
   "activities": {
     "description": "Découvrez les meilleures activités à réserver près de chez vous."
@@ -670,7 +669,6 @@
       "title": "Modération",
       "subtitle": "Publications de l'espace prestataire en attente de validation.",
       "activities": "Activités proposées",
-      "annonces": "Opportunités",
       "approve": "Publier",
       "reject": "Refuser",
       "empty": "Rien en attente."
@@ -687,10 +685,9 @@
   },
   "provider": {
     "title": "Espace prestataire",
-    "subtitle": "Proposez vos activités et publiez vos opportunités auprès des voyageurs Voyara.",
+    "subtitle": "Proposez vos activités aux voyageurs Voyara.",
     "tabs": {
       "activity": "Publier une activité",
-      "annonce": "Publier une opportunité",
       "mine": "Mes publications"
     },
     "fields": {
@@ -703,16 +700,7 @@
       "photo": "Photo (JPG, PNG ou WebP)",
       "chooseFile": "Choisir une photo",
       "noFile": "Aucun fichier choisi",
-      "locationPlaceholder": "Djerba, Houmt Souk",
-      "type": "Type",
-      "contact": "Contact (e-mail ou téléphone)",
-      "deadline": "Date limite"
-    },
-    "types": {
-      "partenariat": "Partenariat",
-      "emploi": "Emploi saisonnier",
-      "evenement": "Événement",
-      "autre": "Autre"
+      "locationPlaceholder": "Djerba, Houmt Souk"
     },
     "statut": {
       "en_attente": "En attente",
@@ -727,11 +715,5 @@
     "moderationNote": "Chaque publication est vérifiée par l'équipe Voyara avant d'être visible des voyageurs.",
     "empty": "Vous n'avez encore rien publié.",
     "delete": "Supprimer"
-  },
-  "opportunities": {
-    "subtitle": "Partenariats, emplois saisonniers et événements proposés par les prestataires.",
-    "all": "Toutes",
-    "empty": "Aucune opportunité pour le moment.",
-    "until": "Jusqu'au"
   }
 }

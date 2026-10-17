@@ -8,7 +8,6 @@ import {
   FerrisWheel,
   Heart,
   LogIn,
-  Megaphone,
   Plane,
   ShoppingCart,
 } from "lucide-react";
@@ -49,7 +48,6 @@ const TRAVEL_TABS = [
   { href: paths.carRentals, labelKey: "nav.carRentals", Icon: Car },
   { href: paths.activities, labelKey: "nav.activities", Icon: FerrisWheel },
   { href: paths.transfers, labelKey: "nav.transfers", Icon: CarTaxiFront },
-  { href: paths.opportunities, labelKey: "nav.opportunities", Icon: Megaphone },
 ] as const;
 
 const ICON_TAB_CLASS =
@@ -118,7 +116,7 @@ export function Navbar() {
     );
 
   // Deux espaces : voyageur (le site de réservation) et prestataire (publication
-  // d'activités et d'annonces, soumises à la modération admin).
+  // d'activités, soumises à la modération admin).
   const inProviderSpace = pathname?.startsWith(paths.provider) ?? false;
   const spaceClass = (active: boolean) =>
     cn(

@@ -75,26 +75,6 @@ class Availability(Base):
     activity = relationship("Activity", back_populates="availabilities")
 
 
-class Annonce(Base):
-    """Opportunité publiée par un prestataire : annonce libre (partenariat,
-    emploi saisonnier, événement…), visible des voyageurs après modération."""
-
-    __tablename__ = "annonces"
-
-    id: Mapped[int] = mapped_column(primary_key=True)
-    prestataire_id: Mapped[int] = mapped_column(Integer, index=True)
-    titre: Mapped[str] = mapped_column(String(200))
-    type: Mapped[str] = mapped_column(String(30))  # partenariat | emploi | evenement | autre
-    description: Mapped[str] = mapped_column(Text)
-    localisation: Mapped[str | None] = mapped_column(String(255), nullable=True)
-    contact: Mapped[str] = mapped_column(String(255))
-    date_limite: Mapped[date | None] = mapped_column(Date, nullable=True)
-    statut: Mapped[str] = mapped_column(
-        String(20), default="en_attente", server_default="en_attente", index=True
-    )
-    cree_le: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
-
-
 # ---------------------------------------------------------------------------
 # Offres de voyage (onglets Séjours, Vols, Voitures de location, Transferts).
 # Tables posées en avance : pas encore d'API ni de réservation branchée.

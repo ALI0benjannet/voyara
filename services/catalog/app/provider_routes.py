@@ -1,19 +1,18 @@
 """Espace prestataire et modération.
 
 - `/prestataire/*` (JWT, tout utilisateur connecté) : un prestataire propose
-  des activités et publie des annonces (opportunités). Tout est créé
-  « en_attente » : rien n'est visible des voyageurs avant validation.
+  des activités. Elles sont créées « en_attente » : rien n'est visible des
+  voyageurs avant validation.
 - `/moderation/*` (JWT admin) : l'admin publie ou refuse ces propositions.
 
 Les créneaux d'une activité validée sont ajoutés depuis l'espace admin
 (CRUD `/availabilities` existant).
 """
 
-from datetime import date as date_type
 from typing import Literal
 
 from fastapi import APIRouter, Depends, File, HTTPException, UploadFile, status
-from pydantic import BaseModel, Field
+from pydantic import BaseModel
 from sqlalchemy import select
 from sqlalchemy.orm import Session, joinedload
 
@@ -21,8 +20,8 @@ from voyara_common.auth import TokenIdentity, get_current_identity, require_admi
 
 from app.admin_routes import ActivityIn, _delete_photo_file, _get_or_404, save_activity_photo
 from app.database import get_db
-from app.models import Activity, Annonce, Category
-from app.schemas import ActivityRead, AnnonceRead
+from app.models import Activity, Category
+from app.schemas import ActivityRead
 
 provider_router = APIRouter(prefix="/prestataire", tags=["Espace prestataire"])
 moderation_router = APIRouter(
@@ -30,15 +29,6 @@ moderation_router = APIRouter(
 )
 
 STATUTS_MODIFIABLES = {"en_attente", "refusee"}
-
-
-class AnnonceIn(BaseModel):
-    titre: str = Field(min_length=3, max_length=200)
-    type: Literal["partenariat", "emploi", "evenement", "autre"]
-    description: str = Field(min_length=10, max_length=5000)
-    localisation: str | None = Field(default=None, max_length=255)
-    contact: str = Field(min_length=3, max_length=255)
-    date_limite: date_type | None = None
 
 
 class StatutIn(BaseModel):
@@ -123,47 +113,6 @@ def delete_my_activity(
 
 
 # ---------------------------------------------------------------------------
-# Annonces (opportunités) du prestataire
-# ---------------------------------------------------------------------------
-
-@provider_router.get("/annonces", response_model=list[AnnonceRead])
-def my_annonces(
-    identity: TokenIdentity = Depends(get_current_identity), db: Session = Depends(get_db)
-):
-    return db.scalars(
-        select(Annonce)
-        .where(Annonce.prestataire_id == identity.user_id)
-        .order_by(Annonce.cree_le.desc())
-    ).all()
-
-
-@provider_router.post("/annonces", response_model=AnnonceRead, status_code=status.HTTP_201_CREATED)
-def create_annonce(
-    payload: AnnonceIn,
-    identity: TokenIdentity = Depends(get_current_identity),
-    db: Session = Depends(get_db),
-):
-    annonce = Annonce(**payload.model_dump(), prestataire_id=identity.user_id)
-    db.add(annonce)
-    db.commit()
-    db.refresh(annonce)
-    return annonce
-
-
-@provider_router.delete("/annonces/{annonce_id}", status_code=status.HTTP_204_NO_CONTENT)
-def delete_my_annonce(
-    annonce_id: int,
-    identity: TokenIdentity = Depends(get_current_identity),
-    db: Session = Depends(get_db),
-):
-    annonce = db.get(Annonce, annonce_id)
-    if not annonce or annonce.prestataire_id != identity.user_id:
-        raise HTTPException(status_code=404, detail="Annonce introuvable")
-    db.delete(annonce)
-    db.commit()
-
-
-# ---------------------------------------------------------------------------
 # Modération (admin)
 # ---------------------------------------------------------------------------
 
@@ -183,19 +132,3 @@ def moderate_activity(activity_id: int, payload: StatutIn, db: Session = Depends
     activity.statut = payload.statut
     db.commit()
     return _activity_with_category(db, activity_id)
-
-
-@moderation_router.get("/annonces", response_model=list[AnnonceRead])
-def pending_annonces(statut: str = "en_attente", db: Session = Depends(get_db)):
-    return db.scalars(
-        select(Annonce).where(Annonce.statut == statut).order_by(Annonce.cree_le.desc())
-    ).all()
-
-
-@moderation_router.patch("/annonces/{annonce_id}", response_model=AnnonceRead)
-def moderate_annonce(annonce_id: int, payload: StatutIn, db: Session = Depends(get_db)):
-    annonce = _get_or_404(db, Annonce, annonce_id, "Annonce")
-    annonce.statut = payload.statut
-    db.commit()
-    db.refresh(annonce)
-    return annonce

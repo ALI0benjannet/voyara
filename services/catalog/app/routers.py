@@ -1,4 +1,4 @@
-from datetime import date, datetime, timezone
+from datetime import datetime, timezone
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from sqlalchemy import func, select, update
@@ -8,8 +8,8 @@ from voyara_common.internal import require_internal_key
 from voyara_common.pagination import Page, paginate
 
 from app.database import get_db
-from app.models import Activity, Annonce, Availability, Category
-from app.schemas import ActivityRead, AnnonceRead, AvailabilityRead, CategoryRead
+from app.models import Activity, Availability, Category
+from app.schemas import ActivityRead, AvailabilityRead, CategoryRead
 
 # ---------------------------------------------------------------------------
 # Routes publiques (exposées par le gateway)
@@ -79,18 +79,6 @@ def list_activity_availabilities(activity_id: int, db: Session = Depends(get_db)
         .where(Availability.activity_id == activity_id)
         .order_by(Availability.date, Availability.heure)
     ).all()
-
-
-@public_router.get("/annonces", response_model=list[AnnonceRead], tags=["Annonces"])
-def list_annonces(db: Session = Depends(get_db), type: str | None = None):
-    """Opportunités publiées par les prestataires (modérées, non expirées)."""
-    stmt = select(Annonce).where(
-        Annonce.statut == "publiee",
-        (Annonce.date_limite.is_(None)) | (Annonce.date_limite >= date.today()),
-    )
-    if type:
-        stmt = stmt.where(Annonce.type == type)
-    return db.scalars(stmt.order_by(Annonce.cree_le.desc()).limit(100)).all()
 
 
 # ---------------------------------------------------------------------------
