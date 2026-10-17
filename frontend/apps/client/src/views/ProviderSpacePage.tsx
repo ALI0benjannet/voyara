@@ -91,10 +91,48 @@ function errorMessage(t: (key: string) => string, error: unknown) {
   return message.startsWith("errors.") ? t(message) : message;
 }
 
+/** Brouillon du formulaire : enregistré à chaque saisie dans `sessionStorage`
+ *  pour survivre au changement d'onglet ou de page (le formulaire est démonté),
+ *  effacé après envoi. La photo n'est pas conservée : un fichier ne se sérialise
+ *  pas. Accès protégés : le stockage peut être indisponible (navigation privée). */
+const DRAFT_KEY = "voyara.provider.activityDraft";
+type Draft = Record<string, string>;
+
+function readDraft(): Draft {
+  try {
+    return JSON.parse(sessionStorage.getItem(DRAFT_KEY) ?? "{}") as Draft;
+  } catch {
+    return {};
+  }
+}
+
+function saveDraft(form: HTMLFormElement) {
+  const draft: Draft = {};
+  new FormData(form).forEach((value, key) => {
+    if (typeof value === "string") draft[key] = value;
+  });
+  try {
+    sessionStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+  } catch {
+    // Stockage plein ou bloqué : le brouillon est simplement perdu.
+  }
+}
+
+function clearDraft() {
+  try {
+    sessionStorage.removeItem(DRAFT_KEY);
+  } catch {
+    // Rien à faire.
+  }
+}
+
 function ActivityForm({ onDone }: { onDone: () => void }) {
   const { t, i18n } = useTranslation();
   const { data: categories } = useCategories();
   const createActivity = useCreateActivity();
+  // Lu une seule fois au montage : le formulaire n'est rendu que côté client
+  // (derrière RequireAuth), donc pas d'écart avec le rendu serveur.
+  const [draft] = useState(readDraft);
 
   const handleSubmit = (event: FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -114,6 +152,7 @@ function ActivityForm({ onDone }: { onDone: () => void }) {
       },
       {
         onSuccess: () => {
+          clearDraft();
           toast.success(t("provider.submitted"));
           onDone();
         },
@@ -123,22 +162,63 @@ function ActivityForm({ onDone }: { onDone: () => void }) {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-5">
+    <form
+      onSubmit={handleSubmit}
+      onChange={(event) => saveDraft(event.currentTarget)}
+      className="space-y-5"
+    >
       <Field label={t("provider.fields.title")}>
-        <input name="titre" required minLength={3} maxLength={200} className={FIELD_CLASS} />
+        <input
+          name="titre"
+          required
+          minLength={3}
+          maxLength={200}
+          defaultValue={draft.titre}
+          className={FIELD_CLASS}
+        />
       </Field>
       <Field label={t("provider.fields.description")}>
-        <textarea name="description" required minLength={10} rows={5} className={FIELD_CLASS} />
+        <textarea
+          name="description"
+          required
+          minLength={10}
+          rows={5}
+          defaultValue={draft.description}
+          className={FIELD_CLASS}
+        />
       </Field>
       <div className="grid gap-5 sm:grid-cols-3">
         <Field label={t("provider.fields.price")}>
-          <input name="prix" type="number" required min={1} step="0.5" className={FIELD_CLASS} />
+          <input
+            name="prix"
+            type="number"
+            required
+            min={1}
+            step="0.5"
+            defaultValue={draft.prix}
+            className={FIELD_CLASS}
+          />
         </Field>
         <Field label={t("provider.fields.duration")}>
-          <input name="duree" type="number" required min={1} className={FIELD_CLASS} />
+          <input
+            name="duree"
+            type="number"
+            required
+            min={1}
+            defaultValue={draft.duree}
+            className={FIELD_CLASS}
+          />
         </Field>
         <Field label={t("provider.fields.category")}>
-          <select name="category_id" required className={FIELD_CLASS}>
+          {/* `key` : les catégories arrivent après le montage ; on remonte le
+              select à leur arrivée pour que la valeur du brouillon s'applique. */}
+          <select
+            key={categories?.length ?? 0}
+            name="category_id"
+            required
+            defaultValue={draft.category_id}
+            className={FIELD_CLASS}
+          >
             {(categories ?? []).map((category) => (
               <option key={category.id} value={category.id}>
                 {categoryName(category, i18n.language)}
@@ -154,6 +234,7 @@ function ActivityForm({ onDone }: { onDone: () => void }) {
           minLength={2}
           maxLength={255}
           placeholder={t("provider.fields.locationPlaceholder")}
+          defaultValue={draft.localisation}
           className={FIELD_CLASS}
         />
       </Field>
@@ -186,9 +267,7 @@ function MyPublications() {
     statut: a.statut,
     // Une activité publiée peut avoir des réservations : suppression via l'admin.
     onDelete:
-      a.statut === "publiee"
-        ? null
-        : () => deleteActivity.mutate(a.id, { onError: onDeleteError }),
+      a.statut === "publiee" ? null : () => deleteActivity.mutate(a.id, { onError: onDeleteError }),
   }));
 
   if (rows.length === 0) {
