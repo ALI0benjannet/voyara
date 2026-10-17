@@ -6,6 +6,7 @@ import fr from "@voyara/i18n/locales/fr/common.json";
 
 import { ActivityCard } from "@/components/activities/ActivityCard";
 import { T } from "@/components/i18n/T";
+import { AiTripPlanner } from "@/components/home/AiTripPlanner";
 import { HeroSearch } from "@/components/home/HeroSearch";
 import { fetchActivities, fetchReviewStats } from "@/lib/server-api";
 import { paths } from "@/routes/paths";
@@ -89,6 +90,11 @@ export default async function HomePage() {
             <HeroSearch />
           </Suspense>
         </div>
+      </section>
+
+      {/* ---- Planificateur IA (emplacement de l'agent IA) ---- */}
+      <section className="mx-auto max-w-7xl px-4 pt-12 sm:px-8">
+        <AiTripPlanner />
       </section>
 
       {/* ---- Destinations ---- */}

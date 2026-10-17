@@ -26,6 +26,22 @@
     "popTitle": "Popular activities",
     "popSub": "The finest experiences this season.",
     "seeAll": "See all",
+    "aiPlanner": {
+      "badge": "Smart curation",
+      "title": "Explore Tunisia your way.",
+      "sub": "Our AI designs a tailor-made itinerary that fits your pace and your budget in dinars.",
+      "placeholder": "E.g. 4 days in Djerba as a couple, beach time, pottery in Guellala and an 850 TND budget…",
+      "status": "AI model active",
+      "generate": "Plan my trip",
+      "soon": "The AI agent is coming soon — your request is not processed yet.",
+      "inspirations": "Instant inspiration:",
+      "chips": {
+        "culture": "Culture & History",
+        "beach": "Beaches & Relaxation",
+        "sahara": "Sahara Adventure",
+        "food": "Local Cuisine"
+      }
+    },
     "values": {
       "cancel": {
         "title": "Free cancellation",
