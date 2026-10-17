@@ -41,8 +41,10 @@ export function useCondensedHeader() {
 
   return {
     condensed,
-    /** La recherche n'a de sens que là où l'on cherche des activités. */
-    showSearch: (onHome || onCatalog) && condensed,
+    /** La recherche n'a de sens que là où l'on cherche des activités. Sur
+     *  l'accueil, le hero est occupé par l'agent IA : la recherche vit donc en
+     *  permanence dans l'en-tête, condensé ou non. */
+    showSearch: onHome || onCatalog,
     /** Les onglets s'effacent une fois l'en-tête condensé. */
     showTabs: !condensed,
   };

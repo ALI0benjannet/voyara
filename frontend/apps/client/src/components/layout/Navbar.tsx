@@ -122,23 +122,29 @@ export function Navbar() {
   const inProviderSpace = pathname?.startsWith(paths.provider) ?? false;
   const spaceClass = (active: boolean) =>
     cn(
-      "flex items-center gap-1.5 rounded-full px-3 py-1 text-xs font-semibold transition-colors",
-      active ? "bg-primary text-primary-foreground" : "text-foreground/70 hover:text-primary",
+      "focus-visible:ring-primary flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-semibold transition-colors focus-visible:ring-2 focus-visible:outline-none",
+      active
+        ? "bg-primary text-primary-foreground shadow-sm"
+        : "text-foreground/80 hover:bg-card hover:text-primary",
     );
 
   return (
     <header className="border-border bg-card sticky top-0 z-50 border-b shadow-sm">
-      {/* Rangée 0 : bascule entre l'espace voyageur et l'espace prestataire. */}
-      <div className="border-border bg-muted/50 border-b">
-        <div className="mx-auto flex max-w-7xl items-center justify-center gap-2 px-4 py-1.5 sm:px-8">
-          <Link href={paths.home} className={spaceClass(!inProviderSpace)}>
-            <FerrisWheel className="size-3.5" />
-            {t("nav.travelerSpace")}
-          </Link>
-          <Link href={paths.provider} className={spaceClass(inProviderSpace)}>
-            <Briefcase className="size-3.5" />
-            {t("nav.providerSpace")}
-          </Link>
+      {/* Rangée 0 : bascule entre l'espace voyageur et l'espace prestataire.
+          Même fond blanc que la nav ; les deux espaces forment un sélecteur
+          segmenté, bien visible sans concurrencer la rangée principale. */}
+      <div className="border-border bg-card border-b">
+        <div className="mx-auto flex max-w-7xl justify-center px-4 py-2 sm:px-8">
+          <div className="border-border bg-muted flex items-center gap-1 rounded-full border p-1">
+            <Link href={paths.home} className={spaceClass(!inProviderSpace)}>
+              <FerrisWheel className="size-4" />
+              {t("nav.travelerSpace")}
+            </Link>
+            <Link href={paths.provider} className={spaceClass(inProviderSpace)}>
+              <Briefcase className="size-4" />
+              {t("nav.providerSpace")}
+            </Link>
+          </div>
         </div>
       </div>
 

@@ -1,4 +1,3 @@
-import { Suspense } from "react";
 import type { Metadata } from "next";
 import Link from "next/link";
 import Image from "next/image";
@@ -7,7 +6,6 @@ import fr from "@voyara/i18n/locales/fr/common.json";
 import { ActivityCard } from "@/components/activities/ActivityCard";
 import { T } from "@/components/i18n/T";
 import { AiTripPlanner } from "@/components/home/AiTripPlanner";
-import { HeroSearch } from "@/components/home/HeroSearch";
 import { fetchActivities, fetchReviewStats } from "@/lib/server-api";
 import { paths } from "@/routes/paths";
 import couverture from "@/assets/couv.png";
@@ -56,7 +54,7 @@ export default async function HomePage() {
   const stats = await fetchReviewStats(popular.items.map((a) => a.id));
   return (
     <div>
-      {/* ---- Hero + recherche ---- */}
+      {/* ---- Hero + agent IA ---- */}
       <section className="relative overflow-hidden">
         <Image
           src={couverture}
@@ -82,19 +80,12 @@ export default async function HomePage() {
             <T k="home.heroTitle" />
           </h1>
           <p className="mx-auto mb-10 w-full text-center text-lg leading-relaxed font-normal tracking-wide text-white/95 sm:whitespace-nowrap">
-            <T k="home.heroSub" />
+            <T k="home.aiPlanner.sub" />
           </p>
-          {/* `HeroSearch` lit `useSearchParams` : la page étant prérendue,
-              Next exige une limite Suspense (sinon le build échoue). */}
-          <Suspense fallback={<div className="mx-auto h-[68px] max-w-3xl" />}>
-            <HeroSearch />
-          </Suspense>
+          {/* L'agent IA est l'entrée principale du site ; la recherche par mot-clé
+              reste disponible dans l'en-tête. */}
+          <AiTripPlanner />
         </div>
-      </section>
-
-      {/* ---- Planificateur IA (emplacement de l'agent IA) ---- */}
-      <section className="mx-auto max-w-7xl px-4 pt-12 sm:px-8">
-        <AiTripPlanner />
       </section>
 
       {/* ---- Destinations ---- */}
