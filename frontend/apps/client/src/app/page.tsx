@@ -68,7 +68,7 @@ export default async function HomePage() {
         {/* Zellige en filigrane — texture, jamais un élément à lire. */}
         <div aria-hidden className="zellige-pattern absolute inset-0 opacity-[0.07]" />
 
-        <div className="animate-fade-up relative mx-auto max-w-7xl px-4 pt-16 pb-24 text-center sm:px-8">
+        <div className="animate-fade-up relative mx-auto max-w-7xl px-4 pt-14 pb-16 text-center sm:px-8">
           {/* Or vif : 10:1 sur ce fond sombre — le contexte où il est le plus juste. */}
           <span className="border-gold/40 bg-ink/25 text-gold inline-flex items-center gap-2.5 rounded-full border px-4 py-1.5 text-[13px] font-semibold tracking-[0.14em] uppercase backdrop-blur-sm">
             <span aria-hidden className="text-base leading-none">
@@ -79,7 +79,7 @@ export default async function HomePage() {
           <h1 className="font-display mx-auto mt-7 mb-8 w-full text-center text-4xl leading-[1.08] text-white drop-shadow-[0_2px_12px_rgba(22,48,60,0.45)] sm:text-7xl sm:whitespace-nowrap">
             <T k="home.heroTitle" />
           </h1>
-          <p className="mx-auto mb-10 w-full text-center text-lg leading-relaxed font-normal tracking-wide text-white/95 sm:whitespace-nowrap">
+          <p className="mx-auto mb-7 w-full text-center text-lg leading-relaxed font-normal tracking-wide text-white/95 sm:whitespace-nowrap">
             <T k="home.aiPlanner.sub" />
           </p>
           {/* L'agent IA est l'entrée principale du site ; la recherche par mot-clé
