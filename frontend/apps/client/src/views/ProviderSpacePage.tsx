@@ -49,6 +49,36 @@ function StatutBadge({ statut }: { statut: Statut }) {
   );
 }
 
+/** Champ fichier traduit : le texte natif (« Aucun fichier choisi »…) suit la
+ *  langue du navigateur, pas celle du site — l'input est donc masqué derrière
+ *  un bouton et le nom du fichier, libellés via i18n. */
+function PhotoInput({ name }: { name: string }) {
+  const { t } = useTranslation();
+  const [fileName, setFileName] = useState<string | null>(null);
+  return (
+    <span
+      className={cn(
+        FIELD_CLASS,
+        "focus-within:ring-ring flex items-center gap-3 py-2 focus-within:ring-2",
+      )}
+    >
+      <input
+        name={name}
+        type="file"
+        accept="image/jpeg,image/png,image/webp"
+        className="sr-only"
+        onChange={(event) => setFileName(event.currentTarget.files?.[0]?.name ?? null)}
+      />
+      <span className="bg-secondary text-foreground hover:bg-secondary/80 shrink-0 cursor-pointer rounded-lg px-3 py-1.5 font-medium transition-colors">
+        {t("provider.fields.chooseFile")}
+      </span>
+      <span className="text-muted-foreground truncate">
+        {fileName ?? t("provider.fields.noFile")}
+      </span>
+    </span>
+  );
+}
+
 function SubmitButton({ pending, children }: { pending: boolean; children: ReactNode }) {
   return (
     <button
@@ -128,17 +158,12 @@ function ActivityForm({ onDone }: { onDone: () => void }) {
           required
           minLength={2}
           maxLength={255}
-          placeholder="Djerba, Houmt Souk"
+          placeholder={t("provider.fields.locationPlaceholder")}
           className={FIELD_CLASS}
         />
       </Field>
       <Field label={t("provider.fields.photo")}>
-        <input
-          name="photo"
-          type="file"
-          accept="image/jpeg,image/png,image/webp"
-          className={FIELD_CLASS}
-        />
+        <PhotoInput name="photo" />
       </Field>
       <div className="flex justify-end">
         <SubmitButton pending={createActivity.isPending}>{t("provider.submit")}</SubmitButton>

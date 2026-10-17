@@ -352,7 +352,9 @@
     "help": "Help",
     "admin": "Admin area",
     "credits": "Photo credits",
-    "privacy": "Privacy"
+    "privacy": "Privacy",
+    "contact": "Contact",
+    "faq": "FAQ"
   },
   "payment": {
     "payNow": "Pay now",
@@ -699,6 +701,9 @@
       "category": "Category",
       "location": "Location",
       "photo": "Photo (JPG, PNG or WebP)",
+      "chooseFile": "Choose a photo",
+      "noFile": "No file chosen",
+      "locationPlaceholder": "Djerba, Houmt Souk",
       "type": "Type",
       "contact": "Contact (email or phone)",
       "deadline": "Deadline"

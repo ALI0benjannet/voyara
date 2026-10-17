@@ -41,10 +41,10 @@ export function Footer() {
           </div>
           <div className="flex flex-col gap-2 text-sm">
             <a href="#" className="text-ink-foreground/80 hover:text-gold">
-              Contact
+              {t("footer.contact")}
             </a>
             <a href="#" className="text-ink-foreground/80 hover:text-gold">
-              FAQ
+              {t("footer.faq")}
             </a>
             <Link href="/privacy" className="text-ink-foreground/80 hover:text-gold">
               {t("footer.privacy", "Confidentialité")}

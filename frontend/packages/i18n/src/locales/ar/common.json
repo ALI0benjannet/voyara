@@ -352,7 +352,9 @@
     "help": "مساعدة",
     "admin": "لوحة الإدارة",
     "credits": "حقوق الصور",
-    "privacy": "الخصوصية"
+    "privacy": "الخصوصية",
+    "contact": "اتصل بنا",
+    "faq": "الأسئلة الشائعة"
   },
   "payment": {
     "payNow": "ادفع الآن",
@@ -699,6 +701,9 @@
       "category": "الفئة",
       "location": "المكان",
       "photo": "صورة (JPG أو PNG أو WebP)",
+      "chooseFile": "اختر صورة",
+      "noFile": "لم يتم اختيار أي ملف",
+      "locationPlaceholder": "جربة، حومة السوق",
       "type": "النوع",
       "contact": "التواصل (بريد إلكتروني أو هاتف)",
       "deadline": "آخر أجل"
