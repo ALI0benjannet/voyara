@@ -8,7 +8,7 @@ from voyara_common.internal import require_internal_key
 from voyara_common.pagination import Page, paginate
 
 from app.database import get_db
-from app.models import Activity, Availability, Category
+from app.models import Activity, Availability, CarRental, Category, Flight, Stay, Transfer
 from app.schemas import ActivityRead, AvailabilityRead, CategoryRead
 
 # ---------------------------------------------------------------------------
@@ -90,17 +90,30 @@ internal_router = APIRouter(prefix="/internal", dependencies=[Depends(require_in
 
 @internal_router.get("/stats/activities")
 def activity_stats(db: Session = Depends(get_db)):
+    """Indicateurs du catalogue pour le tableau de bord admin (un seul appel)."""
+    count = lambda stmt: int(db.scalar(stmt) or 0)  # noqa: E731
+    par_categorie = db.execute(
+        select(Category.nom, func.count(Activity.id))
+        .join(Activity, Activity.category_id == Category.id, isouter=True)
+        .group_by(Category.nom)
+        .order_by(func.count(Activity.id).desc(), Category.nom)
+    ).all()
     return {
-        "total": int(db.scalar(select(func.count(Activity.id))) or 0),
-        "categories": int(db.scalar(select(func.count(Category.id))) or 0),
-        "upcoming_availabilities": int(
-            db.scalar(
-                select(func.count(Availability.id)).where(
-                    Availability.date >= datetime.now(timezone.utc).date()
-                )
+        "total": count(select(func.count(Activity.id))),
+        "categories": count(select(func.count(Category.id))),
+        "upcoming_availabilities": count(
+            select(func.count(Availability.id)).where(
+                Availability.date >= datetime.now(timezone.utc).date()
             )
-            or 0
         ),
+        "en_attente": count(select(func.count(Activity.id)).where(Activity.statut == "en_attente")),
+        "par_categorie": [{"nom": nom, "total": int(n)} for nom, n in par_categorie],
+        "offres": {
+            "sejours": count(select(func.count(Stay.id)).where(Stay.actif.is_(True))),
+            "vols_a_venir": count(select(func.count(Flight.id)).where(Flight.depart_le >= datetime.now())),
+            "voitures": count(select(func.count(CarRental.id)).where(CarRental.disponible.is_(True))),
+            "transferts": count(select(func.count(Transfer.id)).where(Transfer.actif.is_(True))),
+        },
     }
 
 
@@ -109,15 +122,34 @@ def internal_list_activities(
     db: Session = Depends(get_db),
     page: int = Query(1, ge=1),
     size: int = Query(20, ge=1, le=100),
+    search: str | None = Query(None, min_length=1, max_length=100),
+    category_id: int | None = None,
+    statut: str | None = Query(None, pattern="^(publiee|en_attente|refusee)$"),
 ):
-    """Liste admin brute — le booking-count est ajouté par l'admin-service."""
-    total = int(db.scalar(select(func.count(Activity.id))) or 0)
+    """Liste admin brute — le booking-count est ajouté par l'admin-service.
+
+    `search` cherche dans le titre (fr / en / ar), la localisation (ville) et le
+    nom de la catégorie, comme la recherche publique du catalogue."""
+    stmt = select(Activity, Category.nom).join(
+        Category, Activity.category_id == Category.id, isouter=True
+    )
+    if search:
+        pattern = f"%{search.lower()}%"
+        stmt = stmt.where(
+            func.lower(Activity.titre).like(pattern)
+            | func.lower(func.coalesce(Activity.titre_en, "")).like(pattern)
+            | func.lower(func.coalesce(Activity.titre_ar, "")).like(pattern)
+            | func.lower(Activity.localisation).like(pattern)
+            | func.lower(func.coalesce(Category.nom, "")).like(pattern)
+        )
+    if category_id:
+        stmt = stmt.where(Activity.category_id == category_id)
+    if statut:
+        stmt = stmt.where(Activity.statut == statut)
+
+    total = int(db.scalar(select(func.count()).select_from(stmt.subquery())) or 0)
     rows = db.execute(
-        select(Activity, Category.nom)
-        .join(Category, Activity.category_id == Category.id, isouter=True)
-        .order_by(Activity.id.desc())
-        .offset((page - 1) * size)
-        .limit(size)
+        stmt.order_by(Activity.id.desc()).offset((page - 1) * size).limit(size)
     ).all()
     items = [
         {
@@ -128,6 +160,7 @@ def internal_list_activities(
             "localisation": a.localisation,
             "category": category_name,
             "statut": a.statut,
+            "photos": a.photos,
         }
         for a, category_name in rows
     ]

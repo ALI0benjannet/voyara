@@ -16,8 +16,8 @@ const SEARCH_DEBOUNCE_MS = 300;
  *
  *  Deux présentations pour un seul comportement :
  *  - `hero` : la grande barre posée sur l'image d'accueil ;
- *  - `compact` : la même, réduite, affichée dans l'en-tête quand celui-ci se
- *    condense (voir `useCondensedHeader`).
+ *  - `compact` : la même, réduite, affichée dans l'en-tête sur l'accueil et le
+ *    catalogue (voir `useCondensedHeader`).
  *
  *  La recherche se déclenche **dès la première lettre** : la saisie est
  *  répercutée dans l'URL du catalogue, que la page relit pour re-filtrer

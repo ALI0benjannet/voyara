@@ -23,7 +23,8 @@ export interface FieldDef {
 
 export interface ColumnDef {
   field: string;
-  format?: "currency" | "datetime" | "option" | "bool";
+  /** `image` : vignette (URL `/static/...`), remplie par les seeds de démonstration. */
+  format?: "currency" | "datetime" | "option" | "bool" | "image";
 }
 
 export interface TravelConfig {
@@ -32,6 +33,10 @@ export interface TravelConfig {
   icon: LucideIcon;
   fields: FieldDef[];
   columns: ColumnDef[];
+  /** Champs parcourus par la barre de recherche de la liste (nom, ville…). */
+  searchFields: string[];
+  /** Champ `select` proposé en filtre à côté de la recherche. */
+  filterField: string;
   /** Libellé d'une ligne dans les confirmations de suppression. */
   label: (row: Record<string, unknown>) => string;
 }
@@ -64,6 +69,7 @@ export const TRAVEL_CONFIG: Record<TravelResource, TravelConfig> = {
       { name: "actif", type: "checkbox", initial: true },
     ],
     columns: [
+      { field: "photos", format: "image" },
       { field: "nom" },
       { field: "type", format: "option" },
       { field: "localisation" },
@@ -72,6 +78,8 @@ export const TRAVEL_CONFIG: Record<TravelResource, TravelConfig> = {
       { field: "actif", format: "bool" },
       { field: "prix_nuit", format: "currency" },
     ],
+    searchFields: ["nom", "nom_en", "localisation", "type", "equipements"],
+    filterField: "type",
     label: (row) => String(row.nom),
   },
 
@@ -106,6 +114,15 @@ export const TRAVEL_CONFIG: Record<TravelResource, TravelConfig> = {
       { field: "places_disponibles" },
       { field: "prix", format: "currency" },
     ],
+    searchFields: [
+      "numero_vol",
+      "compagnie",
+      "ville_depart",
+      "ville_arrivee",
+      "aeroport_depart",
+      "aeroport_arrivee",
+    ],
+    filterField: "classe",
     label: (row) => `${row.numero_vol} ${row.aeroport_depart} → ${row.aeroport_arrivee}`,
   },
 
@@ -143,6 +160,7 @@ export const TRAVEL_CONFIG: Record<TravelResource, TravelConfig> = {
       { name: "disponible", type: "checkbox", initial: true },
     ],
     columns: [
+      { field: "photos", format: "image" },
       { field: "marque" },
       { field: "modele" },
       { field: "categorie", format: "option" },
@@ -151,6 +169,8 @@ export const TRAVEL_CONFIG: Record<TravelResource, TravelConfig> = {
       { field: "disponible", format: "bool" },
       { field: "prix_jour", format: "currency" },
     ],
+    searchFields: ["marque", "modele", "agence", "localisation", "categorie"],
+    filterField: "categorie",
     label: (row) => `${row.marque} ${row.modele}`,
   },
 
@@ -183,6 +203,8 @@ export const TRAVEL_CONFIG: Record<TravelResource, TravelConfig> = {
       { field: "actif", format: "bool" },
       { field: "prix", format: "currency" },
     ],
+    searchFields: ["depart", "arrivee", "type_vehicule", "description"],
+    filterField: "type_vehicule",
     label: (row) => `${row.depart} → ${row.arrivee}`,
   },
 };

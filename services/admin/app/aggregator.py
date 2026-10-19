@@ -161,8 +161,18 @@ async def list_bookings(page: int, size: int, statut: str | None) -> dict:
     return result
 
 
-async def list_activities(page: int, size: int) -> dict:
-    result = await _call("catalog", catalog.get("/internal/activities", params={"page": page, "size": size}))
+async def list_activities(
+    page: int,
+    size: int,
+    search: str | None = None,
+    category_id: int | None = None,
+    statut: str | None = None,
+) -> dict:
+    # Filtres appliqués par le catalog (propriétaire des données) : la
+    # pagination reste juste, contrairement à un filtrage après coup ici.
+    params = {"page": page, "size": size, "search": search, "category_id": category_id, "statut": statut}
+    params = {k: v for k, v in params.items() if v not in (None, "")}
+    result = await _call("catalog", catalog.get("/internal/activities", params=params))
 
     rows = result["items"]
     ids = [a["id"] for a in rows]

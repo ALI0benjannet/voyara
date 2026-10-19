@@ -1,4 +1,4 @@
-"""Photos des 86 activités du catalogue de démonstration (idempotent).
+"""Photos des 107 activités du catalogue de démonstration (idempotent).
 
 Complète `seed_catalogue_demo.py`, dont les activités sont créées sans photo.
 Les images (Wikimedia Commons, licences libres) sont **versionnées** dans
@@ -41,7 +41,7 @@ URL_PREFIXE = "/static/activities/demo/"
 
 # Vignette demandée à Commons, puis plus petite si le fichier reste trop lourd
 # (pas de Pillow dans le projet : on laisse Commons redimensionner).
-LARGEURS = (1024, 800)
+LARGEURS = (1024, 800, 640)
 TAILLE_MAX = 400 * 1024
 
 # Seules ces licences autorisent la réutilisation avec simple attribution.
@@ -142,6 +142,28 @@ PHOTOS_DEMO: dict[str, str] = {
     "Randonnée dans les gorges de Mides": "Mides Canyon.jpg",
     "Dégustation de dattes Deglet Nour dans une palmeraie": "Une grappe de datte avant la récolte , palmeraie de tozeur - tunisie.jpg",
     "Atelier khobz mella, le pain cuit dans le sable": "Flatbread baked in sand.jpg",
+    # --- Ajout du 19/10/2026 : Bien-être, Famille & loisirs, Golf (vérifiées à l'œil) ---
+    "Demi-journée thalasso à Djerba : parcours marin, hammam et enveloppement": "Indoor swimming pool at Hotel Mercure Krynica Zdroj Resort & Spa, Poland, 2023, 02.jpg",  # illustration
+    "Hammam traditionnel et gommage au kassa à Houmt Souk": "Hammam Tunisia.jpg",
+    "Massage en duo à l'huile d'argan à Aghir": "Massage-hand-1.jpg",  # illustration
+    "Hammam et rituel de soins dans la médina de Tunis": "Dome of Hammam el Sultan.jpg",  # illustration
+    "Yoga au lever du soleil face au golfe de Tunis": "Morning Yoga (134921595).jpeg",  # illustration
+    "Thalasso à Port El Kantaoui : bassin d'eau de mer et soins": "Les Thermes Marins de Cannes - Thalassothérapie - panoramio.jpg",  # illustration
+    "Demi-journée de thalassothérapie à Skanes": "Dinard-Thalasso-byMmeRundvald.jpg",  # illustration
+    "Thalasso et hammam à Yasmine Hammamet": "Centre de Thalasotherapie Ainturk - Oran.jpg",  # illustration
+    "Soins aux dattes et hammam dans un spa de l'oasis": "Inside Tozeur Oasis 03.jpg",
+    "Sortie au Hannibal Park de Port El Kantaoui": "Luna Park Port El Kantaoui - panoramio.jpg",
+    "Parc du Belvédère et zoo de Tunis en famille": "Zoo Belvédère Tunis.jpg",
+    "Cité des sciences de Tunis et séance au planétarium": "Cité des sciences Tunis.jpg",
+    "Friguia Park : animaux d'Afrique en famille": "Watusi cattle in Friguia park, Tunisia, december 2018, DSC 0664.jpg",
+    "Chak Wak, le parc de la préhistoire et des civilisations": "Modèle de la Grande Mosquée de Kairouan au parc Chak Wak, Tozeur.jpg",
+    "Eden Palm : le palmier dattier raconté en famille": "Tozeur Oasis at sunset.jpg",  # illustration
+    "Zoo du Paradis, le zoo du désert de Tozeur": "Zoo du paradis, tozeur, Tunisie, mars 2022 DSC 2153.jpg",
+    "Parcours de golf au Djerba Golf Club": "2008-11-25-Monastir-Flamingo-53.JPG",  # illustration
+    "Green-fee au golf Citrus de Hammamet": "2007-11-21-Hammamet-Golf-Citrus-1.JPG",
+    "Parcours au Flamingo Golf de Monastir": "2008-11-25-Monastir-Flamingo-74.JPG",
+    "Green-fee au golf d'El Kantaoui": "Sousse - Kantaoui Golf Course.jpg",
+    "Initiation au golf à El Kantaoui": "2008-11-25-El-Kantaoui-93.JPG",
 }
 
 

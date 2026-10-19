@@ -2,8 +2,11 @@
 
 Les 8 activités de `seed_catalog.py` ne suffisent pas pour évaluer la recherche,
 la recommandation et le solveur d'itinéraire (décision du 11/10/2026, étape 0).
-Ce script ajoute 86 activités sur 5 zones : Djerba (32), Tunis / Sidi Bou Saïd (16),
-Sousse / Monastir (14), Hammamet (12) et Tozeur (12).
+Ce script ajoute 107 activités sur 5 zones : Djerba (36), Tunis / Sidi Bou Saïd (20),
+Sousse / Monastir (20), Hammamet (15) et Tozeur (16).
+- 86 activités du 11/10/2026 (Culture, Mer, Désert, Aventure, Gastronomie) ;
+- 21 activités du 19/10/2026 dans 3 nouvelles catégories : Bien-être (thalasso,
+  hammam, yoga), Famille & loisirs (parcs, zoos, musées pour enfants) et Golf.
 
 Règles du jeu de données :
 - lieux et types d'activités réels ; aucun nom d'entreprise inventé ;
@@ -12,8 +15,9 @@ Règles du jeu de données :
 - coordonnées issues d'OpenStreetMap (Nominatim, 11/10/2026), arrondies à 4 décimales ;
 - prix en DT : ordres de grandeur du marché, pas des tarifs officiels ;
 - `localisation` = « Ville, lieu », pour rester trouvable par la recherche texte ;
-- seules les 5 catégories existantes sont utilisées (Culture, Mer, Désert,
-  Aventure, Gastronomie) ; le script s'arrête si l'une d'elles manque.
+- les 5 catégories d'origine (Culture, Mer, Désert, Aventure, Gastronomie) doivent
+  exister (le script s'arrête sinon) ; les 3 nouvelles sont créées si besoin, avec
+  leurs traductions.
 
 Idempotence : une activité est identifiée par son titre français. Si elle existe
 déjà, rien n'est écrasé : seules les traductions vides sont complétées et les
@@ -38,7 +42,15 @@ sys.path.insert(0, os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 if hasattr(sys.stdout, "reconfigure"):
     sys.stdout.reconfigure(encoding="utf-8", errors="replace")
 
-CATEGORIES = ("Culture", "Mer", "Désert", "Aventure", "Gastronomie")
+# Catégories créées par seed_catalog.py (obligatoires).
+CATEGORIES_ORIGINE = ("Culture", "Mer", "Désert", "Aventure", "Gastronomie")
+# Catégories ajoutées le 19/10/2026, créées par ce script : nom -> (nom_en, nom_ar).
+NOUVELLES_CATEGORIES = {
+    "Bien-être": ("Wellness", "العافية والاسترخاء"),
+    "Famille & loisirs": ("Family & leisure", "العائلة والترفيه"),
+    "Golf": ("Golf", "الغولف"),
+}
+CATEGORIES = CATEGORIES_ORIGINE + tuple(NOUVELLES_CATEGORIES)
 
 # Ville (préfixe de `localisation`) -> zone de démonstration.
 ZONES = {
@@ -983,6 +995,236 @@ ACTIVITES = [
         ("ورشة خبز المِلّة المطهوّ في الرمل",
          "خبز رُحّل الجنوب: عجين يُعجن باليد ثم يُدفن تحت الرمل والجمر. "
          "يؤكل ساخنًا مع زيت الزيتون والشاي.")),
+
+    # ------------------------------------------------------------------
+    # Ajout du 19/10/2026 — Bien-être (9). La Tunisie est l'une des grandes
+    # destinations de thalassothérapie : les centres sont dans les hôtels des
+    # zones touristiques, d'où un point de rendez-vous « zone » et aucun nom d'hôtel.
+    # ------------------------------------------------------------------
+    act("Djerba", "zone touristique de Midoun", 33.8293, 11.0403, "Bien-être", 150, 240, ["09:30", "14:00"], 8,
+        ("Demi-journée thalasso à Djerba : parcours marin, hammam et enveloppement",
+         "Parcours en bassin d'eau de mer chauffée, jets et hydromassage, puis hammam, gommage au "
+         "savon noir et enveloppement aux algues. Peignoir et serviettes fournis. Idéal en solo "
+         "ou en couple."),
+        ("Half-day thalasso in Djerba: sea-water circuit, hammam and body wrap",
+         "Heated sea-water pool circuit with jets and hydromassage, followed by hammam, black-soap "
+         "scrub and seaweed wrap. Bathrobe and towels provided. Ideal solo or as a couple."),
+        ("نصف يوم علاج بمياه البحر في جربة: مسار بحري وحمّام ولفّ بالطحالب",
+         "مسار في حوض مياه بحر دافئة مع نفاثات وتدليك مائي، ثم حمّام وتقشير بالصابون الأسود "
+         "ولفّ بالطحالب. يوفَّر رداء الحمّام والمناشف. مثالي للفرد أو للأزواج.")),
+    act("Djerba", "Houmt Souk", 33.8760, 10.8572, "Bien-être", 40, 90, ["10:00", "15:00", "17:00"], 6,
+        ("Hammam traditionnel et gommage au kassa à Houmt Souk",
+         "Le rituel du hammam tunisien comme le pratiquent les Djerbiens : bain de vapeur, gommage "
+         "au gant kassa et savon noir, thé à la menthe pour finir. Séances séparées femmes et hommes."),
+        ("Traditional hammam and kessa scrub in Houmt Souk",
+         "The Tunisian hammam ritual as Djerbans practise it: steam bath, kessa-glove scrub with "
+         "black soap, and mint tea to finish. Separate sessions for women and men."),
+        ("حمّام تقليدي وتكييس في حومة السوق",
+         "طقوس الحمّام التونسي كما يمارسها أهل جربة: حمّام بخار، وتكييس بالكاسة والصابون "
+         "الأسود، وكأس شاي بالنعناع في الختام. حصص منفصلة للنساء والرجال.")),
+    act("Djerba", "Aghir", 33.7621, 11.0183, "Bien-être", 120, 60, ["17:00", "18:15"], 4,
+        ("Massage en duo à l'huile d'argan à Aghir",
+         "Une heure de massage relaxant côte à côte, à l'huile d'argan et à la fleur d'oranger, "
+         "dans un spa face à la mer. Pensé pour les couples ; prix par personne."),
+        ("Couples massage with argan oil in Aghir",
+         "One hour of side-by-side relaxing massage with argan oil and orange blossom, in a spa "
+         "facing the sea. Designed for couples; price per person."),
+        ("تدليك ثنائي بزيت الأرغان في أغير",
+         "ساعة من التدليك المريح جنبًا إلى جنب بزيت الأرغان وماء الزهر، في منتجع صحي مطلّ على "
+         "البحر. مصمَّم للأزواج؛ السعر للشخص الواحد.")),
+    act("Tunis", "Médina", 36.7976, 10.1712, "Bien-être", 55, 120, ["10:00", "16:00"], 6,
+        ("Hammam et rituel de soins dans la médina de Tunis",
+         "Dans un hammam de quartier de la médina : bain de vapeur, gommage, masque au tfal "
+         "(argile) et massage court, puis thé dans une ancienne demeure. Accompagnement par une guide."),
+        ("Hammam and beauty ritual in the Tunis medina",
+         "In a neighbourhood hammam of the medina: steam bath, scrub, tfal clay mask and a short "
+         "massage, then tea in an old house. Accompanied by a guide."),
+        ("حمّام وطقوس عناية في مدينة تونس العتيقة",
+         "في حمّام حيّ داخل المدينة العتيقة: حمّام بخار وتكييس وقناع بالطفل وتدليك قصير، ثم "
+         "شاي في دار قديمة. برفقة مرشدة.")),
+    act("Tunis", "Sidi Bou Saïd", 36.8711, 10.3491, "Bien-être", 35, 75, ["07:00"], 12,
+        ("Yoga au lever du soleil face au golfe de Tunis",
+         "Séance de yoga doux tous niveaux sur une terrasse de Sidi Bou Saïd qui domine le golfe, "
+         "suivie d'un thé aux pignons. Tapis fournis ; parfait pour les voyageurs en solo."),
+        ("Sunrise yoga overlooking the Gulf of Tunis",
+         "Gentle all-levels yoga on a Sidi Bou Saïd terrace above the gulf, followed by pine-nut "
+         "tea. Mats provided; perfect for solo travellers."),
+        ("يوغا عند شروق الشمس مطلّة على خليج تونس",
+         "حصة يوغا لطيفة لكل المستويات على سطح في سيدي بوسعيد يطلّ على الخليج، يليها شاي "
+         "بالبندق. الحُصُر متوفّرة؛ مثالية للمسافرين بمفردهم."),
+        jours=SAUF_LUNDI),
+    act("Sousse", "Port El Kantaoui", 35.8939, 10.5984, "Bien-être", 140, 180, ["09:30", "14:30"], 8,
+        ("Thalasso à Port El Kantaoui : bassin d'eau de mer et soins",
+         "Bassin d'eau de mer chauffée, douche à jet, bain bouillonnant aux huiles essentielles et "
+         "massage de 25 minutes, dans un centre de thalassothérapie de la station."),
+        ("Thalasso in Port El Kantaoui: sea-water pool and treatments",
+         "Heated sea-water pool, jet shower, essential-oil bubble bath and a 25-minute massage, in "
+         "one of the resort's thalassotherapy centres."),
+        ("علاج بمياه البحر في مرسى القنطاوي: حوض وعلاجات",
+         "حوض مياه بحر دافئة ورشّ نفاث وحمّام فقاعات بالزيوت العطرية وتدليك لمدة 25 دقيقة، في "
+         "أحد مراكز العلاج بمياه البحر في المنتجع.")),
+    act("Monastir", "Skanes", 35.7637, 10.7295, "Bien-être", 130, 180, ["09:30", "14:30"], 8,
+        ("Demi-journée de thalassothérapie à Skanes",
+         "Affusion marine, bain hydromassant, enveloppement d'algues et accès libre au bassin "
+         "d'eau de mer, dans un centre de la zone touristique de Skanes."),
+        ("Half-day thalassotherapy in Skanes",
+         "Sea-water affusion, hydromassage bath, seaweed wrap and free access to the sea-water "
+         "pool, in a centre of the Skanes tourist zone."),
+        ("نصف يوم علاج بمياه البحر في صقانص",
+         "رشّ بمياه البحر وحمّام تدليك مائي ولفّ بالطحالب ودخول حرّ إلى حوض مياه البحر، في "
+         "مركز بالمنطقة السياحية بصقانص.")),
+    act("Hammamet", "Yasmine Hammamet", 36.3699, 10.5392, "Bien-être", 145, 180, ["09:30", "14:30"], 8,
+        ("Thalasso et hammam à Yasmine Hammamet",
+         "Parcours marin, hammam à l'eucalyptus, gommage et massage à l'huile d'olive du Cap Bon, "
+         "dans un centre de thalasso de la station de Yasmine."),
+        ("Thalasso and hammam in Yasmine Hammamet",
+         "Sea-water circuit, eucalyptus hammam, scrub and massage with Cap Bon olive oil, in a "
+         "thalasso centre of the Yasmine resort."),
+        ("علاج بمياه البحر وحمّام في ياسمين الحمامات",
+         "مسار بحري وحمّام بالكالبتوس وتكييس وتدليك بزيت زيتون الوطن القبلي، في مركز علاج "
+         "بمياه البحر بمنتجع ياسمين.")),
+    act("Tozeur", "palmeraie", 33.9116, 8.1374, "Bien-être", 90, 120, ["10:00", "16:00"], 6,
+        ("Soins aux dattes et hammam dans un spa de l'oasis",
+         "Gommage au noyau de datte, masque au miel et à la sève de palmier (legmi), hammam et "
+         "repos au calme de la palmeraie. Une pause douceur entre deux excursions dans le désert."),
+        ("Date treatments and hammam in an oasis spa",
+         "Date-stone scrub, honey and palm-sap (legmi) mask, hammam and rest in the calm of the "
+         "palm grove. A gentle break between two desert excursions."),
+        ("علاجات بالتمر وحمّام في منتجع صحي بالواحة",
+         "تقشير بنوى التمر وقناع بالعسل واللاقمي، وحمّام واسترخاء في هدوء الواحة. استراحة "
+         "لطيفة بين رحلتين في الصحراء.")),
+
+    # ------------------------------------------------------------------
+    # Ajout du 19/10/2026 — Famille & loisirs (7). Lieux vérifiés dans OSM
+    # (Nominatim, 19/10/2026). Parcs aquatiques écartés : fermés hors saison.
+    # ------------------------------------------------------------------
+    act("Sousse", "Port El Kantaoui", 35.8915, 10.5949, "Famille & loisirs", 30, 180, ["10:00", "15:00"], 30,
+        ("Sortie au Hannibal Park de Port El Kantaoui",
+         "Le parc d'attractions de la station : manèges pour petits et grands, autos tamponneuses, "
+         "grande roue et jeux. Une sortie facile pour les familles avec enfants."),
+        ("Outing to Hannibal Park in Port El Kantaoui",
+         "The resort's amusement park: rides for young and old, bumper cars, Ferris wheel and "
+         "games. An easy outing for families with children."),
+        ("نزهة في حديقة حنبعل بمرسى القنطاوي",
+         "مدينة ألعاب المنتجع: ألعاب للصغار والكبار وسيارات متصادمة وعجلة دوّارة. نزهة سهلة "
+         "للعائلات مع الأطفال.")),
+    act("Tunis", "Belvédère", 36.8187, 10.1702, "Famille & loisirs", 15, 180, ["09:30", "14:00"], 25,
+        ("Parc du Belvédère et zoo de Tunis en famille",
+         "Le grand parc boisé de Tunis et son zoo : lions, girafes, flamants, aires de jeux et "
+         "pique-nique sous les pins. Une sortie idéale avec des enfants."),
+        ("Belvédère Park and Tunis Zoo with the family",
+         "Tunis's large wooded park and its zoo: lions, giraffes, flamingos, playgrounds and "
+         "picnics under the pines. An ideal outing with children."),
+        ("منتزه البلفيدير وحديقة حيوانات تونس مع العائلة",
+         "منتزه تونس الكبير المشجَّر وحديقة حيواناته: أسود وزرافات ونحام ومساحات لعب ونزهة "
+         "تحت الصنوبر. نزهة مثالية مع الأطفال."),
+        jours=SAUF_LUNDI),
+    act("Tunis", "Cité des sciences", 36.8470, 10.1924, "Famille & loisirs", 20, 150, ["10:00", "14:30"], 25,
+        ("Cité des sciences de Tunis et séance au planétarium",
+         "Expositions interactives sur l'espace, le corps humain et la Terre, puis une séance sous "
+         "la coupole du planétarium. Pour les familles et les curieux de tout âge."),
+        ("Tunis Science City and a planetarium show",
+         "Interactive exhibitions on space, the human body and the Earth, followed by a show under "
+         "the planetarium dome. For families and the curious of all ages."),
+        ("مدينة العلوم بتونس وعرض في القبة السماوية",
+         "معارض تفاعلية حول الفضاء وجسم الإنسان والأرض، يليها عرض تحت القبة السماوية. للعائلات "
+         "ولكل الفضوليين من جميع الأعمار."),
+        jours=SAUF_LUNDI),
+    act("Hammamet", "Bouficha", 36.2047, 10.4232, "Famille & loisirs", 45, 240, ["09:30"], 30,
+        ("Friguia Park : animaux d'Afrique en famille",
+         "Parc animalier entre Hammamet et Sousse : éléphants, girafes, fauves, oiseaux et animaux "
+         "de la ferme, avec des spectacles pour les enfants selon la saison. Transport non inclus."),
+        ("Friguia Park: African animals for the whole family",
+         "Wildlife park between Hammamet and Sousse: elephants, giraffes, big cats, birds and farm "
+         "animals, with shows for children depending on the season. Transport not included."),
+        ("فريقيا بارك: حيوانات إفريقيا مع العائلة",
+         "حديقة حيوانات بين الحمامات وسوسة: فيلة وزرافات وسباع وطيور وحيوانات المزرعة، مع عروض "
+         "للأطفال حسب الموسم. النقل غير مشمول.")),
+    act("Tozeur", "Chak Wak", 33.9111, 8.1465, "Famille & loisirs", 25, 120, ["09:30", "15:00"], 20,
+        ("Chak Wak, le parc de la préhistoire et des civilisations",
+         "Un parcours en plein air dans la palmeraie, des dinosaures aux grandes civilisations, "
+         "avec des reconstitutions grandeur nature. Plaît beaucoup aux enfants."),
+        ("Chak Wak, the park of prehistory and civilisations",
+         "An open-air trail in the palm grove, from dinosaurs to great civilisations, with "
+         "life-size reconstructions. Very popular with children."),
+        ("شاك واك، حديقة ما قبل التاريخ والحضارات",
+         "مسار في الهواء الطلق داخل الواحة، من الديناصورات إلى الحضارات الكبرى، مع مجسّمات "
+         "بالحجم الطبيعي. يحبّه الأطفال كثيرًا.")),
+    act("Tozeur", "Eden Palm", 33.9171, 8.1471, "Famille & loisirs", 20, 90, ["10:00", "15:30"], 20,
+        ("Eden Palm : le palmier dattier raconté en famille",
+         "Musée-jardin consacré au palmier dattier : variétés de dattes, outils des grimpeurs, "
+         "fabrication de confitures et de pâtes de dattes, et dégustation. Visite courte adaptée "
+         "aux enfants."),
+        ("Eden Palm: the date palm explained for families",
+         "Garden-museum devoted to the date palm: date varieties, climbers' tools, making jams and "
+         "date pastes, and a tasting. Short visit suited to children."),
+        ("إيدن بالم: نخلة التمر تُروى للعائلة",
+         "متحف-حديقة مخصّص لنخلة التمر: أصناف التمور وأدوات المتسلّقين وصنع المربّى وعجين "
+         "التمر، مع تذوّق. زيارة قصيرة مناسبة للأطفال.")),
+    act("Tozeur", "Belvédère", 33.8961, 8.1361, "Famille & loisirs", 12, 60, ["09:00", "15:00", "16:30"], 25,
+        ("Zoo du Paradis, le zoo du désert de Tozeur",
+         "Petit zoo consacré à la faune saharienne : fennecs, hyènes rayées, dromadaires, gazelles "
+         "et oiseaux du désert. Une heure de visite près du Belvédère."),
+        ("Zoo du Paradis, Tozeur's desert zoo",
+         "Small zoo devoted to Saharan wildlife: fennecs, striped hyenas, dromedaries, gazelles and "
+         "desert birds. A one-hour visit near the Belvédère."),
+        ("حديقة حيوانات الصحراء بتوزر",
+         "حديقة حيوانات صغيرة مخصّصة لحيوانات الصحراء: فنك وضباع مخطّطة وإبل وغزلان وطيور "
+         "صحراوية. زيارة لمدة ساعة قرب البلفيدير.")),
+
+    # ------------------------------------------------------------------
+    # Ajout du 19/10/2026 — Golf (5). Parcours vérifiés dans OSM ; prix = green-fee
+    # indicatif par joueur.
+    # ------------------------------------------------------------------
+    act("Djerba", "Djerba Golf Club", 33.8283, 11.0070, "Golf", 210, 270, ["08:00", "13:00"], 8,
+        ("Parcours de golf au Djerba Golf Club",
+         "Green-fee 18 trous sur un parcours en bord de mer, entre palmiers, oliviers et lacs. "
+         "Location de clubs et de voiturette en supplément sur place ; pour joueurs confirmés, "
+         "practice ouvert aux débutants."),
+        ("Round of golf at Djerba Golf Club",
+         "18-hole green fee on a seaside course among palms, olive trees and lakes. Club and buggy "
+         "hire extra on site; for experienced players, driving range open to beginners."),
+        ("جولة غولف في نادي جربة للغولف",
+         "رسم دخول لـ18 حفرة في ملعب على شاطئ البحر بين النخيل والزيتون والبحيرات. كراء المضارب "
+         "والعربة بمقابل إضافي؛ للاعبين المتمرّسين، وميدان التمرين مفتوح للمبتدئين.")),
+    act("Hammamet", "Golf Citrus", 36.4259, 10.5456, "Golf", 200, 270, ["08:00", "13:00"], 8,
+        ("Green-fee au golf Citrus de Hammamet",
+         "Deux parcours dessinés entre forêt d'eucalyptus et orangeraies, à quelques minutes de la "
+         "plage. Pour golfeurs confirmés ; location de matériel sur place."),
+        ("Green fee at Citrus golf, Hammamet",
+         "Two courses laid out between eucalyptus forest and orange groves, a few minutes from the "
+         "beach. For experienced golfers; equipment hire on site."),
+        ("رسم دخول لملعب سيتروس للغولف بالحمامات",
+         "ملعبان بين غابة الكالبتوس وبساتين البرتقال، على بعد دقائق من الشاطئ. للاعبي الغولف "
+         "المتمرّسين؛ كراء المعدّات في المكان.")),
+    act("Monastir", "Flamingo Golf", 35.7468, 10.7982, "Golf", 190, 270, ["08:00", "13:00"], 8,
+        ("Parcours au Flamingo Golf de Monastir",
+         "18 trous au milieu des oliviers et des lacs, tout près de l'aéroport de Monastir. "
+         "Pratique pour une dernière partie avant le vol retour."),
+        ("Round at Flamingo Golf, Monastir",
+         "18 holes among olive trees and lakes, close to Monastir airport. Handy for a last round "
+         "before the flight home."),
+        ("جولة في ملعب فلامنغو للغولف بالمنستير",
+         "18 حفرة وسط الزيتون والبحيرات، قرب مطار المنستير. مناسب لجولة أخيرة قبل رحلة العودة.")),
+    act("Sousse", "El Kantaoui", 35.8949, 10.5870, "Golf", 200, 270, ["08:00", "13:00"], 8,
+        ("Green-fee au golf d'El Kantaoui",
+         "Deux parcours, dont l'un longe la mer, au cœur de la station de Port El Kantaoui. "
+         "Location de matériel et de voiturette sur place."),
+        ("Green fee at El Kantaoui golf",
+         "Two courses, one of them running along the sea, in the heart of the Port El Kantaoui "
+         "resort. Equipment and buggy hire on site."),
+        ("رسم دخول لملعب القنطاوي للغولف",
+         "ملعبان، أحدهما على طول البحر، في قلب منتجع مرسى القنطاوي. كراء المعدّات والعربة في المكان.")),
+    act("Sousse", "El Kantaoui", 35.8949, 10.5870, "Golf", 80, 90, ["10:00", "16:00"], 6,
+        ("Initiation au golf à El Kantaoui",
+         "Première approche du golf avec un moniteur : prise de club, swing au practice et petit "
+         "jeu sur le green. Matériel fourni ; dès 8 ans, en famille ou en solo."),
+        ("Introduction to golf in El Kantaoui",
+         "A first taste of golf with an instructor: grip, swing at the driving range and short "
+         "game on the green. Equipment provided; from age 8, with family or solo."),
+        ("تعلّم أساسيات الغولف في القنطاوي",
+         "أول تجربة للغولف مع مدرّب: مسك المضرب والتأرجح في ميدان التمرين واللعب القصير على "
+         "العشب. المعدّات متوفّرة؛ من 8 سنوات، مع العائلة أو بمفردك.")),
 ]
 
 
@@ -1050,14 +1292,14 @@ def creneaux_prevus(a: dict, debut: date) -> list[tuple[date, time]]:
 def afficher_repartition() -> None:
     zones = list(CENTRES)
     print("\nRépartition du seed (zone x catégorie) :")
-    entete = f"{'Zone':<24}" + "".join(f"{c:>12}" for c in CATEGORIES) + f"{'Total':>8}"
+    entete = f"{'Zone':<24}" + "".join(f"{c:>19}" for c in CATEGORIES) + f"{'Total':>8}"
     print(entete)
     compte = Counter((ZONES[a["ville"]], a["categorie"]) for a in ACTIVITES)
     for z in zones:
         ligne = [compte[(z, c)] for c in CATEGORIES]
-        print(f"{z:<24}" + "".join(f"{n:>12}" for n in ligne) + f"{sum(ligne):>8}")
+        print(f"{z:<24}" + "".join(f"{n:>19}" for n in ligne) + f"{sum(ligne):>8}")
     totaux = [sum(compte[(z, c)] for z in zones) for c in CATEGORIES]
-    print(f"{'Total':<24}" + "".join(f"{n:>12}" for n in totaux) + f"{sum(totaux):>8}")
+    print(f"{'Total':<24}" + "".join(f"{n:>19}" for n in totaux) + f"{sum(totaux):>8}")
 
     prix = sorted(a["prix"] for a in ACTIVITES)
     durees = sorted(a["duree"] for a in ACTIVITES)
@@ -1078,7 +1320,13 @@ def ecrire() -> None:
     db = SessionLocal()
     try:
         cats = {c.nom: c for c in db.query(Category).filter(Category.nom.in_(CATEGORIES))}
-        manquantes = [c for c in CATEGORIES if c not in cats]
+        for nom, (nom_en, nom_ar) in NOUVELLES_CATEGORIES.items():
+            if nom not in cats:
+                cats[nom] = Category(nom=nom, nom_en=nom_en, nom_ar=nom_ar)
+                db.add(cats[nom])
+                print(f"Catégorie créée : {nom}")
+        db.flush()
+        manquantes = [c for c in CATEGORIES_ORIGINE if c not in cats]
         if manquantes:
             sys.exit(
                 f"Catégories absentes : {', '.join(manquantes)}. "

@@ -16,15 +16,16 @@
     "guests": "{{count}} مشارك",
     "guests_other": "{{count}} مشاركين",
     "destTitle": "إلى أين الوجهة؟",
-    "destSub": "أربع مناطق، أربع أجواء.",
+    "destSub": "أربع جهات، أربعة أجواء — وعروض حقيقية في كل منها.",
     "destTags": {
       "tunis": "تاريخ ومدينة عتيقة",
       "djerba": "جزيرة هادئة",
       "tozeur": "كثبان وواحات",
-      "tabarka": "مرجان وجبال"
+      "tabarka": "مرجان وجبال",
+      "hammamet": "شواطئ ومدينة عتيقة"
     },
     "popTitle": "أنشطة رائجة",
-    "popSub": "أجمل التجارب هذا الموسم.",
+    "popSub": "الأعلى تقييمًا من المسافرين.",
     "seeAll": "عرض الكل",
     "aiPlanner": {
       "badge": "تنسيق ذكي",
@@ -55,7 +56,21 @@
         "title": "دفع آمن",
         "body": "ادفع عبر الإنترنت أو في عين المكان — بياناتك محمية."
       }
-    }
+    },
+    "destCount": "{{activities}} نشاط · {{stays}} إقامة",
+    "catTitle": "استكشف حسب رغبتك",
+    "catSub": "ثماني طرق لعيش تونس.",
+    "catCount": "{{count}} نشاط",
+    "catCount_other": "{{count}} أنشطة",
+    "offersTitle": "رحلتك كاملة في مكان واحد",
+    "offersSub": "إقامة ورحلة جوية وسيارة ونقل: حضّر إقامتك كاملة.",
+    "staysFrom": "ابتداءً من {{price}} لليلة",
+    "flightsCount": "{{count}} رحلة مباشرة قادمة",
+    "carsFrom": "ابتداءً من {{price}} لليوم",
+    "transfersFrom": "ابتداءً من {{price}} للرحلة",
+    "staysTitle": "إقامات مختارة",
+    "staysSub": "لرحلة بمفردك أو كزوجين أو مع العائلة.",
+    "seeAllStays": "كل الإقامات"
   },
   "nav": {
     "home": "الرئيسية",
@@ -298,7 +313,10 @@
       "Mer": "بحر",
       "Désert": "صحراء",
       "Aventure": "مغامرة",
-      "Gastronomie": "مأكولات"
+      "Gastronomie": "مأكولات",
+      "Bien-être": "العافية والاسترخاء",
+      "Famille & loisirs": "العائلة والترفيه",
+      "Golf": "الغولف"
     },
     "emptyTitle": "لا توجد أنشطة مطابقة",
     "emptySub": "جرّب كلمة أخرى أو أزل عوامل التصفية.",
@@ -428,7 +446,19 @@
       "colStatus": "الحالة",
       "colAmount": "المبلغ",
       "empty": "لا توجد حجوزات بعد.",
-      "statsError": "تعذّر تحميل الإحصائيات"
+      "statsError": "تعذّر تحميل الإحصائيات",
+      "updatedAt": "آخر تحديث: {{date}}",
+      "refresh": "تحديث",
+      "bookingsHint": "{{last30}} خلال 30 يومًا · {{pending}} قيد الانتظار",
+      "revenueHint": "{{last30}} خلال 30 يومًا · متوسّط السلة {{basket}}",
+      "clientsHint": "{{active}} نشط · {{fresh}} جديد",
+      "activitiesHint": "{{categories}} فئات · {{slots}} موعد قادم",
+      "offersTitle": "عروض السفر",
+      "flightsHint": "رحلات قادمة",
+      "byCategory": "الأنشطة حسب الفئة",
+      "pendingModeration": "{{count}} نشاط اقترحه مزوّد ينتظر موافقتك.",
+      "pendingModeration_other": "{{count}} أنشطة اقترحها مزوّدون تنتظر موافقتك.",
+      "moderate": "مراجعة"
     },
     "categories": {
       "title": "الفئات",
@@ -457,7 +487,15 @@
       "editAria": "تعديل {{name}}",
       "deleteAria": "حذف {{name}}",
       "deleteConfirmNamed": "هل تريد حذف «{{name}}» نهائيًا؟",
-      "minutes": "{{count}} د"
+      "minutes": "{{count}} د",
+      "searchPlaceholder": "ابحث: الاسم أو المدينة أو الفئة…",
+      "colStatus": "الحالة",
+      "statut": {
+        "publiee": "منشور",
+        "en_attente": "قيد الانتظار",
+        "refusee": "مرفوض"
+      },
+      "hasBookings": "«{{name}}» لديه {{count}} حجز: لا يمكن حذفه."
     },
     "users": {
       "title": "المستخدمون",
@@ -573,6 +611,7 @@
         "new": "إقامة جديدة",
         "empty": "لا توجد إقامات.",
         "fields": {
+          "photos": "صورة",
           "nom": "الاسم",
           "type": "النوع",
           "description": "الوصف",
@@ -614,6 +653,7 @@
         "new": "سيارة جديدة",
         "empty": "لا توجد سيارات.",
         "fields": {
+          "photos": "صورة",
           "marque": "العلامة",
           "modele": "الطراز",
           "categorie": "الفئة",
@@ -672,6 +712,24 @@
       "approve": "نشر",
       "reject": "رفض",
       "empty": "لا شيء في الانتظار."
+    },
+    "list": {
+      "clear": "مسح البحث",
+      "count": "{{count}} نتيجة",
+      "count_other": "{{count}} نتائج",
+      "countOf": "{{count}} من {{total}}",
+      "page": "الصفحة {{page}} من {{pages}}",
+      "pagination": "التنقّل بين الصفحات",
+      "all": "الكل",
+      "allCategories": "كل الفئات",
+      "allStatuses": "كل الحالات",
+      "noMatch": "لا توجد نتائج لهذه المعايير.",
+      "search": {
+        "stays": "ابحث عن إقامة: الاسم، المدينة، النوع، التجهيزات…",
+        "flights": "ابحث عن رحلة: الرقم، الشركة، المدينة، المطار…",
+        "carRentals": "ابحث عن سيارة: العلامة، الطراز، المدينة، الوكالة…",
+        "transfers": "ابحث عن نقل: المغادرة، الوصول، المركبة…"
+      }
     }
   },
   "comingSoon": {
@@ -715,5 +773,40 @@
     "moderationNote": "يراجع فريق Voyara كل منشور قبل أن يظهر للمسافرين.",
     "empty": "لم تنشر أي شيء بعد.",
     "delete": "حذف"
+  },
+  "offres": {
+    "count": "{{count}} عرض",
+    "count_other": "{{count}} عروض",
+    "all": "الكل",
+    "perNight": "/ الليلة",
+    "perDay": "/ اليوم",
+    "perVehicle": "/ السيارة",
+    "guests": "حتى {{count}} مسافر",
+    "guests_other": "حتى {{count}} مسافرين",
+    "seats": "{{count}} مقعد",
+    "seats_other": "{{count}} مقاعد",
+    "bags": "{{count}} حقيبة",
+    "bags_other": "{{count}} حقائب",
+    "seatsLeft": "بقي {{count}} مقعد",
+    "seatsLeft_other": "بقيت {{count}} مقاعد",
+    "stars": "{{count}} نجمة",
+    "stars_other": "{{count}} نجوم",
+    "bookSoon": "الحجز عبر الإنترنت قريبًا",
+    "empty": "لا يوجد عرض يطابق هذه المعايير.",
+    "reset": "عرض كل العروض",
+    "demoNote": "عروض تجريبية: الأسعار تقريبية بالدينار التونسي.",
+    "city": "المدينة",
+    "type": "النوع",
+    "category": "الفئة",
+    "from": "المغادرة",
+    "to": "الوصول",
+    "date": "التاريخ",
+    "search": "بحث",
+    "anyAirport": "كل المطارات",
+    "direct": "رحلة مباشرة",
+    "duration": "المدة",
+    "pickup": "مكان الاستلام",
+    "agency": "الوكالة",
+    "flightsHint": "رحلات مباشرة قادمة بمقاعد متاحة."
   }
 }

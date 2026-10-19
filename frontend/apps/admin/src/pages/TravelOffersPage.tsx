@@ -1,4 +1,4 @@
-import { useState, type FormEvent } from "react";
+import { useMemo, useState, type FormEvent } from "react";
 import { useTranslation } from "react-i18next";
 import { Pencil, Plus, Trash2 } from "lucide-react";
 
@@ -13,6 +13,7 @@ import {
 import { formatCurrency, formatDateTime } from "@voyara/ui/lib/format";
 import { cn } from "@voyara/ui/lib/utils";
 
+import { ListToolbar, Pagination, SELECT_CLASS, useDebouncedValue } from "@/components/ListToolbar";
 import type { TravelItem, TravelPayload } from "@/features/travel/api";
 import {
   TRAVEL_CONFIG,
@@ -161,18 +162,48 @@ function formatCell(
       return t(`admin.travel.options.${value}`);
     case "bool":
       return value ? t("admin.common.yes") : t("admin.common.no");
+    case "image":
+      return <img src={String(value)} alt="" className="h-10 w-14 rounded object-cover" />;
     default:
       return String(value);
   }
 }
 
+const PAGE_SIZE = 25;
+
+/** Minuscules sans accents : « Médina » se trouve en tapant « medina ». */
+const normalize = (value: string) => value.normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase();
+
 /** Page d'administration commune aux séjours, vols, voitures et transferts :
- *  tableau + panneau latéral de création / modification, pilotés par la config. */
+ *  tableau + panneau latéral de création / modification, pilotés par la config.
+ *  Les listes sont chargées en entier (quelques centaines de lignes au plus) :
+ *  recherche, filtre et pagination se font donc dans le navigateur. */
 export default function TravelOffersPage({ resource }: { resource: TravelResource }) {
   const { t } = useTranslation();
   const config = TRAVEL_CONFIG[resource];
   const { data, isLoading } = useTravelItems(config.path);
   const { create, update, remove } = useTravelMutations(config.path);
+
+  const [search, setSearch] = useState("");
+  const [filterValue, setFilterValue] = useState("");
+  const [page, setPage] = useState(1);
+  const debouncedSearch = useDebouncedValue(normalize(search.trim()));
+  const filterDef = config.fields.find((f) => f.name === config.filterField);
+
+  const filtered = useMemo(() => {
+    const words = debouncedSearch.split(/\s+/).filter(Boolean);
+    return (data ?? []).filter((row) => {
+      if (filterValue && String(row[config.filterField]) !== filterValue) return false;
+      if (words.length === 0) return true;
+      const haystack = normalize(config.searchFields.map((f) => String(row[f] ?? "")).join(" "));
+      // Tous les mots doivent apparaître : « djerba suv » croise ville et catégorie.
+      return words.every((w) => haystack.includes(w));
+    });
+  }, [data, debouncedSearch, filterValue, config]);
+
+  const pages = Math.max(1, Math.ceil(filtered.length / PAGE_SIZE));
+  const currentPage = Math.min(page, pages);
+  const rows = filtered.slice((currentPage - 1) * PAGE_SIZE, currentPage * PAGE_SIZE);
 
   const [open, setOpen] = useState(false);
   const [editing, setEditing] = useState<TravelItem | null>(null);
@@ -250,15 +281,51 @@ export default function TravelOffersPage({ resource }: { resource: TravelResourc
         </button>
       </div>
 
+      <ListToolbar
+        search={search}
+        onSearch={(value) => {
+          setSearch(value);
+          setPage(1);
+        }}
+        placeholder={t(`admin.list.search.${resource}`)}
+        count={filtered.length}
+        total={data?.length}
+      >
+        {filterDef?.options && (
+          <select
+            value={filterValue}
+            onChange={(e) => {
+              setFilterValue(e.target.value);
+              setPage(1);
+            }}
+            className={SELECT_CLASS}
+            aria-label={t(`admin.travel.${resource}.fields.${config.filterField}`)}
+          >
+            <option value="">
+              {t(`admin.travel.${resource}.fields.${config.filterField}`)} : {t("admin.list.all")}
+            </option>
+            {filterDef.options.map((option) => (
+              <option key={option} value={option}>
+                {t(`admin.travel.options.${option}`)}
+              </option>
+            ))}
+          </select>
+        )}
+      </ListToolbar>
+
       <div className="bg-card rounded-lg border">
         <DataTable
           columns={columns}
-          rows={data}
+          rows={rows}
           isLoading={isLoading}
           getRowId={(row) => row.id}
-          emptyLabel={t(`admin.travel.${resource}.empty`)}
+          emptyLabel={
+            data && data.length > 0 ? t("admin.list.noMatch") : t(`admin.travel.${resource}.empty`)
+          }
         />
       </div>
+
+      <Pagination page={currentPage} pages={pages} onPage={setPage} />
 
       <Sheet open={open} onOpenChange={setOpen}>
         <SheetContent className="w-full overflow-y-auto sm:max-w-xl">

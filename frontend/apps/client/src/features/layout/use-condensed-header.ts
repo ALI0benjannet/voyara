@@ -5,47 +5,48 @@ import { usePathname } from "next/navigation";
 
 import { paths } from "@/routes/paths";
 
-/** Défilement (px) au-delà duquel l'en-tête se condense sur une seule ligne.
- *  Correspond à peu près au moment où le hero de l'accueil sort de l'écran. */
-const CONDENSE_THRESHOLD = 320;
+/** Hystérésis : l'en-tête se compacte au-delà de 96 px et ne se redéploie
+ *  qu'en dessous de 32 px. Un seuil unique ferait osciller l'état quand
+ *  l'utilisateur s'arrête juste autour, d'où un clignotement. */
+const CONDENSE_AFTER = 96;
+const EXPAND_BEFORE = 32;
 
-/** État de l'en-tête : déployé (2 rangées) ou condensé (1 seule).
+/** État de l'en-tête.
  *
- *  Condensé, l'en-tête ne garde que le logo, la recherche et les icônes ; les
- *  onglets de navigation disparaissent pour libérer de la hauteur — le modèle
- *  des grands sites de réservation.
- *
- *  Sur le catalogue il n'y a pas de hero à laisser défiler : l'en-tête y est
- *  condensé d'emblée, avec la recherche toujours accessible.
+ *  La navigation principale (Séjours, Vols, Voitures, Activités, Transferts)
+ *  reste **toujours visible** : c'est le repère de l'utilisateur, sur toutes
+ *  les pages, comme sur les grands sites de réservation. Au défilement, seule la
+ *  rangée « Espace voyageur / Espace prestataire » se replie pour rendre de la
+ *  hauteur au contenu ; elle revient en haut de page.
  */
 export function useCondensedHeader() {
   const pathname = usePathname();
   const onHome = pathname === "/";
   const onCatalog = pathname === paths.activities;
 
-  // Sur le catalogue, l'état est connu sans attendre le moindre défilement.
   const [scrolled, setScrolled] = useState(false);
 
   useEffect(() => {
-    if (!onHome) return;
-
-    const update = () => setScrolled(window.scrollY > CONDENSE_THRESHOLD);
+    // L'état ne change qu'en franchissant un seuil ; entre les deux, il est
+    // conservé (React ignore un setState à valeur identique : pas de rendu).
+    const update = () => {
+      const y = window.scrollY;
+      if (y > CONDENSE_AFTER) setScrolled(true);
+      else if (y < EXPAND_BEFORE) setScrolled(false);
+    };
     update(); // état correct si la page est rechargée en cours de défilement
 
     // `passive` : ce handler ne bloque jamais le défilement.
     window.addEventListener("scroll", update, { passive: true });
     return () => window.removeEventListener("scroll", update);
-  }, [onHome]);
-
-  const condensed = onCatalog || (onHome && scrolled);
+  }, [pathname]);
 
   return {
-    condensed,
+    /** Rangée des espaces repliée (défilement en cours). */
+    condensed: scrolled,
     /** La recherche n'a de sens que là où l'on cherche des activités. Sur
      *  l'accueil, le hero est occupé par l'agent IA : la recherche vit donc en
-     *  permanence dans l'en-tête, condensé ou non. */
+     *  permanence dans l'en-tête. */
     showSearch: onHome || onCatalog,
-    /** Les onglets s'effacent une fois l'en-tête condensé. */
-    showTabs: !condensed,
   };
 }

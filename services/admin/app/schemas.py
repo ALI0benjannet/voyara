@@ -33,10 +33,26 @@ class UserStats(BaseModel):
     new_30_days: int
 
 
+class CategoryCount(BaseModel):
+    nom: str
+    total: int
+
+
+class OffersStats(BaseModel):
+    sejours: int = 0
+    vols_a_venir: int = 0
+    voitures: int = 0
+    transferts: int = 0
+
+
 class ActivityStats(BaseModel):
     total: int
     categories: int
     upcoming_availabilities: int
+    # Champs ajoutés le 19/10/2026 : valeurs par défaut si le catalog est plus ancien.
+    en_attente: int = 0
+    par_categorie: list[CategoryCount] = []
+    offres: OffersStats = OffersStats()
 
 
 class RecentBooking(BaseModel):
@@ -91,6 +107,8 @@ class AdminActivityRow(BaseModel):
     duree: int
     localisation: str
     category: str | None = None
+    statut: str = "publiee"
+    photos: str | None = None
     bookings_count: int
 
 

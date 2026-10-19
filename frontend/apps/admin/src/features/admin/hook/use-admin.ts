@@ -1,5 +1,5 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { adminApi, type ListParams } from "@/features/admin/api/admin.api";
+import { adminApi, type ActivityListParams, type ListParams } from "@/features/admin/api/admin.api";
 import { adminKeys } from "@/features/admin/api/admin.keys";
 export function useAdminStats() {
 return useQuery({
@@ -23,7 +23,7 @@ queryFn: () => adminApi.bookings(params),
 placeholderData: keepPreviousData,
 });
 }
-export function useAdminActivities(params: ListParams = { page: 1, size: 20 }) {
+export function useAdminActivities(params: ActivityListParams = { page: 1, size: 20 }) {
 return useQuery({
 queryKey: adminKeys.activities(params),
 queryFn: () => adminApi.activities(params),

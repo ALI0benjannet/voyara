@@ -41,7 +41,8 @@ function Badge({ count, tone }: { count: number; tone: "accent" | "primary" }) {
 }
 
 /** Onglets des offres de voyage, dans l'ordre des grands sites de réservation.
- *  Seules les Activités sont réservables ; les autres mènent à une page « bientôt ». */
+ *  Seules les Activités sont réservables en ligne ; les autres offres sont
+ *  consultables (catalog `/api/v1/offres/*`). */
 const TRAVEL_TABS = [
   { href: paths.stays, labelKey: "nav.stays", Icon: BedDouble },
   { href: paths.flights, labelKey: "nav.flights", Icon: Plane },
@@ -103,9 +104,12 @@ export function Navbar() {
   const { data: favorites } = useFavorites();
   const { data: bookings } = useMyBookings();
 
-  // L'en-tête se condense au défilement : logo + recherche + icônes sur une
-  // seule ligne, les onglets s'effacent.
-  const { condensed, showSearch, showTabs } = useCondensedHeader();
+  // Au défilement, seule la rangée des espaces se replie ; la navigation reste.
+  const { condensed, showSearch } = useCondensedHeader();
+
+  // Un onglet reste actif sur ses sous-pages (fiche activité, etc.).
+  const isActive = (href: string) =>
+    href === paths.home ? pathname === href : pathname === href || pathname?.startsWith(`${href}/`);
 
   const tabClass = (active: boolean) =>
     cn(
@@ -127,12 +131,28 @@ export function Navbar() {
     );
 
   return (
-    <header className="border-border bg-card sticky top-0 z-50 border-b shadow-sm">
-      {/* Rangée 0 : bascule entre l'espace voyageur et l'espace prestataire.
-          Même fond blanc que la nav ; les deux espaces forment un sélecteur
-          segmenté, bien visible sans concurrencer la rangée principale. */}
-      <div className="border-border bg-card border-b">
-        <div className="mx-auto flex max-w-7xl justify-center px-4 py-2 sm:px-8">
+    // Au défilement, l'en-tête entier glisse vers le haut de la hauteur de la
+    // rangée 0 (h-14) : un `transform` est animé par le compositeur, sans
+    // recalcul de mise en page ni décalage du contenu — contrairement à une
+    // animation de hauteur, qui saccade et fait sauter la page.
+    <header
+      className={cn(
+        "border-border bg-card sticky top-0 z-50 border-b shadow-sm will-change-transform",
+        "transition-transform duration-300 ease-out motion-reduce:transition-none",
+        condensed && "-translate-y-14",
+      )}
+    >
+      {/* Rangée 0 : bascule entre l'espace voyageur et l'espace prestataire
+          (sélecteur segmenté). Hauteur fixe, pour que le glissement corresponde
+          exactement ; `inert` une fois masquée : plus atteignable au clavier. */}
+      <div
+        inert={condensed}
+        className={cn(
+          "border-border flex h-14 items-center border-b transition-opacity duration-300 motion-reduce:transition-none",
+          condensed ? "opacity-0" : "opacity-100",
+        )}
+      >
+        <div className="mx-auto flex max-w-7xl justify-center px-4 sm:px-8">
           <div className="border-border bg-muted flex items-center gap-1 rounded-full border p-1">
             <Link href={paths.home} className={spaceClass(!inProviderSpace)}>
               <FerrisWheel className="size-4" />
@@ -217,26 +237,33 @@ export function Navbar() {
         </div>
       )}
 
-      {/* Rangée 2 : navigation principale, masquée une fois l'en-tête condensé.
-          Les catégories sont des filtres de la page Activités, pas des entrées
-          de menu ; le profil vit dans le menu du compte (un seul point d'accès). */}
-      {showTabs && (
-        <nav className="mx-auto flex max-w-7xl gap-1 overflow-x-auto px-4 sm:px-8">
-          <Link href={paths.home} className={tabClass(pathname === "/")}>
-            {t("nav.home")}
+      {/* Rangée 2 : navigation principale, visible sur toutes les pages et à
+          tout moment du défilement. Les catégories sont des filtres de la page
+          Activités, pas des entrées de menu ; le profil vit dans le menu du
+          compte (un seul point d'accès). */}
+      <nav
+        aria-label={t("nav.menu")}
+        className="mx-auto flex max-w-7xl [scrollbar-width:none] gap-1 overflow-x-auto px-4 sm:px-8"
+      >
+        <Link
+          href={paths.home}
+          aria-current={isActive(paths.home) ? "page" : undefined}
+          className={tabClass(isActive(paths.home))}
+        >
+          {t("nav.home")}
+        </Link>
+        {TRAVEL_TABS.map(({ href, labelKey, Icon }) => (
+          <Link
+            key={href}
+            href={href}
+            aria-current={isActive(href) ? "page" : undefined}
+            className={cn(tabClass(isActive(href)), "flex items-center gap-2")}
+          >
+            <Icon className="size-[18px]" strokeWidth={1.7} />
+            {t(labelKey)}
           </Link>
-          {TRAVEL_TABS.map(({ href, labelKey, Icon }) => (
-            <Link
-              key={href}
-              href={href}
-              className={cn(tabClass(pathname === href), "flex items-center gap-2")}
-            >
-              <Icon className="size-[18px]" strokeWidth={1.7} />
-              {t(labelKey)}
-            </Link>
-          ))}
-        </nav>
-      )}
+        ))}
+      </nav>
     </header>
   );
 }

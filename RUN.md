@@ -130,10 +130,12 @@ cd services\catalog
 ..\..\.venv\Scripts\python scripts\add_places_totales.py
 ..\..\.venv\Scripts\python scripts\seed_translations.py
 ..\..\.venv\Scripts\python scripts\seed_photos.py
-# Catalogue étendu pour le moteur IA : 86 activités sur 5 villes + créneaux sur 28 jours
+# Catalogue étendu pour le moteur IA : 107 activités sur 5 villes (8 catégories) + créneaux sur 28 jours
 ..\..\.venv\Scripts\python scripts\seed_catalogue_demo.py
-# Photos de ces 86 activités (images déjà dans Git, aucun accès Internet nécessaire)
+# Photos de ces 107 activités (images déjà dans Git, aucun accès Internet nécessaire)
 ..\..\.venv\Scripts\python scripts\seed_photos_demo.py
+# Offres de voyage : 27 séjours, ~630 vols sur 28 jours, 35 voitures, 32 transferts + photos (dans Git)
+..\..\.venv\Scripts\python scripts\seed_offres_voyage_demo.py
 cd ..\..
 
 # 5.5 Codes promo de démo

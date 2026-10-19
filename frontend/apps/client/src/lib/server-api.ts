@@ -6,6 +6,7 @@
  */
 
 import type { Activity, Availability, Category, PageOf } from "@/features/catalog/api";
+import type { CarRental, Flight, Stay, Transfer } from "@/features/offres/api";
 
 const GATEWAY = process.env.API_INTERNAL_URL ?? "http://localhost:8000";
 const REVALIDATE = { next: { revalidate: 60 } } as const;
@@ -39,6 +40,22 @@ export async function fetchActivities(params: {
   }
 }
 
+/** Catalogue complet (l'API pagine à 100 au plus) : sert aux agrégats de
+ *  l'accueil (compteurs par région et par catégorie, classement par avis). */
+export async function fetchAllActivities(): Promise<Activity[]> {
+  const size = 100;
+  const firstPage = await get<PageOf<Activity>>(`/api/v1/activities?size=${size}&page=1`).catch(
+    () => null,
+  );
+  if (!firstPage) return [];
+  const rest = await Promise.all(
+    Array.from({ length: Math.max(0, firstPage.pages - 1) }, (_, i) =>
+      get<PageOf<Activity>>(`/api/v1/activities?size=${size}&page=${i + 2}`).catch(() => null),
+    ),
+  );
+  return [firstPage, ...rest].flatMap((p) => p?.items ?? []);
+}
+
 export async function fetchActivity(id: number): Promise<Activity | null> {
   try {
     return await get<Activity>(`/api/v1/activities/${id}`);
@@ -54,6 +71,37 @@ export async function fetchAvailabilities(id: number): Promise<Availability[]> {
     return [];
   }
 }
+
+/** Offres de voyage publiques. Paramètres vides ignorés ; panne = liste vide. */
+async function fetchOffres<T>(
+  segment: string,
+  params: Record<string, string | undefined>,
+): Promise<T[]> {
+  const qs = new URLSearchParams();
+  for (const [key, value] of Object.entries(params)) if (value) qs.set(key, value);
+  try {
+    return await get<T[]>(`/api/v1/offres/${segment}${qs.size ? `?${qs}` : ""}`);
+  } catch {
+    return [];
+  }
+}
+
+export const fetchStays = (params: { ville?: string; type?: string }) =>
+  fetchOffres<Stay>("sejours", params);
+
+export const fetchFlights = (params: {
+  depart?: string;
+  arrivee?: string;
+  jour?: string;
+  /** 200 par défaut côté API ; l'accueil demande tout pour un compte exact. */
+  limite?: string;
+}) => fetchOffres<Flight>("vols", params);
+
+export const fetchCarRentals = (params: { ville?: string; categorie?: string }) =>
+  fetchOffres<CarRental>("voitures", params);
+
+export const fetchTransfers = (params: { depart?: string }) =>
+  fetchOffres<Transfer>("transferts", params);
 
 export interface ReviewStat {
   average: number;

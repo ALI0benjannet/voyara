@@ -26,7 +26,7 @@ export default function CreditsPage() {
     <main className="mx-auto max-w-3xl px-4 py-12 sm:px-8">
       <h1 className="font-display mb-2 text-4xl">Crédits photo</h1>
       <p className="text-muted-foreground mb-10">
-        Les photographies des activités proviennent de{" "}
+        Les photographies des activités, séjours et voitures proviennent de{" "}
         <a
           href="https://commons.wikimedia.org"
           className="text-primary hover:underline"

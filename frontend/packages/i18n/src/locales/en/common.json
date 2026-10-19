@@ -16,15 +16,16 @@
     "guests": "{{count}} guest",
     "guests_other": "{{count}} guests",
     "destTitle": "Where next?",
-    "destSub": "Four regions, four moods.",
+    "destSub": "Four regions, four moods — with real offers in each.",
     "destTags": {
       "tunis": "History & medina",
       "djerba": "Gentle island",
       "tozeur": "Dunes & oases",
-      "tabarka": "Coral & mountains"
+      "tabarka": "Coral & mountains",
+      "hammamet": "Beaches & medina"
     },
     "popTitle": "Popular activities",
-    "popSub": "The finest experiences this season.",
+    "popSub": "Top-rated by travellers.",
     "seeAll": "See all",
     "aiPlanner": {
       "badge": "Smart curation",
@@ -55,7 +56,21 @@
         "title": "Secure payment",
         "body": "Pay online or on site — your data stays protected."
       }
-    }
+    },
+    "destCount": "{{activities}} activities · {{stays}} stays",
+    "catTitle": "Explore by mood",
+    "catSub": "Eight ways to experience Tunisia.",
+    "catCount": "{{count}} activity",
+    "catCount_other": "{{count}} activities",
+    "offersTitle": "Your whole trip in one place",
+    "offersSub": "Accommodation, flight, car and transfer: plan the complete stay.",
+    "staysFrom": "From {{price}} per night",
+    "flightsCount": "{{count}} upcoming direct flights",
+    "carsFrom": "From {{price}} per day",
+    "transfersFrom": "From {{price}} per ride",
+    "staysTitle": "Favourite stays",
+    "staysSub": "For a trip solo, as a couple or with the family.",
+    "seeAllStays": "All stays"
   },
   "nav": {
     "home": "Home",
@@ -298,7 +313,10 @@
       "Mer": "Sea",
       "Désert": "Desert",
       "Aventure": "Adventure",
-      "Gastronomie": "Food"
+      "Gastronomie": "Food",
+      "Bien-être": "Wellness",
+      "Famille & loisirs": "Family & leisure",
+      "Golf": "Golf"
     },
     "emptyTitle": "No activities match",
     "emptySub": "Try another keyword or clear the filters.",
@@ -428,7 +446,19 @@
       "colStatus": "Status",
       "colAmount": "Amount",
       "empty": "No bookings yet.",
-      "statsError": "Could not load the statistics"
+      "statsError": "Could not load the statistics",
+      "updatedAt": "Last updated: {{date}}",
+      "refresh": "Refresh",
+      "bookingsHint": "{{last30}} in 30 days · {{pending}} pending",
+      "revenueHint": "{{last30}} in 30 days · average basket {{basket}}",
+      "clientsHint": "{{active}} active · {{fresh}} new",
+      "activitiesHint": "{{categories}} categories · {{slots}} upcoming slots",
+      "offersTitle": "Travel offers",
+      "flightsHint": "upcoming flights",
+      "byCategory": "Activities by category",
+      "pendingModeration": "{{count}} activity submitted by a provider awaits your approval.",
+      "pendingModeration_other": "{{count}} activities submitted by providers await your approval.",
+      "moderate": "Moderate"
     },
     "categories": {
       "title": "Categories",
@@ -457,7 +487,15 @@
       "editAria": "Edit {{name}}",
       "deleteAria": "Delete {{name}}",
       "deleteConfirmNamed": "Permanently delete “{{name}}”?",
-      "minutes": "{{count}} min"
+      "minutes": "{{count}} min",
+      "searchPlaceholder": "Search: name, city or category…",
+      "colStatus": "Status",
+      "statut": {
+        "publiee": "Published",
+        "en_attente": "Pending",
+        "refusee": "Rejected"
+      },
+      "hasBookings": "“{{name}}” has {{count}} booking(s): it cannot be deleted."
     },
     "users": {
       "title": "Users",
@@ -573,6 +611,7 @@
         "new": "New stay",
         "empty": "No stays.",
         "fields": {
+          "photos": "Photo",
           "nom": "Name",
           "type": "Type",
           "description": "Description",
@@ -614,6 +653,7 @@
         "new": "New car",
         "empty": "No cars.",
         "fields": {
+          "photos": "Photo",
           "marque": "Make",
           "modele": "Model",
           "categorie": "Category",
@@ -672,6 +712,24 @@
       "approve": "Publish",
       "reject": "Reject",
       "empty": "Nothing pending."
+    },
+    "list": {
+      "clear": "Clear search",
+      "count": "{{count}} result",
+      "count_other": "{{count}} results",
+      "countOf": "{{count}} of {{total}}",
+      "page": "Page {{page}} of {{pages}}",
+      "pagination": "Pagination",
+      "all": "all",
+      "allCategories": "All categories",
+      "allStatuses": "All statuses",
+      "noMatch": "No results for these filters.",
+      "search": {
+        "stays": "Search a stay: name, city, type, amenity…",
+        "flights": "Search a flight: number, airline, city, airport…",
+        "carRentals": "Search a car: make, model, city, agency…",
+        "transfers": "Search a transfer: from, to, vehicle…"
+      }
     }
   },
   "comingSoon": {
@@ -715,5 +773,40 @@
     "moderationNote": "Every post is reviewed by the Voyara team before travelers can see it.",
     "empty": "You haven't posted anything yet.",
     "delete": "Delete"
+  },
+  "offres": {
+    "count": "{{count}} offer",
+    "count_other": "{{count}} offers",
+    "all": "All",
+    "perNight": "/ night",
+    "perDay": "/ day",
+    "perVehicle": "/ vehicle",
+    "guests": "Up to {{count}} guest",
+    "guests_other": "Up to {{count}} guests",
+    "seats": "{{count}} seat",
+    "seats_other": "{{count}} seats",
+    "bags": "{{count}} bag",
+    "bags_other": "{{count}} bags",
+    "seatsLeft": "{{count}} seat left",
+    "seatsLeft_other": "{{count}} seats left",
+    "stars": "{{count}} star",
+    "stars_other": "{{count}} stars",
+    "bookSoon": "Online booking coming soon",
+    "empty": "No offer matches these filters.",
+    "reset": "See all offers",
+    "demoNote": "Demo offers: indicative prices in Tunisian dinars.",
+    "city": "City",
+    "type": "Type",
+    "category": "Category",
+    "from": "From",
+    "to": "To",
+    "date": "Date",
+    "search": "Search",
+    "anyAirport": "All airports",
+    "direct": "Direct flight",
+    "duration": "Duration",
+    "pickup": "Pick-up",
+    "agency": "Agency",
+    "flightsHint": "Upcoming direct flights with seats available."
   }
 }

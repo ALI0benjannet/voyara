@@ -88,8 +88,8 @@ découpée de bout en bout :
 
 | Préfixe | Service |
 |---|---|
-| `/api/v1/auth/*`, `/static/*` (avatars — sauf `/static/activities`) | auth |
-| `/api/v1/activities*`, `/api/v1/categories*`, `/api/v1/availabilities*`, `/static/activities/*` (photos) | catalog |
+| `/api/v1/auth/*`, `/static/*` (avatars — sauf `/static/activities` et `/static/offres`) | auth |
+| `/api/v1/activities*`, `/api/v1/categories*`, `/api/v1/availabilities*`, `/static/activities/*` (photos), `/static/offres/*` (photos des séjours et voitures), `/api/v1/offres/*` (séjours, vols, voitures, transferts — lecture publique) | catalog |
 | `/api/v1/prestataire/*` (espace prestataire, JWT), `/api/v1/moderation/*` (admin) | catalog |
 | `/api/v1/bookings*` | booking |
 | `/api/v1/payments*` | payment |

@@ -16,15 +16,16 @@
     "guests": "{{count}} participant",
     "guests_other": "{{count}} participants",
     "destTitle": "Envie d'ailleurs ?",
-    "destSub": "Quatre régions, quatre ambiances.",
+    "destSub": "Quatre régions, quatre ambiances — des offres réelles dans chacune.",
     "destTags": {
       "tunis": "Histoire & médina",
       "djerba": "Île douce",
       "tozeur": "Dunes & oasis",
-      "tabarka": "Corail & montagne"
+      "tabarka": "Corail & montagne",
+      "hammamet": "Plages & médina"
     },
     "popTitle": "Activités populaires",
-    "popSub": "Les plus belles expériences cette saison.",
+    "popSub": "Les mieux notées par les voyageurs.",
     "seeAll": "Tout voir",
     "aiPlanner": {
       "badge": "Curation intelligente",
@@ -55,7 +56,21 @@
         "title": "Paiement sécurisé",
         "body": "Réglez en ligne ou sur place — vos données restent protégées."
       }
-    }
+    },
+    "destCount": "{{activities}} activités · {{stays}} séjours",
+    "catTitle": "Explorer par envie",
+    "catSub": "Huit façons de vivre la Tunisie.",
+    "catCount": "{{count}} activité",
+    "catCount_other": "{{count}} activités",
+    "offersTitle": "Tout votre voyage au même endroit",
+    "offersSub": "Hébergement, vol, voiture et transfert : préparez le séjour complet.",
+    "staysFrom": "Dès {{price}} la nuit",
+    "flightsCount": "{{count}} vols directs à venir",
+    "carsFrom": "Dès {{price}} par jour",
+    "transfersFrom": "Dès {{price}} le trajet",
+    "staysTitle": "Séjours coups de cœur",
+    "staysSub": "Pour un voyage en solo, en couple ou en famille.",
+    "seeAllStays": "Tous les séjours"
   },
   "nav": {
     "home": "Accueil",
@@ -298,7 +313,10 @@
       "Mer": "Mer",
       "Désert": "Désert",
       "Aventure": "Aventure",
-      "Gastronomie": "Gastronomie"
+      "Gastronomie": "Gastronomie",
+      "Bien-être": "Bien-être",
+      "Famille & loisirs": "Famille & loisirs",
+      "Golf": "Golf"
     },
     "emptyTitle": "Aucune activité ne correspond",
     "emptySub": "Essayez un autre mot-clé ou retirez les filtres.",
@@ -428,7 +446,19 @@
       "colStatus": "Statut",
       "colAmount": "Montant",
       "empty": "Aucune réservation pour le moment.",
-      "statsError": "Impossible de charger les statistiques"
+      "statsError": "Impossible de charger les statistiques",
+      "updatedAt": "Dernière mise à jour : {{date}}",
+      "refresh": "Actualiser",
+      "bookingsHint": "{{last30}} sur 30 jours · {{pending}} en attente",
+      "revenueHint": "{{last30}} sur 30 jours · panier moyen {{basket}}",
+      "clientsHint": "{{active}} actifs · {{fresh}} nouveaux",
+      "activitiesHint": "{{categories}} catégories · {{slots}} créneaux à venir",
+      "offersTitle": "Offres de voyage",
+      "flightsHint": "vols à venir",
+      "byCategory": "Activités par catégorie",
+      "pendingModeration": "{{count}} activité proposée par un prestataire attend votre validation.",
+      "pendingModeration_other": "{{count}} activités proposées par des prestataires attendent votre validation.",
+      "moderate": "Modérer"
     },
     "categories": {
       "title": "Catégories",
@@ -457,7 +487,15 @@
       "editAria": "Modifier {{name}}",
       "deleteAria": "Supprimer {{name}}",
       "deleteConfirmNamed": "Supprimer définitivement « {{name}} » ?",
-      "minutes": "{{count}} min"
+      "minutes": "{{count}} min",
+      "searchPlaceholder": "Rechercher : nom, ville ou catégorie…",
+      "colStatus": "Statut",
+      "statut": {
+        "publiee": "Publiée",
+        "en_attente": "En attente",
+        "refusee": "Refusée"
+      },
+      "hasBookings": "« {{name}} » a {{count}} réservation(s) : suppression impossible."
     },
     "users": {
       "title": "Utilisateurs",
@@ -573,6 +611,7 @@
         "new": "Nouveau séjour",
         "empty": "Aucun séjour.",
         "fields": {
+          "photos": "Photo",
           "nom": "Nom",
           "type": "Type",
           "description": "Description",
@@ -614,6 +653,7 @@
         "new": "Nouvelle voiture",
         "empty": "Aucune voiture.",
         "fields": {
+          "photos": "Photo",
           "marque": "Marque",
           "modele": "Modèle",
           "categorie": "Catégorie",
@@ -672,6 +712,24 @@
       "approve": "Publier",
       "reject": "Refuser",
       "empty": "Rien en attente."
+    },
+    "list": {
+      "clear": "Effacer la recherche",
+      "count": "{{count}} résultat",
+      "count_other": "{{count}} résultats",
+      "countOf": "{{count}} sur {{total}}",
+      "page": "Page {{page}} sur {{pages}}",
+      "pagination": "Pagination",
+      "all": "tous",
+      "allCategories": "Toutes les catégories",
+      "allStatuses": "Tous les statuts",
+      "noMatch": "Aucun résultat pour ces filtres.",
+      "search": {
+        "stays": "Rechercher un séjour : nom, ville, type, équipement…",
+        "flights": "Rechercher un vol : numéro, compagnie, ville, aéroport…",
+        "carRentals": "Rechercher une voiture : marque, modèle, ville, agence…",
+        "transfers": "Rechercher un transfert : départ, arrivée, véhicule…"
+      }
     }
   },
   "comingSoon": {
@@ -715,5 +773,40 @@
     "moderationNote": "Chaque publication est vérifiée par l'équipe Voyara avant d'être visible des voyageurs.",
     "empty": "Vous n'avez encore rien publié.",
     "delete": "Supprimer"
+  },
+  "offres": {
+    "count": "{{count}} offre",
+    "count_other": "{{count}} offres",
+    "all": "Toutes",
+    "perNight": "/ nuit",
+    "perDay": "/ jour",
+    "perVehicle": "/ véhicule",
+    "guests": "Jusqu'à {{count}} voyageur",
+    "guests_other": "Jusqu'à {{count}} voyageurs",
+    "seats": "{{count}} place",
+    "seats_other": "{{count}} places",
+    "bags": "{{count}} bagage",
+    "bags_other": "{{count}} bagages",
+    "seatsLeft": "{{count}} place restante",
+    "seatsLeft_other": "{{count}} places restantes",
+    "stars": "{{count}} étoile",
+    "stars_other": "{{count}} étoiles",
+    "bookSoon": "Réservation en ligne bientôt",
+    "empty": "Aucune offre ne correspond à ces filtres.",
+    "reset": "Voir toutes les offres",
+    "demoNote": "Offres de démonstration : prix indicatifs en dinars tunisiens.",
+    "city": "Ville",
+    "type": "Type",
+    "category": "Catégorie",
+    "from": "Départ",
+    "to": "Arrivée",
+    "date": "Date",
+    "search": "Rechercher",
+    "anyAirport": "Tous les aéroports",
+    "direct": "Vol direct",
+    "duration": "Durée",
+    "pickup": "Prise en charge",
+    "agency": "Agence",
+    "flightsHint": "Vols directs à venir avec des places disponibles."
   }
 }

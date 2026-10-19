@@ -31,6 +31,7 @@ ROUTES: list[tuple[str, str, str]] = [
     ("/api/v1/flights", settings.CATALOG_SERVICE_URL, "catalog"),
     ("/api/v1/car-rentals", settings.CATALOG_SERVICE_URL, "catalog"),
     ("/api/v1/transfers", settings.CATALOG_SERVICE_URL, "catalog"),
+    ("/api/v1/offres", settings.CATALOG_SERVICE_URL, "catalog"),  # offres de voyage, lecture publique
     ("/api/v1/prestataire", settings.CATALOG_SERVICE_URL, "catalog"),
     ("/api/v1/moderation", settings.CATALOG_SERVICE_URL, "catalog"),
     ("/api/v1/bookings", settings.BOOKING_SERVICE_URL, "booking"),
@@ -38,6 +39,7 @@ ROUTES: list[tuple[str, str, str]] = [
     ("/api/v1/reviews", settings.REVIEW_SERVICE_URL, "review"),
     ("/api/v1/favorites", settings.REVIEW_SERVICE_URL, "review"),
     ("/static/activities", settings.CATALOG_SERVICE_URL, "catalog"),  # photos d'activités
+    ("/static/offres", settings.CATALOG_SERVICE_URL, "catalog"),  # photos des séjours et voitures
     ("/static", settings.AUTH_SERVICE_URL, "auth"),  # avatars servis par auth-service
 ]
 

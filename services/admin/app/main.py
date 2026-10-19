@@ -72,8 +72,11 @@ async def list_bookings(
 async def list_activities(
     page: int = Query(1, ge=1),
     size: int = Query(20, ge=1, le=100),
+    search: str | None = Query(None, min_length=1, max_length=100, description="Titre, ville ou catégorie"),
+    category_id: int | None = None,
+    statut: str | None = Query(None, pattern="^(publiee|en_attente|refusee)$"),
 ):
-    return await aggregator.list_activities(page, size)
+    return await aggregator.list_activities(page, size, search, category_id, statut)
 
 
 @app.get(f"{PREFIX}/payments", response_model=Page[AdminPaymentRow], tags=["Administration"], dependencies=[admin_dep])

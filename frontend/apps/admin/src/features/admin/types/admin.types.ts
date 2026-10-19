@@ -22,6 +22,10 @@ export type ActivityStats = {
 total: number;
 categories: number;
 upcoming_availabilities: number;
+/** Activités proposées par des prestataires, à modérer. */
+en_attente: number;
+par_categorie: { nom: string; total: number }[];
+offres: { sejours: number; vols_a_venir: number; voitures: number; transferts: number };
 };
 export type RecentBooking = {
 id: number;
@@ -76,6 +80,8 @@ prix: number;
 duree: number;
 localisation: string;
 category: string | null;
+statut: "publiee" | "en_attente" | "refusee";
+photos: string | null;
 bookings_count: number;
 };
 export type AdminPaymentRow = {
