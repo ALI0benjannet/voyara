@@ -20,11 +20,12 @@ modèle de données : [docs/mcd.md](docs/mcd.md) · moteur IA : [docs/ia/README.
 | `services/review` | 8005 | `voyara_review` | Avis et favoris |
 | `services/notification` | 8006 | — | E-mails SMTP — interne uniquement |
 | `services/admin` | 8007 | — | BFF de l'espace admin (agrégation `asyncio.gather` + `/batch`) |
-| `services/ai` *(prévu — ADR-007)* | 8008 | `voyara_ai` (pgvector) | Moteur IA — créé aux étapes 1 et 3 du guide IA |
+| `services/ai` *(partiel — ADR-007)* | 8008 | `voyara_ai` (pgvector, conteneur `postgres-ai` :5435) | Moteur IA — étape 1 : modèles + scripts (POI, météo) ; scaffold FastAPI à l'étape 3 |
 | `frontend/apps/client` | 5173 | — | Next.js 16 App Router (SSR/SEO) |
 | `frontend/apps/admin` | 5174 (`/admin`) | — | SPA Vite/React |
 
-PostgreSQL 16 en Docker, **port hôte 5434**, une base par service.
+PostgreSQL 16 en Docker, **port hôte 5434**, une base par service ; la base `voyara_ai` est dans un
+conteneur dédié **`postgres-ai`** (`pgvector/pgvector:pg16`, **port hôte 5435**).
 Packages front partagés : `frontend/packages/@voyara/{ui,api,auth,i18n}`.
 
 ## 2. Conventions (obligatoires)
@@ -57,8 +58,8 @@ python -m venv .venv
 
 # Démarrage
 docker compose up -d postgres         # Postgres sur localhost:5434
-.\scripts\dev.ps1                     # gateway + 7 services (-Seed : crée l'admin initial)
-.\scripts\stop-dev.ps1                # arrête les ports 8000-8007
+.\scripts\dev.ps1                     # postgres-ai (:5435) + gateway + 7 services (-Seed : crée l'admin initial)
+.\scripts\stop-dev.ps1                # arrête les ports 8000-8007 et le conteneur postgres-ai
 cd frontend; npm run dev              # client :5173 + admin :5174/admin
 
 # Vérifications
@@ -66,6 +67,7 @@ cd frontend; npm run dev              # client :5173 + admin :5174/admin
 
 # Tests
 cd services\auth; ..\..\.venv\Scripts\python -m pytest     # backend (parcours auth)
+cd services\ai; ..\..\.venv\Scripts\python -m pytest       # moteur IA (postgres-ai démarré, réseau simulé)
 cd frontend; npm run test                                   # vitest (client)
 cd frontend; npm run typecheck                              # TypeScript strict (2 apps)
 ```

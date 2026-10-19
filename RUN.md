@@ -49,7 +49,7 @@ cd voyara
 Les fichiers `.env` ne sont **pas** dans Git. Ali te les envoie à part
 (ne jamais les commiter ni les partager publiquement).
 
-Il en faut **9**, chacun à sa place exacte :
+Il en faut **10**, chacun à sa place exacte :
 
 ```text
 Voyara/
@@ -57,6 +57,7 @@ Voyara/
 ├── gateway/.env
 └── services/
     ├── admin/.env
+    ├── ai/.env            ← moteur IA (modèle : services/ai/.env.example)
     ├── auth/.env
     ├── booking/.env
     ├── catalog/.env
@@ -72,7 +73,8 @@ Get-ChildItem -Recurse -Force -Filter .env -File | Where-Object { $_.FullName -n
 ```
 
 > Important : dans `services/*/.env`, `POSTGRES_PORT` doit valoir **5434**
-> (c'est le port du conteneur Postgres de `docker-compose.yml`).
+> (c'est le port du conteneur Postgres de `docker-compose.yml`), **sauf** `services/ai/.env` :
+> `POSTGRES_PORT=5435` et `POSTGRES_DB=voyara_ai` (conteneur dédié `postgres-ai` du moteur IA).
 
 Les fichiers `.env` du frontend (`frontend/apps/*/.env.development`) sont déjà dans Git, rien à faire.
 
@@ -94,9 +96,12 @@ python -m venv .venv
 Docker Desktop doit être ouvert.
 
 ```powershell
-docker compose up -d postgres
-docker compose ps          # attendre que postgres soit "healthy"
+docker compose up -d postgres postgres-ai
+docker compose ps          # attendre que postgres et postgres-ai soient "healthy"
 ```
+
+`postgres-ai` (image `pgvector/pgvector:pg16`, ~150 Mo à télécharger la première fois) porte la
+base `voyara_ai` du moteur IA, sur le port 5435. `dev.ps1` le démarre aussi, `stop-dev.ps1` l'arrête.
 
 ---
 
@@ -134,6 +139,15 @@ cd ..\..
 # 5.5 Codes promo de démo
 cd services\booking
 ..\..\.venv\Scripts\python scripts\seed_promos.py
+cd ..\..
+
+# 5.6 Données du moteur IA (Internet nécessaire ; tables créées automatiquement)
+cd services\ai
+# POI OpenStreetMap, 8 villes (~10 min : le serveur Overpass public répond souvent 504,
+# le script réessaie ; une ville en échec se relance avec --ville <nom>)
+..\..\.venv\Scripts\python scripts\collecter_pois.py
+# Météo Open-Meteo des 7 prochains jours (cache de 6 h)
+..\..\.venv\Scripts\python scripts\rafraichir_meteo.py
 cd ..\..
 ```
 
@@ -223,4 +237,12 @@ npm run dev
 ```powershell
 cd services\auth
 ..\..\.venv\Scripts\python -m pytest
+
+# Moteur IA (postgres-ai démarré ; Overpass et Open-Meteo sont simulés, pas d'Internet)
+cd ..\ai
+..\..\.venv\Scripts\python -m pytest
+
+# Notebook d'analyse des données (figures dans docs/ia/figures/)
+cd ..\..
+.venv\Scripts\jupyter nbconvert --to notebook --execute --inplace notebooks\01_eda_donnees.ipynb
 ```
