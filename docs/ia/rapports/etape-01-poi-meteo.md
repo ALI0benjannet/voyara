@@ -344,3 +344,31 @@ Prérequis :
   puisque la couche `LLMProvider` n'arrive qu'à l'étape 3 ;
 - reprendre les constats de cette EDA : faire de « distance au restaurant le plus proche » un
   attribut utile, et faire de Kairouan, sans activité, une zone à enrichir ou à exclure de la démo.
+
+---
+
+### Addendum du 2026-10-19 — fusion dans `main`
+
+La branche `ia/etape-01` (commit `b4286fb`) n'avait pas été fusionnée. Pendant ce temps, `main` avait
+reçu 8 commits (espace prestataire, navbar, page Agent IA). Un seul fichier était modifié des deux
+côtés, `docs/architecture.md`, et la fusion automatique n'a produit aucun conflit.
+
+- **Décision** : fusionner plutôt que refaire l'étape. Le livrable couvre déjà les 5 points du prompt.
+  Garder le conteneur dédié `postgres-ai` reste justifié (§3), tout comme l'absence de `voyara_ai`
+  dans `init.sql` et `create_databases.py`.
+- **Vérification après fusion** (sortie réelle) :
+
+```text
+PS> git merge --no-ff ia/etape-01
+Auto-merging docs/architecture.md
+Merge made by the 'ort' strategy.   38 files changed, 2894 insertions(+), 21 deletions(-)
+PS> docker compose ps
+voyara-postgres-1      postgres:16-alpine       Up 25 minutes (healthy)   0.0.0.0:5434->5432/tcp
+voyara-postgres-ai-1   pgvector/pgvector:pg16   Up 8 seconds (healthy)    0.0.0.0:5435->5432/tcp
+PS> cd services\ai; ..\..\.venv\Scripts\python -m pytest -q
+55 passed in 0.70s
+PS> psql voyara_ai : pois 1030 lignes / 8 villes · meteo_cache 56 lignes / 8 villes · doublons source_id 0
+```
+
+- **Remarque** : la météo en cache date du 13/10 et elle est périmée (plus de 6 h). Elle est
+  rafraîchie au premier appel, ou par `scripts\rafraichir_meteo.py`.
