@@ -34,6 +34,7 @@ ROUTES: list[tuple[str, str, str]] = [
     ("/api/v1/offres", settings.CATALOG_SERVICE_URL, "catalog"),  # offres de voyage, lecture publique
     ("/api/v1/prestataire", settings.CATALOG_SERVICE_URL, "catalog"),
     ("/api/v1/moderation", settings.CATALOG_SERVICE_URL, "catalog"),
+    ("/api/v1/etiquetage", settings.CATALOG_SERVICE_URL, "catalog"),  # validation des tags IA (admin)
     ("/api/v1/bookings", settings.BOOKING_SERVICE_URL, "booking"),
     ("/api/v1/payments", settings.PAYMENT_SERVICE_URL, "payment"),
     ("/api/v1/reviews", settings.REVIEW_SERVICE_URL, "review"),

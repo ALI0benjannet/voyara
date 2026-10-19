@@ -68,6 +68,7 @@ cd frontend; npm run dev              # client :5173 + admin :5174/admin
 # Tests
 cd services\auth; ..\..\.venv\Scripts\python -m pytest     # backend (parcours auth)
 cd services\ai; ..\..\.venv\Scripts\python -m pytest       # moteur IA (postgres-ai démarré, réseau simulé)
+cd services\catalog; ..\..\.venv\Scripts\python -m pytest  # export interne + tags IA (postgres démarré, migration add_tags_ia_columns appliquée)
 cd frontend; npm run test                                   # vitest (client)
 cd frontend; npm run typecheck                              # TypeScript strict (2 apps)
 ```

@@ -16,8 +16,15 @@ INTERNAL_HEADER = "X-Internal-Api-Key"
 
 
 def require_internal_key(
-    x_internal_api_key: str = Header(..., alias=INTERNAL_HEADER),
+    x_internal_api_key: str | None = Header(None, alias=INTERNAL_HEADER),
 ) -> None:
+    # Header facultatif côté FastAPI : sans cela, une clé absente donnait une
+    # 422 (erreur de validation) au lieu d'un refus d'authentification.
+    if not x_internal_api_key:
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Clé interne manquante",
+        )
     if x_internal_api_key != get_common_settings().INTERNAL_API_KEY:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,

@@ -10,6 +10,7 @@ from voyara_common.logging import setup_logging
 from app.admin_routes import admin_router
 from app.config import settings
 from app.database import Base, engine
+from app.etiquetage_routes import etiquetage_router
 from app.offres_routes import offres_router
 from app.provider_routes import moderation_router, provider_router
 from app.routers import internal_router, public_router
@@ -53,4 +54,5 @@ app.include_router(travel_router, prefix=settings.API_V1_PREFIX)
 app.include_router(offres_router, prefix=settings.API_V1_PREFIX)
 app.include_router(provider_router, prefix=settings.API_V1_PREFIX)
 app.include_router(moderation_router, prefix=settings.API_V1_PREFIX)
+app.include_router(etiquetage_router, prefix=settings.API_V1_PREFIX)
 app.include_router(internal_router)

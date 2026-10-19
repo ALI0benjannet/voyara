@@ -75,6 +75,16 @@ erDiagram
         float longitude "nullable"
         text photos "nullable — /static/activities/…"
         int category_id FK
+        string statut "publiee | en_attente | refusee"
+        int prestataire_id "nullable — user_id auth, sans FK"
+        jsonb themes "tags IA : plage, culture, histoire, nature…"
+        jsonb public "tags IA : famille, couple, solo, groupe, enfants"
+        int niveau_marche "nullable — 1 faible, 2 moyen, 3 eleve"
+        bool interieur "nullable"
+        string moment_ideal "nullable — matin, apres_midi, soir, indifferent"
+        bool tags_valides "valide par un humain (admin)"
+        jsonb tags_proposes "nullable — copie de la proposition automatique"
+        timestamptz modifie_le "trigger a chaque UPDATE — synchro du service ai"
     }
     AVAILABILITIES {
         int id PK
@@ -87,6 +97,14 @@ erDiagram
     CATEGORIES ||--o{ ACTIVITIES : "classe"
     ACTIVITIES ||--o{ AVAILABILITIES : "propose"
 ```
+
+**Attributs IA (étape 2 du moteur IA)** — vocabulaire unique dans
+`services/catalog/app/tags_ia.py`. Les listes `themes` et `public` sont en JSONB plutôt
+qu'en table d'association : catalog ne filtre jamais dessus (le service `ai` indexe dans sa
+propre base) et l'export reste une requête sans jointure. Cinq contraintes `CHECK`
+(`ck_activities_*`) garantissent les valeurs autorisées même hors API, et qu'une activité
+`tags_valides` a des tags complets. Migration d'une base existante :
+`scripts/add_tags_ia_columns.py` (idempotente).
 
 ### Offres de voyage (tables préparées, API à venir)
 

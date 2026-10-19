@@ -10,6 +10,7 @@ from voyara_common.pagination import Page, paginate
 from app.database import get_db
 from app.models import Activity, Availability, CarRental, Category, Flight, Stay, Transfer
 from app.schemas import ActivityRead, AvailabilityRead, CategoryRead
+from app.tags_ia import tags_de
 
 # ---------------------------------------------------------------------------
 # Routes publiques (exposées par le gateway)
@@ -163,6 +164,77 @@ def internal_list_activities(
             "photos": a.photos,
         }
         for a, category_name in rows
+    ]
+    return paginate(total, page, size, items)
+
+
+def _vers_utc(moment: datetime) -> datetime:
+    """Une date sans fuseau est interprétée en UTC (convention de l'export)."""
+    return moment if moment.tzinfo else moment.replace(tzinfo=timezone.utc)
+
+
+@internal_router.get("/activities/export")
+def export_activities(
+    db: Session = Depends(get_db),
+    page: int = Query(1, ge=1),
+    size: int = Query(100, ge=1, le=500),
+    modifie_depuis: datetime | None = Query(
+        None,
+        description="ISO 8601 ; sans fuseau = UTC. Renvoie les activités modifiées "
+        "à partir de cet instant (borne incluse : l'appelant dédoublonne par id).",
+    ),
+    statut: str | None = Query(None, pattern="^(publiee|en_attente|refusee)$"),
+    tags_valides: bool | None = None,
+):
+    """Export complet des activités pour le moteur IA (service ai, étape 5).
+
+    Tri stable par (modifie_le, id) : une synchronisation incrémentale reprend
+    au dernier `modifie_le` vu. Tous les statuts sont exportés par défaut pour
+    que l'appelant apprenne aussi les dépublications ; une activité supprimée,
+    elle, n'apparaît plus — l'appelant doit faire une resynchronisation
+    complète de temps en temps."""
+    stmt = select(Activity).options(joinedload(Activity.category))
+    if modifie_depuis is not None:
+        stmt = stmt.where(Activity.modifie_le >= _vers_utc(modifie_depuis))
+    if statut:
+        stmt = stmt.where(Activity.statut == statut)
+    if tags_valides is not None:
+        stmt = stmt.where(Activity.tags_valides.is_(tags_valides))
+
+    total = int(db.scalar(select(func.count()).select_from(stmt.subquery())) or 0)
+    activities = db.scalars(
+        stmt.order_by(Activity.modifie_le, Activity.id).offset((page - 1) * size).limit(size)
+    ).all()
+    items = [
+        {
+            "id": a.id,
+            "titre": a.titre,
+            "titre_en": a.titre_en,
+            "titre_ar": a.titre_ar,
+            "description": a.description,
+            "description_en": a.description_en,
+            "description_ar": a.description_ar,
+            "prix": float(a.prix or 0.0),
+            "duree": a.duree,
+            "localisation": a.localisation,
+            "latitude": a.latitude,
+            "longitude": a.longitude,
+            "photos": a.photos,
+            "statut": a.statut,
+            "category": (
+                {
+                    "id": a.category.id,
+                    "nom": a.category.nom,
+                    "nom_en": a.category.nom_en,
+                    "nom_ar": a.category.nom_ar,
+                }
+                if a.category
+                else None
+            ),
+            **tags_de(a),
+            "modifie_le": a.modifie_le.isoformat(),
+        }
+        for a in activities
     ]
     return paginate(total, page, size, items)
 

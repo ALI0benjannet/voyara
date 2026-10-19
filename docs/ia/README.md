@@ -164,3 +164,4 @@ de PFE (étape 13).
 | 1 · Photos du catalogue (sous-tâche) | [etape-01-photos-catalogue.md](rapports/etape-01-photos-catalogue.md) |
 | 1 · Offres de voyage et nouvelles catégories (sous-tâche) | [etape-01-offres-voyage.md](rapports/etape-01-offres-voyage.md) |
 | 1 · POI, météo et EDA (clôture de l'étape) | [etape-01-poi-meteo.md](rapports/etape-01-poi-meteo.md) |
+| 2 · Enrichissement sémantique du catalogue | [etape-02-enrichissement-catalogue.md](rapports/etape-02-enrichissement-catalogue.md) |

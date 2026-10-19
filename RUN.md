@@ -136,6 +136,12 @@ cd services\catalog
 ..\..\.venv\Scripts\python scripts\seed_photos_demo.py
 # Offres de voyage : 27 séjours, ~630 vols sur 28 jours, 35 voitures, 32 transferts + photos (dans Git)
 ..\..\.venv\Scripts\python scripts\seed_offres_voyage_demo.py
+# Tags IA (étape 2) : colonnes + contraintes + trigger (idempotent ; obligatoire sur une base
+# créée avant l'étape 2, sans effet sur une base neuve), puis pré-étiquetage hors-ligne et import
+# des propositions (non validées : la validation se fait dans l'admin, page « Tags IA »)
+..\..\.venv\Scripts\python scripts\add_tags_ia_columns.py
+..\..\.venv\Scripts\python scripts\pre_etiqueter.py
+..\..\.venv\Scripts\python scripts\importer_propositions.py
 cd ..\..
 
 # 5.5 Codes promo de démo

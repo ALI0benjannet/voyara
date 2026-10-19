@@ -403,7 +403,8 @@
       "flights": "Flights",
       "carRentals": "Car rentals",
       "transfers": "Transfers",
-      "moderation": "Moderation"
+      "moderation": "Moderation",
+      "tagsIa": "AI tags"
     },
     "common": {
       "loading": "Loading…",
@@ -729,6 +730,79 @@
         "flights": "Search a flight: number, airline, city, airport…",
         "carRentals": "Search a car: make, model, city, agency…",
         "transfers": "Search a transfer: from, to, vehicle…"
+      }
+    },
+    "tagsIa": {
+      "title": "AI tags for activities",
+      "subtitle": "Review the automatically proposed tags, fix them and validate: the AI engine only relies on validated tags.",
+      "progress": "{{done}} / {{total}} published activities validated",
+      "searchPlaceholder": "Search an activity, a city, a category…",
+      "filterAll": "All states",
+      "filterTodo": "To validate",
+      "filterDone": "Validated",
+      "validated": "Validated",
+      "toValidate": "To validate",
+      "proposedBy": "Proposed by: {{source}}",
+      "noProposal": "No proposal: fill in the tags by hand.",
+      "confidence": "{{level}} confidence",
+      "confidenceLevel": {
+        "haute": "High",
+        "moyenne": "Medium",
+        "faible": "Low"
+      },
+      "reasons": "Why these tags?",
+      "changed": "changed",
+      "edit": "Edit",
+      "validate": "Validate",
+      "saveDraft": "Save without validating",
+      "unvalidate": "Mark as to validate",
+      "cancel": "Cancel",
+      "savedToast": "Tags saved",
+      "validatedToast": "Tags validated",
+      "errorToast": "Could not save",
+      "incomplete": "Choose at least one theme and one audience.",
+      "empty": "No activities.",
+      "corrections": "Human corrections over {{count}} validated activities",
+      "fields": {
+        "themes": "Themes",
+        "public": "Audience",
+        "niveau_marche": "Walking",
+        "interieur": "Setting",
+        "moment_ideal": "Best time"
+      },
+      "theme": {
+        "plage": "Beach",
+        "culture": "Culture",
+        "histoire": "History",
+        "nature": "Nature",
+        "gastronomie": "Food",
+        "aventure": "Adventure",
+        "detente": "Relaxation",
+        "shopping": "Shopping",
+        "nautique": "Water sports",
+        "desert": "Desert"
+      },
+      "public": {
+        "famille": "Family",
+        "couple": "Couple",
+        "solo": "Solo",
+        "groupe": "Group",
+        "enfants": "Children"
+      },
+      "niveau": {
+        "1": "Low",
+        "2": "Medium",
+        "3": "High"
+      },
+      "interieur": {
+        "true": "Indoor",
+        "false": "Outdoor"
+      },
+      "moment": {
+        "matin": "Morning",
+        "apres_midi": "Afternoon",
+        "soir": "Evening",
+        "indifferent": "Any time"
       }
     }
   },

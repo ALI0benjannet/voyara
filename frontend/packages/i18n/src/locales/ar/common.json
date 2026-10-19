@@ -403,7 +403,8 @@
       "flights": "الرحلات الجوية",
       "carRentals": "تأجير السيارات",
       "transfers": "التنقلات",
-      "moderation": "الإشراف"
+      "moderation": "الإشراف",
+      "tagsIa": "وسوم الذكاء الاصطناعي"
     },
     "common": {
       "loading": "جارٍ التحميل…",
@@ -729,6 +730,79 @@
         "flights": "ابحث عن رحلة: الرقم، الشركة، المدينة، المطار…",
         "carRentals": "ابحث عن سيارة: العلامة، الطراز، المدينة، الوكالة…",
         "transfers": "ابحث عن نقل: المغادرة، الوصول، المركبة…"
+      }
+    },
+    "tagsIa": {
+      "title": "وسوم الذكاء الاصطناعي للأنشطة",
+      "subtitle": "راجع الوسوم المقترحة آليًا وصحّحها ثم اعتمدها: لا يعتمد محرك الذكاء الاصطناعي إلا على الوسوم المعتمدة.",
+      "progress": "{{done}} / {{total}} من الأنشطة المنشورة معتمدة",
+      "searchPlaceholder": "ابحث عن نشاط أو مدينة أو فئة…",
+      "filterAll": "كل الحالات",
+      "filterTodo": "بانتظار الاعتماد",
+      "filterDone": "معتمدة",
+      "validated": "معتمدة",
+      "toValidate": "بانتظار الاعتماد",
+      "proposedBy": "اقترحها: {{source}}",
+      "noProposal": "لا يوجد اقتراح: أدخل الوسوم يدويًا.",
+      "confidence": "الثقة: {{level}}",
+      "confidenceLevel": {
+        "haute": "عالية",
+        "moyenne": "متوسطة",
+        "faible": "ضعيفة"
+      },
+      "reasons": "لماذا هذه الوسوم؟",
+      "changed": "معدّل",
+      "edit": "تعديل",
+      "validate": "اعتماد",
+      "saveDraft": "حفظ دون اعتماد",
+      "unvalidate": "إرجاع إلى بانتظار الاعتماد",
+      "cancel": "إلغاء",
+      "savedToast": "تم حفظ الوسوم",
+      "validatedToast": "تم اعتماد الوسوم",
+      "errorToast": "تعذّر الحفظ",
+      "incomplete": "اختر موضوعًا واحدًا وجمهورًا واحدًا على الأقل.",
+      "empty": "لا توجد أنشطة.",
+      "corrections": "التصحيحات البشرية على {{count}} نشاطًا معتمدًا",
+      "fields": {
+        "themes": "المواضيع",
+        "public": "الجمهور",
+        "niveau_marche": "المشي",
+        "interieur": "المكان",
+        "moment_ideal": "الوقت المثالي"
+      },
+      "theme": {
+        "plage": "شاطئ",
+        "culture": "ثقافة",
+        "histoire": "تاريخ",
+        "nature": "طبيعة",
+        "gastronomie": "مأكولات",
+        "aventure": "مغامرة",
+        "detente": "استرخاء",
+        "shopping": "تسوّق",
+        "nautique": "رياضات مائية",
+        "desert": "صحراء"
+      },
+      "public": {
+        "famille": "عائلة",
+        "couple": "زوجان",
+        "solo": "فردي",
+        "groupe": "مجموعة",
+        "enfants": "أطفال"
+      },
+      "niveau": {
+        "1": "خفيف",
+        "2": "متوسط",
+        "3": "مرتفع"
+      },
+      "interieur": {
+        "true": "داخلي",
+        "false": "خارجي"
+      },
+      "moment": {
+        "matin": "صباحًا",
+        "apres_midi": "بعد الظهر",
+        "soir": "مساءً",
+        "indifferent": "أي وقت"
       }
     }
   },

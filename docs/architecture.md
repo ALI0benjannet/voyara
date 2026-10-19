@@ -90,7 +90,7 @@ découpée de bout en bout :
 |---|---|
 | `/api/v1/auth/*`, `/static/*` (avatars — sauf `/static/activities` et `/static/offres`) | auth |
 | `/api/v1/activities*`, `/api/v1/categories*`, `/api/v1/availabilities*`, `/static/activities/*` (photos), `/static/offres/*` (photos des séjours et voitures), `/api/v1/offres/*` (séjours, vols, voitures, transferts — lecture publique) | catalog |
-| `/api/v1/prestataire/*` (espace prestataire, JWT), `/api/v1/moderation/*` (admin) | catalog |
+| `/api/v1/prestataire/*` (espace prestataire, JWT), `/api/v1/moderation/*` (admin), `/api/v1/etiquetage/*` (validation des tags IA, admin) | catalog |
 | `/api/v1/bookings*` | booking |
 | `/api/v1/payments*` | payment |
 | `/api/v1/reviews*`, `/api/v1/favorites*` | review |
@@ -106,7 +106,12 @@ découpée de bout en bout :
 - **catalog** : `GET /activities` (recherche, `category_id`, pagination),
   `GET /activities/{id}`, `GET /activities/{id}/availabilities`, `GET /categories` ;
   **admin (JWT admin)** : CRUD `categories` / `activities` / `availabilities`,
-  `POST|DELETE /activities/{id}/photo` (multipart → `/static/activities/`)
+  `POST|DELETE /activities/{id}/photo` (multipart → `/static/activities/`) ;
+  **tags IA (JWT admin, étape 2)** : `GET /etiquetage/activities` (recherche, catégorie,
+  `tags_valides`), `PUT /etiquetage/activities/{id}` (tags + validation, valeurs contrôlées),
+  `GET /etiquetage/stats` (avancement, part des propositions corrigées) ;
+  **interne** : `GET /internal/activities/export` (paginé ≤ 500, `modifie_depuis`, `statut`,
+  `tags_valides` — toutes les infos utiles au service `ai`)
 - **booking** : `GET /bookings` (mes réservations, titres enrichis),
   `POST /bookings` (`activity_id`, `availability_id`, `guests` 1-8, `promo_code`
   optionnel appliqué au montant), `GET /bookings/{id}`,
