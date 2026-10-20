@@ -789,12 +789,16 @@ def telecharger() -> None:
 
 def ecrire() -> None:
     from app.database import Base, SessionLocal, engine
-    from app.models import CarRental, Flight, Stay, Transfer
+    from app.lieux import completer_lieux
+    from app.models import Aeroport, CarRental, Flight, Stay, Transfer
 
     Base.metadata.create_all(bind=engine)
     db = SessionLocal()
     debut = date.today() + timedelta(days=1)
     try:
+        # Référentiel des aéroports (rempli à la création de la table) : sert à
+        # déduire ville et code aéroport des voitures et transferts (étape 2-bis).
+        aeroports = db.query(Aeroport).all()
         # Séjours : clé = nom ; ne complète que les champs vides.
         crees = completes = 0
         for s in SEJOURS:
@@ -844,7 +848,9 @@ def ecrire() -> None:
                 CarRental.modele == v["modele"],
             ).first()
             if voiture is None:
-                db.add(CarRental(**v, photos=URL_PREFIXE + photo_voiture(cle)))
+                voiture = CarRental(**v, photos=URL_PREFIXE + photo_voiture(cle))
+                completer_lieux(voiture, aeroports)
+                db.add(voiture)
                 crees += 1
             elif not voiture.photos:
                 voiture.photos = URL_PREFIXE + photo_voiture(cle)
@@ -857,7 +863,9 @@ def ecrire() -> None:
                 Transfer.depart == t["depart"], Transfer.arrivee == t["arrivee"],
                 Transfer.type_vehicule == t["type_vehicule"],
             ).first() is None:
-                db.add(Transfer(**t))
+                transfert = Transfer(**t)
+                completer_lieux(transfert, aeroports)
+                db.add(transfert)
                 crees += 1
         print(f"Transferts : {crees} créé(s).")
 

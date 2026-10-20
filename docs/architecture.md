@@ -71,18 +71,41 @@ découpée de bout en bout :
  └────────────────────┘
 ```
 
+### Flux du moteur IA (v2 — étape 2-bis)
+
+```text
+                          gateway :8000  (/api/ai -> ai à l'étape 3 ; /internal bloqué)
+                                 │
+                                 ▼
+ ┌──────────────────────── AI :8008 (base voyara_ai, conteneur postgres-ai :5435) ─────────────┐
+ │  index sémantique (pgvector, étape 5)          recherche structurée transport (étape 5)    │
+ │  activités · hébergements · POI                vols · voitures · transferts : AUCUN index   │
+ │  synchronisés par modifie_depuis               interrogés en direct à chaque demande        │
+ └───────┬───────────────────────────────────────────────────┬─────────────────────────────────┘
+         │ HTTP + X-Internal-Api-Key (ServiceClient)          │ HTTP + X-Internal-Api-Key
+         ▼                                                    ▼
+ catalog /internal/activities/export                catalog /internal/flights/search
+ catalog /internal/stays/export                     catalog /internal/car-rentals/search
+ review, booking /internal/* (étape 6)              catalog /internal/transfers/search
+                                                    catalog /internal/airports
+ collecte web : OSM Overpass (POI + aéroports), Open-Meteo        → l'agent PROPOSE, avec un lien
+                                                                    vers la page du site ; il ne
+                                                                    réserve ni ne paie jamais
+```
+
 ## 3. Les microservices
 
 | Service | Port | Base de données | Responsabilité |
 |---|---|---|---|
 | **gateway** | 8000 | — | Point d'entrée unique, routage par préfixe, CORS, blocage `/internal`, `/health` agrégé |
 | **auth** | 8001 | `voyara` (historique + Alembic) | Comptes, JWT, refresh tokens rotatifs, vérification e-mail, reset mot de passe, profil, avatars (`/static`) |
-| **catalog** | 8002 | `voyara_catalog` | Activités, catégories, disponibilités — réservation/libération **atomique** des places (`reserve`/`release`) |
+| **catalog** | 8002 | `voyara_catalog` | Activités, catégories, disponibilités — réservation/libération **atomique** des places (`reserve`/`release`) ; offres de voyage (séjours, vols, voitures, transferts) + référentiel `aeroports` ; export et recherche internes pour le moteur IA |
 | **booking** | 8003 | `voyara_booking` | Réservations **multi-voyageurs** (`nb_places`), annulation, codes promo (modèle) — saga avec le catalogue |
 | **payment** | 8004 | `voyara_payment` | Tunnel de paiement : `create-intent`, webhook Stripe signé + idempotent, **mode simulation** sans clés (démo) |
 | **review** | 8005 | `voyara_review` | Avis (par activité) et favoris (par utilisateur) |
 | **notification** | 8006 | — | E-mails SMTP via fastapi-mail + templates Jinja2 — **interne uniquement** |
 | **admin** | 8007 | — | BFF de l'espace admin : agrège stats et listes depuis auth/catalog/booking/payment |
+| **ai** *(partiel — ADR-007)* | 8008 | `voyara_ai` (conteneur `postgres-ai`, pgvector, :5435) | Moteur IA : POI (dont aéroports) et météo aujourd'hui ; scaffold FastAPI à l'étape 3. Lit catalog **en direct** pour le transport |
 
 ### Table de routage du gateway
 
@@ -111,7 +134,16 @@ découpée de bout en bout :
   `tags_valides`), `PUT /etiquetage/activities/{id}` (tags + validation, valeurs contrôlées),
   `GET /etiquetage/stats` (avancement, part des propositions corrigées) ;
   **interne** : `GET /internal/activities/export` (paginé ≤ 500, `modifie_depuis`, `statut`,
-  `tags_valides` — toutes les infos utiles au service `ai`)
+  `tags_valides` — toutes les infos utiles au service `ai`) ;
+  **interne, étape 2-bis (moteur IA)** : `GET /internal/stays/export` (paginé ≤ 500,
+  `modifie_depuis`, `actif`), `GET /internal/flights/search` (`origine`, `destination` en IATA ou
+  ville, `date` ± `tolerance_jours` ≤ 3, `nb_passagers`, `classe`, `escales_max` 0|1, `tri` →
+  directs + correspondances, prix par passager et total, durée réelle par fuseau),
+  `GET /internal/car-rentals/search` (`lieu_prise`, `lieu_retour`, `prise_le`, `retour_le`,
+  `nb_places`, `transmission`, `categorie` → prix par jour et total),
+  `GET /internal/transfers/search` (`depart`, `arrivee`, `date_heure`, `nb_passagers`, `bagages`
+  → prix et durée), `GET /internal/airports` (référentiel). Réponses paginées, prix en DT,
+  dates ISO 8601, aucun champ personnel
 - **booking** : `GET /bookings` (mes réservations, titres enrichis),
   `POST /bookings` (`activity_id`, `availability_id`, `guests` 1-8, `promo_code`
   optionnel appliqué au montant), `GET /bookings/{id}`,
@@ -175,7 +207,9 @@ sequenceDiagram
 - Les endpoints `/internal/*` sont protégés par le header `X-Internal-Api-Key`
   (clé partagée `INTERNAL_API_KEY`) et **jamais routés par le gateway**.
 - Endpoints internes types : `/internal/stats/*`, `/internal/*/batch?ids=`,
-  `/internal/availabilities/{id}/reserve|release?seats=`.
+  `/internal/availabilities/{id}/reserve|release?seats=`, `/internal/*/export?modifie_depuis=`
+  (synchronisation incrémentale du moteur IA), `/internal/{flights,car-rentals,transfers}/search`
+  (recherche structurée en direct du transport, étape 2-bis).
 - Limites (pas de timeout/retry systématiques) : voir [§12](#12-limites-connues-risques--améliorations-ciblées).
 
 ### 4.4 API Composition — admin-service (BFF)
@@ -431,6 +465,7 @@ Les améliorations `planifié` sont des tâches du [plan.md](plan.md) (jalon ind
 | 9 | **Notifications best-effort** : si notification-service est down, l'e-mail est perdu | Un utilisateur peut ne jamais recevoir son e-mail de vérification | Assumé (bouton « renvoyer l'e-mail » déjà en place = filet de sécurité) ; évolution : file de messages persistée | 📋 perspective |
 | 10 | **Annulation d'une réservation payée** : aucun flux de remboursement | Après la Phase 8, annuler une réservation `confirmed` poserait la question du remboursement | Décision de cadrage : l'annulation en ligne n'est permise que sur les réservations `pending` ; le remboursement Stripe est une perspective | 🔜 à trancher (Phase 8) |
 | 11 | **Webhook Stripe à venir** : risques de faux événements et de doublons | Confirmation frauduleuse ou double confirmation d'une réservation | Prévu dès la conception (plan.md Phase 8) : vérification de signature Stripe + idempotence sur `event.id` ; route publique dédiée sans JWT | 🔜 planifié (J2) |
+| 13 | **`localhost` sous Windows** : les URL inter-services (`*_SERVICE_URL=http://localhost:800X`) résolvent d'abord `::1` (IPv6) alors que les services n'écoutent que sur `127.0.0.1` | Mesuré le 20/10/2026 : **~2 100 ms** par appel via `localhost` contre **24 ms** (p50) via `127.0.0.1` — pénalise chaque appel du gateway et, demain, chaque outil de l'agent IA | Utiliser `127.0.0.1` dans les `.env` de dev (et pour le client catalog du service ai, étape 3) ; en Docker, les noms de service ne sont pas concernés | 🔜 à faire (étape 3) |
 | 12 | **Données personnelles (RGPD)** : e-mails, réservations, avatars répartis sur plusieurs bases | Le rapport doit adresser le sujet | ✅ Fait : `DELETE /auth/me` (anonymisation + révocation des sessions) + page `/privacy` ; reste la section dédiée dans le rapport | ✅ implémenté (reste : rapport) |
 
 ## 13. Décisions d'architecture (ADR)
@@ -604,6 +639,44 @@ lui-même arrive à l'étape 3 de la phase « Moteur IA » ([plan.md](plan.md)).
     `ANTHROPIC_API_KEY` = nouveau secret à protéger et budget API à plafonner ; latence des appels
     synchrones vers 3 services → timeouts et dégradation propre obligatoires (cf. §12 n° 1) ; Ollama
     demande une machine avec assez de RAM pour le modèle choisi.
+
+#### Avenant v2 à l'ADR-007 — transport intégré (20/10/2026, étape 2-bis)
+
+> Source : [guide moteur IA v2](../AgentIA_Voyara/Guide_Moteur_IA_Voyara.pdf) ·
+> rapport : [etape-02bis-transport-catalogue.md](ia/rapports/etape-02bis-transport-catalogue.md).
+
+- **Contexte** : la v1 ne branchait le moteur que sur les activités, les hébergements, les POI et
+  la météo ; vols, voitures et transferts du catalogue étaient ignorés et les déplacements estimés
+  au kilomètre. Un itinéraire « réalisable » commence pourtant à l'arrivée du vol et finit au départ.
+- **Décision** :
+  - le moteur IA couvre **activités, hébergements, POI, météo ET vols, voitures de location,
+    transferts** ;
+  - le **transport passe par une recherche structurée en direct** via catalog
+    (`/internal/flights/search`, `/internal/car-rentals/search`, `/internal/transfers/search`),
+    **sans index vectoriel** : places, prix et horaires changent souvent et se cherchent par
+    critères exacts (origine, destination, date, passagers). La source de vérité reste catalog,
+    interrogée au moment de la demande ;
+  - seuls les **hébergements** rejoignent l'index sémantique de l'étape 5, via
+    `/internal/stays/export` (même contrat que l'export d'activités) ;
+  - catalog gagne le référentiel **`aeroports`** (code IATA, ville, pays, fuseau) et des colonnes
+    de lieu sur les voitures et les transferts ; le service ai localise les aéroports par des POI
+    OSM de type `aeroport` (rapprochement logique par code IATA, jamais par jointure SQL) ;
+  - **l'agent ne réserve jamais** : il propose des vols, voitures et transferts avec un lien vers la
+    page du site ; réservation et paiement restent dans booking + payment.
+- **Alternatives écartées** :
+  - *Indexer le transport dans pgvector* — un embedding ne sait ni filtrer « ≥ 2 places le 24/10 »
+    ni rester à jour : les résultats seraient périmés (vol devenu complet, prix changé) et
+    invérifiables, exactement l'hallucination que le principe directeur veut éviter. Il faudrait en
+    plus réindexer à chaque vente. La similarité n'apporte rien sur des critères exacts.
+  - *Appeler directement des API de compagnies externes* (Amadeus, Skyscanner, loueurs) — clés et
+    quotas payants, CGU restrictives, données hors catalogue donc **non réservables sur Voyara**
+    (le bouton « Réserver » mènerait ailleurs), et une dépendance externe de plus pendant la démo.
+    Le catalogue reste le seul fournisseur ; brancher un agrégateur est une perspective, côté catalog.
+- **Conséquences** : + chiffres de transport exacts et vérifiables ; + aucun pipeline de
+  synchronisation pour des données volatiles ; − le service ai dépend de catalog en temps réel pour
+  le transport (timeouts, cache court de 5 min et dégradation propre à l'étape 5) ; − les
+  correspondances sont calculées à la volée (≤ 1 escale), et le catalogue n'a ni stock de voitures
+  par date ni horaires de transferts (limites listées dans le rapport de l'étape 2-bis).
 
 ## 14. Feuille de route technique
 

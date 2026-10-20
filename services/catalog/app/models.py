@@ -26,6 +26,7 @@ from sqlalchemy.dialects.postgresql import JSONB
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 
 from app.database import Base
+from app.lieux import AEROPORTS_REFERENCE
 from app.tags_ia import MOMENTS, PUBLICS, THEMES
 
 
@@ -133,24 +134,32 @@ class Activity(Base):
     availabilities = relationship("Availability", back_populates="activity")
 
 
-# Trigger `modifie_le` : partagé entre `create_all` (base neuve) et le script
-# de migration scripts/add_tags_ia_columns.py (base existante).
-DDL_TRIGGER_MODIFIE_LE = (
-    """
+# Trigger `modifie_le` : partagé entre `create_all` (base neuve) et les scripts
+# de migration (base existante) : add_tags_ia_columns.py (activités, étape 2) et
+# add_transport_ia.py (séjours, étape 2-bis). Même fonction pour les deux tables.
+_DDL_FONCTION_MODIFIE_LE = """
     CREATE OR REPLACE FUNCTION catalog_maj_modifie_le() RETURNS trigger AS $$
     BEGIN
         NEW.modifie_le := now();
         RETURN NEW;
     END;
     $$ LANGUAGE plpgsql
-    """,
-    "DROP TRIGGER IF EXISTS trg_activities_modifie_le ON activities",
     """
-    CREATE TRIGGER trg_activities_modifie_le
-    BEFORE UPDATE ON activities
+
+
+def ddl_trigger_modifie_le(table: str) -> tuple[str, ...]:
+    return (
+        _DDL_FONCTION_MODIFIE_LE,
+        f"DROP TRIGGER IF EXISTS trg_{table}_modifie_le ON {table}",
+        f"""
+    CREATE TRIGGER trg_{table}_modifie_le
+    BEFORE UPDATE ON {table}
     FOR EACH ROW EXECUTE FUNCTION catalog_maj_modifie_le()
     """,
-)
+    )
+
+
+DDL_TRIGGER_MODIFIE_LE = ddl_trigger_modifie_le("activities")
 
 for _instruction in DDL_TRIGGER_MODIFIE_LE:
     event.listen(Activity.__table__, "after_create", DDL(_instruction))
@@ -176,9 +185,34 @@ class Availability(Base):
 
 # ---------------------------------------------------------------------------
 # Offres de voyage (onglets Séjours, Vols, Voitures de location, Transferts).
-# Tables posées en avance : pas encore d'API ni de réservation branchée.
-# Créées au démarrage par `create_all` (AUTO_CREATE_TABLES) comme les autres.
+# Lecture publique (offres_routes), CRUD admin (travel_routes), recherche
+# interne pour le moteur IA (internal_offres_routes) ; pas encore de réservation.
+# Créées au démarrage par `create_all` (AUTO_CREATE_TABLES) comme les autres ;
+# base existante : scripts/add_transport_ia.py (étape 2-bis).
 # ---------------------------------------------------------------------------
+
+
+class Aeroport(Base):
+    """Référentiel des aéroports (étape 2-bis) : relie vols, voitures et transferts.
+
+    Pas de coordonnées ici : la position vient d'OpenStreetMap (POI « aeroport » du
+    service ai). Pas de clé étrangère depuis `flights` : un code saisi par l'admin
+    et absent du référentiel reste accepté (sa durée de vol est alors inconnue)."""
+
+    __tablename__ = "aeroports"
+
+    code_iata: Mapped[str] = mapped_column(String(3), primary_key=True)
+    nom: Mapped[str] = mapped_column(String(100))
+    ville: Mapped[str] = mapped_column(String(100), index=True)  # ville desservie
+    pays: Mapped[str] = mapped_column(String(2))  # ISO 3166-1 alpha-2
+    # Fuseau IANA : les horaires de `flights` sont en heure locale de l'aéroport ;
+    # sans fuseau, la durée Paris -> Tunis serait fausse d'une heure en été.
+    fuseau: Mapped[str] = mapped_column(String(50))
+
+
+@event.listens_for(Aeroport.__table__, "after_create")
+def _remplir_aeroports(table, connection, **_):
+    connection.execute(table.insert(), list(AEROPORTS_REFERENCE))
 
 
 class Stay(Base):
@@ -203,6 +237,15 @@ class Stay(Base):
     equipements: Mapped[str | None] = mapped_column(Text, nullable=True)  # « wifi,piscine,… »
     photos: Mapped[str | None] = mapped_column(Text, nullable=True)
     actif: Mapped[bool] = mapped_column(Boolean, default=True, server_default="true")
+    # Étape 2-bis : synchronisation incrémentale de l'index sémantique (service ai),
+    # tenue par le trigger `trg_stays_modifie_le` comme pour les activités.
+    modifie_le: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now(), nullable=False, index=True
+    )
+
+
+for _instruction in ddl_trigger_modifie_le("stays"):
+    event.listen(Stay.__table__, "after_create", DDL(_instruction))
 
 
 class Flight(Base):
@@ -240,6 +283,10 @@ class CarRental(Base):
     nb_places: Mapped[int] = mapped_column(Integer)
     agence: Mapped[str] = mapped_column(String(150))
     localisation: Mapped[str] = mapped_column(String(255))  # lieu de prise en charge
+    # Étape 2-bis — déduits de `localisation` (app/lieux.py) s'ils ne sont pas saisis :
+    # « Tunis, aéroport Tunis-Carthage » -> ville « Tunis », aeroport « TUN ».
+    ville: Mapped[str | None] = mapped_column(String(100), nullable=True, index=True)
+    aeroport: Mapped[str | None] = mapped_column(String(3), nullable=True)  # code IATA
     prix_jour: Mapped[float] = mapped_column(Float)
     photos: Mapped[str | None] = mapped_column(Text, nullable=True)
     disponible: Mapped[bool] = mapped_column(Boolean, default=True, server_default="true")
@@ -253,6 +300,11 @@ class Transfer(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     depart: Mapped[str] = mapped_column(String(255))  # ex. « Aéroport Tunis-Carthage »
     arrivee: Mapped[str] = mapped_column(String(255))
+    # Étape 2-bis — déduits de `depart` / `arrivee` (app/lieux.py) s'ils ne sont pas saisis.
+    ville_depart: Mapped[str | None] = mapped_column(String(100), nullable=True, index=True)
+    ville_arrivee: Mapped[str | None] = mapped_column(String(100), nullable=True, index=True)
+    aeroport_depart: Mapped[str | None] = mapped_column(String(3), nullable=True)  # code IATA
+    aeroport_arrivee: Mapped[str | None] = mapped_column(String(3), nullable=True)
     type_vehicule: Mapped[str] = mapped_column(String(50))  # taxi | grand_taxi | berline | van | minibus
     capacite: Mapped[int] = mapped_column(Integer)  # passagers max
     bagages: Mapped[int] = mapped_column(Integer, default=0)

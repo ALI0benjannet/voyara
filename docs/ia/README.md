@@ -2,7 +2,8 @@
 
 > Projet IA & Cognition — 5DS Data Science (ESPRIM) · équipe TravelMinds.
 > Sources : [présentation](../../AgentIA_Voyara/PresProjCom.pdf) ·
-> [guide de réalisation](../../AgentIA_Voyara/Guide_Moteur_IA_Voyara.html) ·
+> [guide de réalisation v2 — transport intégré](../../AgentIA_Voyara/Guide_Moteur_IA_Voyara.pdf)
+> (la [version HTML](../../AgentIA_Voyara/Guide_Moteur_IA_Voyara.html) est la v1) ·
 > décision d'architecture : [ADR-007](../architecture.md#adr-007--microservice-ai-dédié-pgvector-et-llm-hybride) ·
 > avancement : [plan.md — Phase Moteur IA](../plan.md#-phase-moteur-ia--projet-ia--cognition-5ds) ·
 > historique : [journal.md](journal.md)
@@ -14,6 +15,8 @@ naturellement en un itinéraire **personnalisé, cohérent et adaptable** ?
 
 > « Je vais à Djerba pendant 3 jours. J'ai 300 DT. Je voyage avec ma famille.
 > Je veux découvrir la culture et profiter de la plage. »
+>
+> « On part de Tunis en avion, 4 jours à Djerba, 1200 DT à deux, avec une voiture. » *(v2)*
 
 Aujourd'hui le voyageur cherche les activités, compare les prix, vérifie les distances, organise
 les horaires et construit lui-même son itinéraire. Le moteur IA ajoute **une couche d'intelligence**
@@ -25,79 +28,91 @@ intention de voyage en plan d'action réservable.
 | Rôle | Qui le tient |
 |---|---|
 | Comprendre la demande, expliquer les choix | **LLM** (Claude API, Ollama en secours) |
-| Faits (prix, horaires, places, coordonnées) | **Bases de données** (catalog, review, booking, `voyara_ai`) |
+| Faits (prix, horaires, places, coordonnées — y compris des vols) | **Bases de données** (catalog, review, booking, `voyara_ai`) |
 | Classement des expériences | **Score mesurable** et explicable (module 3) |
 | Planning jour par jour, budget | **Solveur d'optimisation** (OR-Tools CP-SAT, glouton en secours) |
 
 L'agent **propose** ; il ne réserve et ne paie jamais seul (le bouton « Réserver » renvoie vers le
 tunnel existant booking + Stripe).
 
-## 2. Les 6 modules
+## 2. Les 6 modules (v2 — transport intégré)
+
+Depuis le [guide v2](../../AgentIA_Voyara/Guide_Moteur_IA_Voyara.pdf) (étape 2-bis), le moteur couvre
+aussi les **vols, voitures de location et transferts** du catalogue. Règle : le transport **n'est
+jamais vectorisé** ; il est cherché par critères exacts, en direct, dans catalog
+([avenant à l'ADR-007](../architecture.md#avenant-v2-à-ladr-007--transport-intégré-20102026-étape-2-bis)).
 
 ```text
-                     « 3 jours à Djerba, 300 DT, famille, culture + plage »
+          « On part de Tunis en avion, 4 jours à Djerba, 1200 DT à deux, avec une voiture »
                                             │
                                             ▼
- ┌────────────────────────────────────────────────────────────────────────────────┐
- │ MODULE 6 — AGENT INTELLIGENT (étape 8)                                         │
- │ boucle LLM à outils · état de conversation persistant · planifier / modifier / │
- │ justifier · garde-fous (max itérations, budget tokens, aucune action payante)  │
- │                                                                                │
- │  ┌──────────────┐  ┌──────────────────┐  ┌──────────────┐  ┌────────────────┐  │
- │  │ MODULE 1     │  │ MODULE 2         │  │ MODULE 3     │  │ MODULES 4 & 5  │  │
- │  │ Compréhension│─▶│ Recherche &      │─▶│ Recommandation─▶│ Itinéraire +   │  │
- │  │ (NLU)        │  │ collecte (RAG)   │  │ Top-5        │  │ budget/optim.  │  │
- │  │ étape 4      │  │ étapes 1, 2, 5   │  │ étape 6      │  │ étape 7        │  │
- │  │ texte →      │  │ BM25 + embeddings│  │ score pondéré│  │ CP-SAT sous    │  │
- │  │ DemandeVoyage│  │ fusion RRF,      │  │ explicable + │  │ contraintes :  │  │
- │  │ + question si│  │ filtres durs     │  │ diversité MMR│  │ budget, temps, │  │
- │  │ info manquante│ │ (ville, rayon,   │  │ + raisons    │  │ distances,     │  │
- │  └──────────────┘  │ prix)            │  └──────────────┘  │ horaires, météo│  │
- │                    └────────┬─────────┘                    └────────────────┘  │
- └─────────────────────────────┼──────────────────────────────────────────────────┘
-                               │ lit (jamais de jointure SQL)
-        ┌──────────────────────┼─────────────────────────────┬─────────────────────┐
-        ▼                      ▼                             ▼                     ▼
-  catalog /internal/*    review /internal/*          booking /internal/*    collecte web
-  activités, tags IA,    notes, favoris              historique,            automatisée :
-  hébergements, créneaux                             popularité             OSM (POI) +
-                                                                            Open-Meteo
+ ┌────────────────────────────────────────────────────────────────────────────────────────┐
+ │ MODULE 6 — AGENT INTELLIGENT (étape 8)                                                 │
+ │ boucle LLM à outils : analyser_demande, rechercher, rechercher_transport, recommander, │
+ │ construire_itineraire, modifier_itineraire, justifier_choix, meteo,                    │
+ │ proposer_reservation (activité, hébergement, vol, voiture, transfert → lien du site)   │
+ │ garde-fous : max itérations, budget tokens, aucune action payante, aucun passeport     │
+ │                                                                                        │
+ │ ┌───────────────┐  ┌────────────────────┐  ┌───────────────┐  ┌──────────────────────┐ │
+ │ │ MODULE 1      │  │ MODULE 2           │  │ MODULE 3      │  │ MODULES 4 & 5        │ │
+ │ │ Compréhension │─▶│ Recherche &        │─▶│ Recommandation│─▶│ Itinéraire + budget  │ │
+ │ │ étape 4       │  │ collecte           │  │ étape 6       │  │ étape 7              │ │
+ │ │ DemandeVoyage │  │ étapes 1, 2, 2-bis,│  │ Top-5 score   │  │ CP-SAT : jour        │ │
+ │ │ + ville_depart│  │ 5                  │  │ explicable +  │  │ d'arrivée / départ,  │ │
+ │ │ + besoins     │  │ sémantique (RAG) : │  │ MMR           │  │ transferts, voiture  │ │
+ │ │   transport   │  │ activités, héberg.,│  │ + Top-3       │  │ OU transferts ;      │ │
+ │ │ (vol, voiture,│  │ POI                │  │   transport   │  │ budget : vols,       │ │
+ │ │ transfert)    │  │ + STRUCTURÉE       │  │ par type (prix│  │ transferts, voiture, │ │
+ │ │ question si   │  │   transport : vols,│  │ durée,escales,│  │ hébergement, repas,  │ │
+ │ │ départ/date   │  │   voitures,        │  │ horaires,     │  │ activités,           │ │
+ │ │ manquant      │  │   transferts       │  │ capacité)     │  │ déplacements         │ │
+ │ └───────────────┘  └─────────┬──────────┘  └───────────────┘  └──────────────────────┘ │
+ └──────────────────────────────┼─────────────────────────────────────────────────────────┘
+                                │ lit via /internal/* (jamais de jointure SQL)
+     ┌───────────────────────┬──┴──────────────────────┬──────────────────┬─────────────────┐
+     ▼                       ▼                         ▼                  ▼                 ▼
+ catalog : export       catalog : recherche       review /internal  booking /internal  collecte web :
+ activités + tags,      EN DIRECT vols, voitures, notes, favoris    historique,        OSM (POI +
+ hébergements           transferts, aéroports     (étape 6)         popularité         aéroports),
+ (→ index pgvector)     (aucun index)                                                  Open-Meteo
                                             │
                                             ▼
-          Itinéraire jour par jour (matin · midi · après-midi · soir) + ventilation du budget
-          (hébergement / restaurants / activités / déplacements) + carte + bouton Réserver
+   Itinéraire jour par jour, du vol aller au vol retour (arrivée · transfert · activités · repas ·
+   départ) + ventilation du budget + carte (aéroport, trajets) + bouton Réserver vers le site
 ```
 
-| Module (présentation) | Ce qu'il fait | Étapes du guide |
-|---|---|---|
-| 1 · Compréhension du besoin | Extrait destination, durée, budget, type de voyage, préférences, contraintes ; pose une question au lieu d'inventer | 4 |
-| 2 · Recherche & collecte | Collecte POI + météo, enrichit le catalogue, recherche hybride sémantique + lexicale | 1, 2, 5 |
-| 3 · Recommandation personnalisée | Passe de ~50 candidats aux 5 meilleurs, avec raisons lisibles | 6 |
-| 4 · Construction de l'itinéraire | Planning cohérent jour par jour | 7 |
-| 5 · Budget & optimisation | Respect du budget total, du temps, des distances, des horaires | 7 |
-| 6 · Agent intelligent / adaptation | Orchestre les modules, modifie et justifie en conversation | 8 |
+| Module (présentation) | Ce qu'il fait | Place du transport (v2) | Étapes du guide |
+|---|---|---|---|
+| 1 · Compréhension du besoin | Extrait destination, durée, budget, type de voyage, préférences, contraintes ; pose une question au lieu d'inventer | `ville_depart`, `besoins_transport` (vol, voiture, transfert : oui / non / indifférent), `preferences_transport` (vol direct, boîte auto, priorité prix ou confort), `budget_inclut_transport` ; question si un vol est demandé sans ville de départ ou sans date | 4 |
+| 2 · Recherche & collecte | Collecte POI + météo, enrichit le catalogue, recherche hybride sémantique + lexicale | **Recherche structurée** en direct via catalog (`/internal/{flights,car-rentals,transfers}/search`) ; hébergements ajoutés à l'index via `/internal/stays/export` ; aéroports localisés (POI `aeroport`) | 1, 2, **2-bis**, 5 |
+| 3 · Recommandation personnalisée | Passe de ~50 candidats aux 5 meilleurs, avec raisons lisibles | **Top-3 transport** par type demandé : prix vs budget, durée, escales, compatibilité horaire, capacité / bagages, préférences | 6 |
+| 4 · Construction de l'itinéraire | Planning cohérent jour par jour | Jours d'**arrivée et de départ** (aucune activité avant l'atterrissage ni après le décollage), **transferts** aéroport ↔ hébergement, choix voiture ou transferts | 7 |
+| 5 · Budget & optimisation | Respect du budget total, du temps, des distances, des horaires | **Nouveaux postes** : vols, transferts, location de voiture (en plus d'hébergement, repas, activités, déplacements) | 7 |
+| 6 · Agent intelligent / adaptation | Orchestre les modules, modifie et justifie en conversation | **Nouveaux outils** : `rechercher_transport`, `proposer_reservation` étendu (vol, voiture, transfert) ; « pourquoi ce vol ? », « finalement pas de voiture » | 8 |
 
 **Collecte de données web.** La présentation mentionne un « web scraper » pour les données
 touristiques. Il est remplacé par une **collecte automatisée de données web** à partir de sources
 ouvertes : **OpenStreetMap** (API Overpass, licence ODbL — restaurants, plages, musées, monuments,
-souks) et **Open-Meteo** (météo, sans clé). Raison : le scraping de sites commerciaux
+souks, aéroports) et **Open-Meteo** (météo, sans clé). Raison : le scraping de sites commerciaux
 (TripAdvisor, Google) viole leurs CGU et leurs licences, et casse à chaque changement de page ;
 les API ouvertes sont légales, reproductibles et défendables devant un jury. Le module 2 de la
-présentation reste donc entièrement couvert.
+présentation reste donc entièrement couvert. Pour le transport, la source est le **catalogue
+Voyara** lui-même (pas d'API de compagnies externes : voir l'avenant à l'ADR-007).
 
-## 3. Les 3 scénarios de démonstration
+## 3. Les 4 scénarios de démonstration
 
 | # | Le voyageur dit | Le moteur fait |
 |---|---|---|
 | 1 · Planifier | « 3 jours à Djerba, 300 DT, famille, culture + plage » | comprend → recherche → vérifie → construit l'itinéraire et le budget |
 | 2 · Modifier | « Je préfère moins marcher » | baisse `niveau_marche_max`, remplace les activités concernées, recalcule distances et planning, liste les changements |
 | 3 · Justifier | « Pourquoi le village de Guellala ? » | répond à partir des composantes réelles du score (budget respecté, distance à l'activité précédente, thème) |
+| 4 · Transport *(v2)* | « On part de Tunis en avion, 4 jours à Djerba, 1200 DT à deux, avec une voiture » | cherche les vols Tunis → Djerba et retour, la voiture à l'aéroport, construit l'itinéraire entre l'atterrissage et le décollage, ventile vols + voiture dans le budget, justifie « pourquoi ce vol ? » ; propose les liens de réservation sans réserver |
 
 ## 4. Périmètre et perspectives
 
 **MVP (présentation, diapo 15)** : saisie de la demande, recherche d'activités, recommandations,
 itinéraire personnalisé, gestion du budget, modification de l'itinéraire — couverts par les
-étapes 1 à 9.
+étapes 1 à 9 ; le guide v2 y ajoute le **transport** (étapes 2-bis et 4 à 9).
 
 **Perspectives (hors périmètre de la phase IA)** : interface Prestataires (gestion des offres par
 les partenaires), application mobile, interaction vocale, extension multi-destinations, agent plus
@@ -165,3 +180,4 @@ de PFE (étape 13).
 | 1 · Offres de voyage et nouvelles catégories (sous-tâche) | [etape-01-offres-voyage.md](rapports/etape-01-offres-voyage.md) |
 | 1 · POI, météo et EDA (clôture de l'étape) | [etape-01-poi-meteo.md](rapports/etape-01-poi-meteo.md) |
 | 2 · Enrichissement sémantique du catalogue | [etape-02-enrichissement-catalogue.md](rapports/etape-02-enrichissement-catalogue.md) |
+| 2-bis · Hébergements et offres de transport pour l'IA | [etape-02bis-transport-catalogue.md](rapports/etape-02bis-transport-catalogue.md) |

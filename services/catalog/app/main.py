@@ -13,6 +13,7 @@ from app.database import Base, engine
 from app.etiquetage_routes import etiquetage_router
 from app.offres_routes import offres_router
 from app.provider_routes import moderation_router, provider_router
+from app.internal_offres_routes import internal_offres_router
 from app.routers import internal_router, public_router
 from app.travel_routes import travel_router
 
@@ -56,3 +57,4 @@ app.include_router(provider_router, prefix=settings.API_V1_PREFIX)
 app.include_router(moderation_router, prefix=settings.API_V1_PREFIX)
 app.include_router(etiquetage_router, prefix=settings.API_V1_PREFIX)
 app.include_router(internal_router)
+app.include_router(internal_offres_router)

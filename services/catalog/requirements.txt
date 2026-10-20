@@ -9,3 +9,5 @@ passlib==1.7.4
 httpx==0.28.1
 python-multipart==0.0.32
 python-dotenv==1.2.2
+# zoneinfo : base des fuseaux horaires (absente de Windows) — recherche de vols
+tzdata==2026.5

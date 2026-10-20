@@ -13,7 +13,9 @@ from sqlalchemy.orm import Mapped, mapped_column
 
 from app.database import Base
 
-TYPES_POI = ("restaurant", "plage", "musee", "monument", "souk", "parc", "cafe")
+# `aeroport` ajouté à l'étape 2-bis : position des aéroports pour les transferts et
+# l'heure d'arrivée (le code IATA reste dans `tags["iata"]`, clé du référentiel catalog).
+TYPES_POI = ("restaurant", "plage", "musee", "monument", "souk", "parc", "cafe", "aeroport")
 
 
 class Poi(Base):

@@ -396,10 +396,11 @@ Les tâches jugées **surdimensionnées pour un PFE solo** ont été déplacées
 >
 > Décision d'architecture : [ADR-007](architecture.md#adr-007--microservice-ai-dédié-pgvector-et-llm-hybride) ·
 > vision, modules, modèle de rapport : [docs/ia/README.md](ia/README.md) · historique : [docs/ia/journal.md](ia/journal.md) ·
-> source des étapes : [Guide_Moteur_IA_Voyara.html](../AgentIA_Voyara/Guide_Moteur_IA_Voyara.html) +
+> source des étapes : [Guide_Moteur_IA_Voyara.pdf](../AgentIA_Voyara/Guide_Moteur_IA_Voyara.pdf)
+> (**v2, transport intégré** : vols, voitures, transferts ; nouvelle étape 2-bis) +
 > [PresProjCom.pdf](../AgentIA_Voyara/PresProjCom.pdf).
 > Chaque étape = une branche `ia/etape-NN` + un rapport dans `docs/ia/rapports/`.
-> MVP de la présentation : étapes 0 à 9 (+ la version réduite de l'étape 11).
+> MVP de la présentation : étapes 0, 1, 2, 2-bis, 3 à 9 (+ la version réduite de l'étape 11).
 
 - [x]  **0 — Cadrage, conventions et architecture cible** (CLAUDE.md, docs/ia/, ADR-007, cette phase) `S · must` — [rapport](ia/rapports/etape-00-cadrage.md)
 - [x]  **1 — Données : points d'intérêt, météo et catalogue de démo** (module 2) — table `pois` dans `voyara_ai`, collecte automatisée de données web OSM/Overpass (≥ 300 POI, ≥ 5 villes) + Open-Meteo avec cache, notebook d'EDA `L · must` — **1 030 POI sur 8 villes**, météo des 8 villes (cache 6 h), conteneur dédié `postgres-ai` (5435), `notebooks/01_eda_donnees.ipynb` + 7 figures, 55 tests — [rapport](ia/rapports/etape-01-poi-meteo.md)
@@ -409,20 +410,23 @@ Les tâches jugées **surdimensionnées pour un PFE solo** ont été déplacées
 - [x]  **2 — Enrichissement sémantique du catalogue** (modules 2 & 3) — attributs IA dans catalog (thèmes, public, `niveau_marche`, intérieur, moment idéal), `/internal/activities/export`, pré-étiquetage LLM + validation admin `M · must` — 8 colonnes + 5 contraintes CHECK (migration idempotente), export paginé avec `modifie_depuis`, pré-étiquetage par règles hors-ligne (Claude / Ollama prêts), page admin « Tags IA » fr/en/ar, 51 tests — [rapport](ia/rapports/etape-02-enrichissement-catalogue.md)
     - [ ]  **Validation humaine des tags** dans l'admin (critère de « fini » du guide : 100 % des activités actives validées) — 0 / 117 au 19/10/2026 `S · must`
     - [ ]  Supprimer ou dépublier les 2 activités de test publiées (« claude » n° 10, « Chien a verdure » n° 97) `S · must`
-- [ ]  **3 — Service `ai` et couche LLM hybride** — scaffold :8008 (`app/main.py` sur les modèles, config et base déjà créés à l'étape 1), gateway `/api/ai`, `LLMProvider` Claude/Ollama + fallback, table `llm_appels` `M · must`
+- [x]  **2-bis — Hébergements et offres de transport pour l'IA** (module 2 + architecture, guide v2) — export interne des hébergements, recherche structurée **en direct** vols / voitures / transferts (sans index vectoriel), aéroports localisés, architecture et documentation à jour `M · must` — référentiel `aeroports` (14) + 7 colonnes (migration idempotente `add_transport_ia.py`, 27/632/35/32 lignes conservées, 99/99 libellés de lieu résolus), 5 routes `/internal/*` (correspondances à 1 escale, durée réelle par fuseau), 5 POI `aeroport` (OSM), 37 + 9 tests (catalog 88, ai 64) ; 51 tests de l'étape 2 toujours verts — [rapport](ia/rapports/etape-02bis-transport-catalogue.md)
+    - [ ]  Exposer les nouvelles colonnes de lieu (ville, code aéroport) dans les formulaires admin des voitures et transferts (aujourd'hui déduites du libellé) `S · should`
+    - [ ]  Compléter le seed : transferts retour (hébergement → aéroport) pour chaque zone — 3 seulement aujourd'hui, aucun à Djerba `S · should`
+- [ ]  **3 — Service `ai` et couche LLM hybride** — scaffold :8008 (`app/main.py` sur les modèles, config et base déjà créés à l'étape 1), gateway `/api/ai`, `LLMProvider` Claude/Ollama + fallback, table `llm_appels`, **client catalog (`ServiceClient`) prêt pour les routes de l'étape 2-bis** (timeouts, erreurs typées, URL en `127.0.0.1`) ; sans clé Anthropic, `LLM_PROVIDER=ollama` suffit `M · must`
     - ✅ **Décidé à l'étape 1 (13/10/2026)** : conteneur Postgres **dédié** `postgres-ai` (`pgvector/pgvector:pg16`, port hôte **5435**, base `voyara_ai`) ; les 5 bases du conteneur `postgres` restent intactes — [ADR-007](architecture.md#adr-007--microservice-ai-dédié-pgvector-et-llm-hybride), [rapport](ia/rapports/etape-01-poi-meteo.md)
-- [ ]  **4 — Module 1 : comprendre le voyageur (NLU)** — `DemandeVoyage`, `POST /api/ai/comprendre`, 100 demandes annotées (≥ 20 ar/darija), F1 par champ (cible ≥ 0,85 avec Claude) `L · must`
-- [ ]  **5 — Module 2 : recherche sémantique et RAG** — `documents_index` pgvector, BM25 + embeddings + RRF, `POST /api/ai/rechercher`, Recall@k / nDCG / MRR `L · must`
-- [ ]  **6 — Module 3 : recommandation personnalisée Top-5** — score explicable pondéré + MMR, `POST /api/ai/recommander`, précision@5 + ablation `L · must`
-- [ ]  **7 — Modules 4 & 5 : itinéraire et optimisation sous contraintes** — OR-Tools CP-SAT + glouton de secours, ventilation du budget, `POST /api/ai/itineraire`, tests de propriétés (cas Djerba 3 j / 300 DT / famille) `L · must`
-- [ ]  **8 — Module 6 : agent intelligent** — boucle à outils, conversations persistées, SSE `POST /api/ai/agent/messages`, 3 scénarios (planifier, modifier, justifier) `L · must`
-- [ ]  **9 — Interface voyageur « Planifier mon voyage »** — page `/planifier` (Next), chat streaming, timeline, carte, budget, partage, feedback, fr/en/ar + RTL `L · must`
-- [ ]  **10 — Back-office : paramétrage et analytics IA** — paramètres, statistiques, qualité ; agrégation BFF admin ; écrans Vite `M · should`
+- [ ]  **4 — Module 1 : comprendre le voyageur (NLU)** — `DemandeVoyage` **+ bloc transport** (`ville_depart`, `besoins_transport` vol/voiture/transfert, `preferences_transport`, `budget_inclut_transport`), `POST /api/ai/comprendre`, question si un vol est demandé sans ville de départ ni date ; 100 demandes annotées (≥ 20 ar/darija, **≥ 25 avec transport**), F1 par champ ≥ 0,85 (champs transport compris) `L · must`
+- [ ]  **5 — Module 2 : recherche sémantique, RAG et recherche transport** — `documents_index` pgvector (activités **+ hébergements** via `/internal/stays/export` + POI), BM25 + embeddings + RRF, `POST /api/ai/rechercher`, Recall@k / nDCG / MRR ; **`app/transport/` + `POST /api/ai/transport/rechercher`** : appels en direct aux routes 2-bis, cache 5 min, dégradation propre, ≥ 20 requêtes transport (exactitude 100 %) `L · must`
+- [ ]  **6 — Module 3 : recommandation Top-5 et Top-3 transport** — score explicable pondéré + MMR, `POST /api/ai/recommander` ; **`app/transport/classement.py`** : Top-3 par type (prix, durée, escales, horaires, capacité, préférences) avec raisons fr/en/ar ; précision@5 + ablation, Top-1 transport conforme sur 20 cas `L · must`
+- [ ]  **7 — Modules 4 & 5 : itinéraire et optimisation sous contraintes** — OR-Tools CP-SAT + glouton de secours ; étapes **vol, transfert, location_voiture** ; aucune activité avant l'arrivée ni après le départ ; choix voiture ou transferts ; budget ventilé (vols, transferts, voiture, hébergement, repas, activités, déplacements) ; `POST /api/ai/itineraire`, tests de propriétés (Djerba 3 j / 300 DT / famille **et** Tunis → Djerba en avion / 4 j / 1200 DT / couple avec voiture) `L · must`
+- [ ]  **8 — Module 6 : agent intelligent** — boucle à outils (+ `rechercher_transport`, `proposer_reservation` étendu), conversations persistées, SSE `POST /api/ai/agent/messages`, **4 scénarios** (planifier, modifier, justifier, transport) ; l'agent ne réserve ni ne paie jamais `L · must`
+- [ ]  **9 — Interface voyageur « Planifier mon voyage »** — page `/planifier` (Next), chat streaming, timeline **avec étapes vol / transfert / voiture**, carte (aéroport + trajets), budget avec les nouveaux postes, partage, feedback, fr/en/ar + RTL `L · must`
+- [ ]  **10 — Back-office : paramétrage et analytics IA** — paramètres (dont **poids et paramètres transport**), statistiques, qualité ; agrégation BFF admin ; écrans Vite `M · should`
 - [ ]  **11 — Évaluation globale, tests et CI** `M`
-    - [ ]  Version réduite : évaluations **NLU, recherche et itinéraire** chiffrées et reproductibles (`docs/ia/resultats/`) `must`
-    - [ ]  Reste : bout en bout sur 30 scénarios, LLM-as-judge + évaluation humaine, comparaison Claude vs Ollama complète, CI GitHub Actions du service `ai` `should`
-- [ ]  **12 — Sécurité, coûts et RGPD du moteur IA** — jeu adversarial d'injection de prompt, plafonds tokens/coût, masquage PII, suppression RGPD étendue aux conversations `M · should`
-- [ ]  **13 — Démo, rapport et soutenance** — seed de démo, `docs/ia/demo.md` + plan B hors-ligne, diagrammes, chapitre « Moteur IA » dans `rapport.tex` `M · must`
+    - [ ]  Version réduite : évaluations **NLU, recherche (dont transport) et itinéraire** chiffrées et reproductibles (`docs/ia/resultats/`) `must`
+    - [ ]  Reste : bout en bout sur 30 scénarios (**≥ 10 avec transport** : cohérence horaire vol ↔ activités), LLM-as-judge + évaluation humaine, comparaison Claude vs Ollama complète, CI GitHub Actions du service `ai` `should`
+- [ ]  **12 — Sécurité, coûts et RGPD du moteur IA** — jeu adversarial d'injection de prompt, plafonds tokens/coût, masquage PII, **aucun passeport ni permis demandé**, suppression RGPD étendue aux conversations `M · should`
+- [ ]  **13 — Démo, rapport et soutenance** — seed de démo (dont vols Tunis ↔ Djerba, voitures et transferts à Djerba), `docs/ia/demo.md` (4 scénarios) + plan B hors-ligne, diagrammes, chapitre « Moteur IA » dans `rapport.tex` `M · must`
 
 ---
 

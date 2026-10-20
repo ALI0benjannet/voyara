@@ -291,3 +291,12 @@ Prérequis et recommandations :
   et se brancher sur `LLMProvider` ;
 - à garder pour l'étape 7 : profils solo / couple / famille des séjours, et export interne des
   offres (séjours, transferts, vols) pour le budget.
+
+## Avenant v2 (20/10/2026 — étape 2-bis)
+
+La recommandation de la section 8, « export interne des offres (séjours, transferts, vols) pour le
+budget » à garder pour l'étape 7, est réalisée par l'[étape 2-bis](etape-02bis-transport-catalogue.md),
+autrement que prévu ici : les **séjours** sont exportés (`/internal/stays/export`), mais vols,
+voitures et transferts ne sont **pas exportés**. Ils sont **recherchés en direct**
+(`/internal/{flights,car-rentals,transfers}/search`). Les 51 tests de cette étape restent verts
+après la migration `add_transport_ia.py`.

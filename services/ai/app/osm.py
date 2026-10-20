@@ -30,6 +30,10 @@ _PRIX = re.compile(r"(\d+(?:[.,]\d+)?)\s*(?:tnd|dt|dinars?)\b", re.IGNORECASE)
 
 def determiner_type(tags: dict) -> str | None:
     """Type Voyara d'un objet OSM, ou None s'il n'entre dans aucune famille."""
+    # Aéroport (étape 2-bis) : seulement avec un code IATA, ce qui écarte aéroclubs,
+    # pistes agricoles et bases militaires sans vols commerciaux.
+    if tags.get("aeroway") == "aerodrome" and tags.get("iata"):
+        return "aeroport"
     for type_poi, cle, valeurs in REGLES_TYPE:
         if tags.get(cle) in valeurs:
             return type_poi

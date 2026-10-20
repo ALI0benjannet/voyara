@@ -188,3 +188,12 @@ PS> git status --short
 ?? RUN.md
 ?? docs/ia/
 ```
+
+## Avenant v2 (20/10/2026 — étape 2-bis)
+
+Deux points de ce cadrage ne sont plus à jour depuis le [guide v2](../../../AgentIA_Voyara/Guide_Moteur_IA_Voyara.pdf) :
+- **périmètre** : le moteur couvre aussi les vols, voitures de location et transferts, par une
+  recherche structurée en direct dans catalog, sans index vectoriel ; la phase compte une étape
+  **2-bis** en plus des étapes 0 à 13 ([avenant à l'ADR-007](../../architecture.md#avenant-v2-à-ladr-007--transport-intégré-20102026-étape-2-bis)) ;
+- **scénarios** : il y en a désormais **4** (le 4ᵉ porte sur le transport), voir [README §3](../README.md#3-les-4-scénarios-de-démonstration).
+La source des étapes est la version PDF (v2) du guide ; la version HTML citée ci-dessus est la v1.

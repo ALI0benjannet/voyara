@@ -14,13 +14,13 @@ modèle de données : [docs/mcd.md](docs/mcd.md) · moteur IA : [docs/ia/README.
 |---|---|---|---|
 | `gateway/` | 8000 | — | Point d'entrée unique, routage par préfixe, CORS, **bloque tout `/internal`**, `/health` agrégé |
 | `services/auth` | 8001 | `voyara` (Alembic) | Comptes, JWT HS256, refresh rotatif, e-mail, avatars |
-| `services/catalog` | 8002 | `voyara_catalog` | Activités, catégories, créneaux (réserve/libère atomiquement), offres de voyage |
+| `services/catalog` | 8002 | `voyara_catalog` | Activités, catégories, créneaux (réserve/libère atomiquement), offres de voyage, référentiel `aeroports`, export/recherche internes pour l'IA |
 | `services/booking` | 8003 | `voyara_booking` | Réservations (saga avec catalog), codes promo, QR, expiration des `pending` |
 | `services/payment` | 8004 | `voyara_payment` | Stripe (ou simulation), webhook signé + idempotent |
 | `services/review` | 8005 | `voyara_review` | Avis et favoris |
 | `services/notification` | 8006 | — | E-mails SMTP — interne uniquement |
 | `services/admin` | 8007 | — | BFF de l'espace admin (agrégation `asyncio.gather` + `/batch`) |
-| `services/ai` *(partiel — ADR-007)* | 8008 | `voyara_ai` (pgvector, conteneur `postgres-ai` :5435) | Moteur IA — étape 1 : modèles + scripts (POI, météo) ; scaffold FastAPI à l'étape 3 |
+| `services/ai` *(partiel — ADR-007)* | 8008 | `voyara_ai` (pgvector, conteneur `postgres-ai` :5435) | Moteur IA — étape 1 : modèles + scripts (POI dont aéroports, météo) ; scaffold FastAPI à l'étape 3 |
 | `frontend/apps/client` | 5173 | — | Next.js 16 App Router (SSR/SEO) |
 | `frontend/apps/admin` | 5174 (`/admin`) | — | SPA Vite/React |
 
@@ -68,17 +68,38 @@ cd frontend; npm run dev              # client :5173 + admin :5174/admin
 # Tests
 cd services\auth; ..\..\.venv\Scripts\python -m pytest     # backend (parcours auth)
 cd services\ai; ..\..\.venv\Scripts\python -m pytest       # moteur IA (postgres-ai démarré, réseau simulé)
-cd services\catalog; ..\..\.venv\Scripts\python -m pytest  # export interne + tags IA (postgres démarré, migration add_tags_ia_columns appliquée)
+cd services\catalog; ..\..\.venv\Scripts\python -m pytest  # export interne, tags IA, transport (postgres démarré, migrations add_tags_ia_columns + add_transport_ia appliquées)
 cd frontend; npm run test                                   # vitest (client)
 cd frontend; npm run typecheck                              # TypeScript strict (2 apps)
 ```
 
 Guide d'installation complet pour un nouveau poste : [RUN.md](RUN.md).
 
-## 4. Moteur IA — méthode de travail
+## 4. Moteur IA — périmètre et méthode de travail
 
-- **Source des étapes** : [AgentIA_Voyara/Guide_Moteur_IA_Voyara.html](AgentIA_Voyara/Guide_Moteur_IA_Voyara.html)
-  (étapes 0 à 13, un prompt par étape) et la présentation
+**Périmètre (guide v2, avenant ADR-007)** : activités, hébergements, POI (dont aéroports), météo
+**et** vols, voitures de location, transferts. Activités, hébergements et POI → index sémantique
+(étape 5) ; **le transport n'est jamais indexé** : le service ai interroge catalog **en direct**.
+L'agent propose (lien vers la page du site), il ne réserve ni ne paie jamais.
+
+Endpoints internes de catalog pour le moteur IA (`require_internal_key`, paginés, prix en DT,
+dates ISO 8601) :
+
+| Route | Rôle |
+|---|---|
+| `GET /internal/activities/export` | activités + tags IA, `modifie_depuis` (étape 2) |
+| `GET /internal/stays/export` | hébergements, `modifie_depuis`, `actif` (étape 2-bis) |
+| `GET /internal/flights/search` | `origine`/`destination` (IATA ou ville), `date` ± `tolerance_jours`, `nb_passagers`, `classe`, `escales_max` → directs + 1 correspondance, prix par passager et total |
+| `GET /internal/car-rentals/search` | `lieu_prise`/`lieu_retour`, `prise_le`/`retour_le`, `nb_places`, `transmission`, `categorie` → prix/jour et total |
+| `GET /internal/transfers/search` | `depart`/`arrivee`, `date_heure`, `nb_passagers`, `bagages` → prix et durée |
+| `GET /internal/airports` | référentiel des aéroports (IATA, ville, pays, fuseau) |
+
+Base existante : migrations idempotentes `services/catalog/scripts/add_tags_ia_columns.py` (étape 2)
+puis `add_transport_ia.py` (étape 2-bis). En dev Windows, appeler les services sur `127.0.0.1`
+(et non `localhost` : ~2 s de pénalité IPv6 par appel, cf. architecture.md §12 n° 13).
+
+- **Source des étapes** : [AgentIA_Voyara/Guide_Moteur_IA_Voyara.pdf](AgentIA_Voyara/Guide_Moteur_IA_Voyara.pdf)
+  (**version 2**, étapes 0 à 13 + 2-bis, un prompt par étape ; la version HTML est la v1) et la présentation
   [AgentIA_Voyara/PresProjCom.pdf](AgentIA_Voyara/PresProjCom.pdf) (6 modules, 3 scénarios).
 - **Une étape à la fois**, sur une branche dédiée `ia/etape-NN`, en plan mode : proposer le plan,
   attendre la validation, puis coder.

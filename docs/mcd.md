@@ -106,10 +106,24 @@ propre base) et l'export reste une requête sans jointure. Cinq contraintes `CHE
 `tags_valides` a des tags complets. Migration d'une base existante :
 `scripts/add_tags_ia_columns.py` (idempotente).
 
-### Offres de voyage (tables préparées, API à venir)
+### Offres de voyage
 
-Onglets Séjours, Vols, Voitures de location et Transferts de la navbar. Tables
-indépendantes, sans relation entre elles ni avec les activités.
+Onglets Séjours, Vols, Voitures de location et Transferts de la navbar : lecture publique
+(`/api/v1/offres/*`), CRUD admin, export et recherche internes pour le moteur IA (étape 2-bis).
+Sans relation avec les activités.
+
+**Étape 2-bis (20/10/2026)** — ajouts pour le moteur IA, migration idempotente
+`scripts/add_transport_ia.py` (aucune donnée modifiée hors colonnes nouvelles) :
+- table **`aeroports`** : référentiel du transport (14 codes utilisés par `flights`). Le **fuseau**
+  rend les horaires locaux de `flights` comparables (durée réelle, correspondances) ; la **ville**
+  relie un code (`TUN`) à une ville demandée (« Tunis ») et aux voitures et transferts. Pas de
+  coordonnées (elles viennent des POI OSM `aeroport` de `voyara_ai`) ; lien **logique** par code
+  IATA, sans clé étrangère (un code saisi par l'admin hors référentiel reste accepté) ;
+- `stays.modifie_le` (trigger `trg_stays_modifie_le`) : synchronisation incrémentale de l'index ;
+- `car_rentals.ville` / `aeroport` et `transfers.ville_depart` / `ville_arrivee` /
+  `aeroport_depart` / `aeroport_arrivee` : jusque-là le lieu n'était qu'un texte libre. Remplis
+  depuis ce texte (`app/lieux.py::deduire_lieu`) à la migration et à chaque écriture admin ou seed
+  lorsqu'ils sont omis.
 
 ```mermaid
 erDiagram
@@ -127,6 +141,7 @@ erDiagram
         text equipements "nullable"
         text photos "nullable"
         bool actif
+        datetime modifie_le "trigger, index (2-bis)"
     }
     FLIGHTS {
         int id PK
@@ -153,6 +168,8 @@ erDiagram
         int nb_places
         string agence
         string localisation "prise en charge"
+        string ville "nullable, index (2-bis)"
+        string aeroport "IATA, nullable (2-bis)"
         float prix_jour
         text photos "nullable"
         bool disponible
@@ -161,6 +178,10 @@ erDiagram
         int id PK
         string depart
         string arrivee
+        string ville_depart "nullable, index (2-bis)"
+        string ville_arrivee "nullable, index (2-bis)"
+        string aeroport_depart "IATA, nullable (2-bis)"
+        string aeroport_arrivee "IATA, nullable (2-bis)"
         string type_vehicule "taxi | grand_taxi | berline | van | minibus"
         int capacite
         int bagages
@@ -169,6 +190,16 @@ erDiagram
         text description "nullable"
         bool actif
     }
+    AEROPORTS {
+        string code_iata PK "TUN, DJE, ORY..."
+        string nom
+        string ville "index, ville desservie"
+        string pays "ISO 3166-1 alpha-2"
+        string fuseau "IANA, ex. Africa/Tunis"
+    }
+    AEROPORTS ||..o{ FLIGHTS : "aeroport_depart / arrivee (logique)"
+    AEROPORTS ||..o{ CAR_RENTALS : "aeroport (logique)"
+    AEROPORTS ||..o{ TRANSFERS : "aeroport_depart / arrivee (logique)"
 ```
 
 ## 3. Base `voyara_booking` — booking-service
@@ -240,13 +271,15 @@ erDiagram
 
 > Ajoutée à l'étape 1 du moteur IA (13/10/2026, [ADR-007](architecture.md#adr-007--microservice-ai-dédié-pgvector-et-llm-hybride)).
 > Modèles : `services/ai/app/models.py`. Aucune référence vers les autres bases : une activité
-> du catalogue est rapprochée d'un POI par ses coordonnées GPS, jamais par clé.
+> du catalogue est rapprochée d'un POI par ses coordonnées GPS, jamais par clé. Un POI
+> `aeroport` (étape 2-bis) porte son code IATA dans `tags.iata`, ce qui le rapproche de
+> `voyara_catalog.aeroports` sans jointure.
 
 ```mermaid
 erDiagram
     POIS {
         int id PK
-        string type "restaurant|plage|musee|monument|souk|parc|cafe"
+        string type "restaurant|plage|musee|monument|souk|parc|cafe|aeroport (2-bis)"
         string nom
         string nom_en "nullable"
         string nom_ar "nullable"

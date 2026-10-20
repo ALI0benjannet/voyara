@@ -372,3 +372,10 @@ PS> psql voyara_ai : pois 1030 lignes / 8 villes · meteo_cache 56 lignes / 8 vi
 
 - **Remarque** : la météo en cache date du 13/10 et elle est périmée (plus de 6 h). Elle est
   rafraîchie au premier appel, ou par `scripts\rafraichir_meteo.py`.
+
+## Avenant v2 (20/10/2026 — étape 2-bis)
+
+`app/osm.py` ne mappe plus 7 mais **8 types** : `aeroport` (`aeroway=aerodrome` **avec** tag
+`iata`) a été ajouté, avec une collecte nationale dédiée (`collecter_pois.py --aeroports`, ville
+la plus proche à ≤ 60 km). Base : **1 035 POI** (dont 5 aéroports : TUN, DJE, MIR, NBE, TOE), sur
+les mêmes 8 villes. Détail : [rapport 2-bis](etape-02bis-transport-catalogue.md).

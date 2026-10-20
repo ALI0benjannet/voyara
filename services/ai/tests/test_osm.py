@@ -25,6 +25,10 @@ MAINTENANT = datetime(2026, 10, 13, 12, 0, tzinfo=UTC)
         ({"tourism": "zoo"}, "parc"),
         # priorité : un musée installé dans un fort reste un musée
         ({"tourism": "museum", "historic": "fort"}, "musee"),
+        # aéroport (étape 2-bis) : seulement avec un code IATA
+        ({"aeroway": "aerodrome", "iata": "DJE"}, "aeroport"),
+        ({"aeroway": "aerodrome"}, None),
+        ({"aeroway": "helipad", "iata": "XXX"}, None),
         # hors périmètre
         ({"amenity": "bank"}, None),
         ({"tourism": "attraction"}, None),

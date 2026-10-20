@@ -15,7 +15,8 @@ from sqlalchemy.orm import Session
 from voyara_common.auth import require_admin
 
 from app.database import Base, get_db
-from app.models import CarRental, Flight, Stay, Transfer
+from app.lieux import completer_lieux
+from app.models import Aeroport, CarRental, Flight, Stay, Transfer
 
 travel_router = APIRouter(
     tags=["Offres de voyage — administration"], dependencies=[Depends(require_admin)]
@@ -88,6 +89,9 @@ class CarRentalIn(BaseModel):
     nb_places: int = Field(ge=2, le=9)
     agence: str = Field(min_length=2, max_length=150)
     localisation: str = Field(min_length=2, max_length=255)
+    # Étape 2-bis — facultatifs : déduits de `localisation` s'ils sont omis.
+    ville: str | None = Field(default=None, min_length=2, max_length=100)
+    aeroport: str | None = Field(default=None, pattern="^[A-Z]{3}$")
     prix_jour: float = Field(gt=0)
     disponible: bool = True
 
@@ -101,6 +105,11 @@ class CarRentalRead(CarRentalIn):
 class TransferIn(BaseModel):
     depart: str = Field(min_length=2, max_length=255)
     arrivee: str = Field(min_length=2, max_length=255)
+    # Étape 2-bis — facultatifs : déduits de `depart` / `arrivee` s'ils sont omis.
+    ville_depart: str | None = Field(default=None, min_length=2, max_length=100)
+    ville_arrivee: str | None = Field(default=None, min_length=2, max_length=100)
+    aeroport_depart: str | None = Field(default=None, pattern="^[A-Z]{3}$")
+    aeroport_arrivee: str | None = Field(default=None, pattern="^[A-Z]{3}$")
     type_vehicule: str = Field(pattern="^(taxi|grand_taxi|berline|van|minibus)$")
     capacite: int = Field(gt=0, le=30)
     bagages: int = Field(default=0, ge=0, le=30)
@@ -141,12 +150,15 @@ def _register_crud(
             raise HTTPException(status_code=404, detail=f"{label} introuvable")
         return obj
 
-    def apply(obj, payload: BaseModel) -> None:
+    def apply(db: Session, obj, payload: BaseModel) -> None:
         data = payload.model_dump()
         if model is Flight:
             _apply_flight_capacity(obj, data.pop("places_totales"))
         for key, value in data.items():
             setattr(obj, key, value)
+        if model in (CarRental, Transfer):
+            # Lieux omis -> déduits du libellé, pour la recherche du moteur IA.
+            completer_lieux(obj, db.scalars(select(Aeroport)).all())
 
     @travel_router.get(path, response_model=list[schema_read], name=f"list_{model.__tablename__}")
     def list_items(db: Session = Depends(get_db)):
@@ -166,7 +178,7 @@ def _register_crud(
     )
     def create_item(payload: schema_in, db: Session = Depends(get_db)):  # type: ignore[valid-type]
         obj = model()
-        apply(obj, payload)
+        apply(db, obj, payload)
         db.add(obj)
         db.commit()
         db.refresh(obj)
@@ -177,7 +189,7 @@ def _register_crud(
     )
     def update_item(item_id: int, payload: schema_in, db: Session = Depends(get_db)):  # type: ignore[valid-type]
         obj = get_or_404(db, item_id)
-        apply(obj, payload)
+        apply(db, obj, payload)
         db.commit()
         db.refresh(obj)
         return obj
