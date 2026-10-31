@@ -74,7 +74,7 @@ découpée de bout en bout :
 ### Flux du moteur IA (v2 — étape 2-bis)
 
 ```text
-                          gateway :8000  (/api/ai -> ai à l'étape 3 ; /internal bloqué)
+                          gateway :8000  (/api/ai -> ai, étape 3 ; /internal bloqué)   
                                  │
                                  ▼
  ┌──────────────────────── AI :8008 (base voyara_ai, conteneur postgres-ai :5435) ─────────────┐
@@ -105,7 +105,7 @@ découpée de bout en bout :
 | **review** | 8005 | `voyara_review` | Avis (par activité) et favoris (par utilisateur) |
 | **notification** | 8006 | — | E-mails SMTP via fastapi-mail + templates Jinja2 — **interne uniquement** |
 | **admin** | 8007 | — | BFF de l'espace admin : agrège stats et listes depuis auth/catalog/booking/payment |
-| **ai** *(partiel — ADR-007)* | 8008 | `voyara_ai` (conteneur `postgres-ai`, pgvector, :5435) | Moteur IA : POI (dont aéroports) et météo aujourd'hui ; scaffold FastAPI à l'étape 3. Lit catalog **en direct** pour le transport |
+| **ai** | 8008 | `voyara_ai` (conteneur `postgres-ai`, pgvector, :5435) | Moteur IA (ADR-007) : POI (dont aéroports), météo, journal `llm_appels` ; couche LLM hybride Claude / Ollama (`LLM_PROVIDER`) ; client catalog `/internal/*` ; routes publiques sous `/api/ai` (étape 3 : `/api/ai/health`). Lit catalog **en direct** pour le transport |
 
 ### Table de routage du gateway
 
@@ -118,6 +118,7 @@ découpée de bout en bout :
 | `/api/v1/payments*` | payment |
 | `/api/v1/reviews*`, `/api/v1/favorites*` | review |
 | `/api/v1/admin/*` | admin |
+| `/api/ai/*` (moteur IA — hors `/api/v1`, ADR-007) | ai |
 | tout chemin contenant `/internal` | **bloqué (404)** |
 
 ### Endpoints principaux (publics)
@@ -417,6 +418,16 @@ docker-compose lit les secrets dans le `.env` racine.
 - `JWT_SECRET_KEY` — signature des tokens
 - `INTERNAL_API_KEY` — protection des endpoints internes
 
+**URL inter-services** (`*_SERVICE_URL`) : `http://127.0.0.1:800X` en dev local (pas `localhost`,
+voir §12 n° 13), `http://<service>:800X` en Docker.
+
+**Moteur IA** (`services/ai/.env`, `.env` racine pour Docker) : `LLM_PROVIDER` (`claude` | `ollama` |
+`auto`, défaut `auto`), `ANTHROPIC_API_KEY` (secret, vide = Ollama en mode auto), `CLAUDE_MODEL`
+(`claude-sonnet-5-5`), `CLAUDE_EFFORT`, `CLAUDE_TIMEOUT_S`, `CLAUDE_MAX_RETRIES`, `CLAUDE_FALLBACKS`
+(repli serveur sur refus), `OLLAMA_URL`, `OLLAMA_MODEL` (`qwen2.5:3b` ; `qwen2.5:7b` demande ≥ 16 Go
+de RAM), `OLLAMA_TIMEOUT_S`, `CATALOG_SERVICE_URL`, `CATALOG_TIMEOUT_S`. Ollama en Docker :
+`docker compose --profile ollama up -d ollama` puis `docker compose exec ollama ollama pull qwen2.5:3b`.
+
 **Frontend client (Next)** : `NEXT_PUBLIC_API_URL` (=`/api`),
 `NEXT_PUBLIC_ADMIN_URL`, `NEXT_PUBLIC_SITE_URL` (canonical/sitemap),
 `API_INTERNAL_URL` (fetch SSR → gateway, jamais exposée au navigateur).
@@ -465,7 +476,7 @@ Les améliorations `planifié` sont des tâches du [plan.md](plan.md) (jalon ind
 | 9 | **Notifications best-effort** : si notification-service est down, l'e-mail est perdu | Un utilisateur peut ne jamais recevoir son e-mail de vérification | Assumé (bouton « renvoyer l'e-mail » déjà en place = filet de sécurité) ; évolution : file de messages persistée | 📋 perspective |
 | 10 | **Annulation d'une réservation payée** : aucun flux de remboursement | Après la Phase 8, annuler une réservation `confirmed` poserait la question du remboursement | Décision de cadrage : l'annulation en ligne n'est permise que sur les réservations `pending` ; le remboursement Stripe est une perspective | 🔜 à trancher (Phase 8) |
 | 11 | **Webhook Stripe à venir** : risques de faux événements et de doublons | Confirmation frauduleuse ou double confirmation d'une réservation | Prévu dès la conception (plan.md Phase 8) : vérification de signature Stripe + idempotence sur `event.id` ; route publique dédiée sans JWT | 🔜 planifié (J2) |
-| 13 | **`localhost` sous Windows** : les URL inter-services (`*_SERVICE_URL=http://localhost:800X`) résolvent d'abord `::1` (IPv6) alors que les services n'écoutent que sur `127.0.0.1` | Mesuré le 20/10/2026 : **~2 100 ms** par appel via `localhost` contre **24 ms** (p50) via `127.0.0.1` — pénalise chaque appel du gateway et, demain, chaque outil de l'agent IA | Utiliser `127.0.0.1` dans les `.env` de dev (et pour le client catalog du service ai, étape 3) ; en Docker, les noms de service ne sont pas concernés | 🔜 à faire (étape 3) |
+| 13 | ~~**`localhost` sous Windows**~~ : les URL inter-services (`*_SERVICE_URL=http://localhost:800X`) résolvent d'abord `::1` (IPv6) alors que les services n'écoutent que sur `127.0.0.1` | ~~Chaque appel `ServiceClient` (une connexion neuve par appel) payait la résolution IPv6~~ | ✅ Fait à l'étape 3 (30/10/2026) : toutes les URL inter-services (valeurs par défaut des `config.py`, `.env.example`, `.env` locaux) en `127.0.0.1`. Mesuré : `ServiceClient` → catalog **282 ms → 29 ms** (p50). Le gateway, qui garde une connexion persistante, n'était presque pas touché (10 ms → 9 ms). Docker n'est pas concerné (noms de service) | ✅ implémenté |
 | 12 | **Données personnelles (RGPD)** : e-mails, réservations, avatars répartis sur plusieurs bases | Le rapport doit adresser le sujet | ✅ Fait : `DELETE /auth/me` (anonymisation + révocation des sessions) + page `/privacy` ; reste la section dédiée dans le rapport | ✅ implémenté (reste : rapport) |
 
 ## 13. Décisions d'architecture (ADR)
@@ -576,8 +587,10 @@ lui-même arrive à l'étape 3 de la phase « Moteur IA » ([plan.md](plan.md)).
 
 ### ADR-007 — Microservice `ai` dédié, pgvector et LLM hybride
 
-> Statut : **acceptée le 11/10/2026 — partiellement appliquée le 13/10/2026** (étape 1 : conteneur
-> `postgres-ai`, base `voyara_ai`, tables `pois` et `meteo_cache` ; le scaffold du service vient à
+> Statut : **acceptée le 11/10/2026 — appliquée** : étape 1 (13/10/2026 : conteneur `postgres-ai`,
+> base `voyara_ai`, tables `pois` et `meteo_cache`) puis étape 3 (30/10/2026 : service FastAPI :8008,
+> route gateway `/api/ai`, extension `vector` activée, couche LLM hybride, table `llm_appels` —
+> [rapport](ia/rapports/etape-03-service-ai-llm-hybride.md)). Rappel de l'historique : le scaffold du service venait à
 > l'étape 3 du [guide moteur IA](../AgentIA_Voyara/Guide_Moteur_IA_Voyara.html)). Vision et modules : [docs/ia/README.md](ia/README.md).
 
 - **Contexte** : le projet devient aussi un projet *IA & Cognition* (5DS Data Science). Le moteur
@@ -629,6 +642,12 @@ lui-même arrive à l'étape 3 de la phase « Moteur IA » ([plan.md](plan.md)).
     deux cas, **aucune comparaison scientifique** possible entre modèles, alors que c'est un résultat
     attendu du projet data science.
 - **Conséquences** :
+  - *Réalisation (étape 3)* : interface `LLMProvider.generer(...)` → `ReponseLLM` normalisée ; Claude
+    via le SDK officiel `anthropic` 2.x (version d'API `2026-10-21` : `temperature` n'est jamais
+    envoyée, outils natifs en `tool_choice` auto, sortie structurée `output_config.format`, repli
+    serveur sur refus) ; Ollama via `/api/chat` ; mode `auto` = Claude puis Ollama sur clé absente,
+    panne, délai ou requête rejetée, **jamais sur un refus de sécurité** ; chaque tentative journalisée
+    dans `llm_appels` (tokens, latence, coût estimé en USD, statut, chaîne de bascule).
   - \+ isolation des pannes et des coûts : si `ai` tombe, réservation et paiement continuent ;
     database-per-service respecté ; le moteur s'évalue et se teste isolément ; comparaison
     Claude / Ollama chiffrable sur le même jeu de test ; démo possible hors-ligne.

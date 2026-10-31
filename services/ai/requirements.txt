@@ -1,6 +1,11 @@
+fastapi==0.141.1
+uvicorn[standard]==0.52.1
 pydantic==2.13.4
 pydantic-settings==2.14.2
 SQLAlchemy==2.0.51
 psycopg2-binary==2.9.12
 httpx==0.28.1
 python-dotenv==1.2.2
+slowapi==0.1.10
+# Couche LLM : SDK officiel Anthropic (2.x -> version d'API 2026-10-21)
+anthropic==2.3.0

@@ -1,6 +1,7 @@
 """Modèles du moteur IA (base `voyara_ai`).
 
 Étape 1 : points d'intérêt OpenStreetMap et cache météo Open-Meteo.
+Étape 3 : journal des appels LLM (`llm_appels`).
 Aucune référence SQL vers les autres services (database-per-service) : une
 activité du catalogue n'est jamais jointe à un POI, le rapprochement se fait
 par coordonnées GPS côté moteur.
@@ -8,7 +9,7 @@ par coordonnées GPS côté moteur.
 
 from datetime import date, datetime
 
-from sqlalchemy import JSON, Date, DateTime, Float, Index, Integer, String, Text, UniqueConstraint
+from sqlalchemy import JSON, Date, DateTime, Float, Index, Integer, String, Text, UniqueConstraint, func
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.database import Base
@@ -56,3 +57,29 @@ class MeteoCache(Base):
     precipitations: Mapped[float | None] = mapped_column(Float, nullable=True)  # mm
     code_meteo: Mapped[int | None] = mapped_column(Integer, nullable=True)  # code WMO
     maj_le: Mapped[datetime] = mapped_column(DateTime(timezone=True))
+
+
+STATUTS_APPEL_LLM = ("succes", "erreur", "refus", "bascule")
+
+
+class LlmAppel(Base):
+    """Une ligne par tentative d'appel LLM (étape 3) : coût, latence, fiabilité mesurables.
+
+    Ni prompt, ni réponse, ni clé : seulement des métadonnées. Une bascule Claude -> Ollama
+    donne deux lignes, la seconde pointant vers la première (`appel_parent_id`)."""
+
+    __tablename__ = "llm_appels"
+    __table_args__ = (Index("ix_llm_appels_provider_cree_le", "provider", "cree_le"),)
+
+    id: Mapped[int] = mapped_column(primary_key=True)
+    cree_le: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    provider: Mapped[str] = mapped_column(String(20))  # claude | ollama
+    modele: Mapped[str] = mapped_column(String(100))
+    usage: Mapped[str] = mapped_column(String(50), default="inconnu")  # essai, nlu, agent...
+    statut: Mapped[str] = mapped_column(String(20))  # voir STATUTS_APPEL_LLM
+    tokens_entree: Mapped[int] = mapped_column(Integer, default=0)
+    tokens_sortie: Mapped[int] = mapped_column(Integer, default=0)
+    latence_ms: Mapped[int] = mapped_column(Integer, default=0)
+    cout_estime: Mapped[float | None] = mapped_column(Float, nullable=True)  # USD
+    erreur: Mapped[str | None] = mapped_column(Text, nullable=True)  # classe + message court
+    appel_parent_id: Mapped[int | None] = mapped_column(Integer, nullable=True, index=True)

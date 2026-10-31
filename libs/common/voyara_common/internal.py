@@ -39,12 +39,19 @@ def internal_headers() -> dict[str, str]:
 class ServiceClient:
     """Petit client HTTP pour appeler les endpoints internes d'un autre service."""
 
-    def __init__(self, base_url: str, timeout: float = 10.0):
+    def __init__(
+        self,
+        base_url: str,
+        timeout: float = 10.0,
+        transport: httpx.AsyncBaseTransport | None = None,
+    ):
         self.base_url = base_url.rstrip("/")
         self.timeout = timeout
+        # Transport injectable : les tests passent un httpx.MockTransport (aucun appel réel).
+        self.transport = transport
 
     async def get(self, path: str, params: dict[str, Any] | None = None) -> Any:
-        async with httpx.AsyncClient(timeout=self.timeout) as client:
+        async with httpx.AsyncClient(timeout=self.timeout, transport=self.transport) as client:
             resp = await client.get(
                 f"{self.base_url}{path}", params=params, headers=internal_headers()
             )
@@ -52,7 +59,7 @@ class ServiceClient:
             return resp.json()
 
     async def post(self, path: str, json: Any = None, params: dict[str, Any] | None = None) -> Any:
-        async with httpx.AsyncClient(timeout=self.timeout) as client:
+        async with httpx.AsyncClient(timeout=self.timeout, transport=self.transport) as client:
             resp = await client.post(
                 f"{self.base_url}{path}", json=json, params=params, headers=internal_headers()
             )

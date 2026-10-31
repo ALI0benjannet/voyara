@@ -37,6 +37,9 @@ python-dotenv==1.2.2
 qrcode==8.2
 stripe==15.5.0
 
+# Moteur IA — couche LLM (services/ai)
+anthropic==2.3.0
+
 # Moteur IA — analyse exploratoire (notebooks/)
 pandas==3.0.6
 matplotlib==3.11.2

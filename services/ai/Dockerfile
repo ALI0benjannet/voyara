@@ -1,0 +1,17 @@
+# Contexte de build attendu : racine du repo (voir docker-compose.yml)
+FROM python:3.11-slim
+
+ENV PIP_DEFAULT_TIMEOUT=120 PIP_RETRIES=10
+
+WORKDIR /srv
+
+COPY libs/common /srv/libs/common
+COPY services/ai/requirements.txt /srv/requirements.txt
+RUN pip install --no-cache-dir -r requirements.txt && \
+    pip install --no-cache-dir /srv/libs/common
+
+COPY services/ai /srv/service
+WORKDIR /srv/service
+
+EXPOSE 8008
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8008", "--proxy-headers"]

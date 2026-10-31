@@ -141,6 +141,36 @@ services:
       REVIEW_SERVICE_URL: http://review:8005
     depends_on: [auth, catalog, booking, payment]
 
+  # Moteur IA (ADR-007, étape 3) : base voyara_ai dans postgres-ai ; lit catalog via /internal/*.
+  # LLM : LLM_PROVIDER=auto -> Claude si ANTHROPIC_API_KEY est renseignée, sinon Ollama.
+  ai:
+    build: { context: ., dockerfile: services/ai/Dockerfile }
+    environment:
+      <<: [*common-env, *postgres-env]
+      POSTGRES_HOST: postgres-ai
+      POSTGRES_DB: voyara_ai
+      AUTO_CREATE_TABLES: "True"
+      CATALOG_SERVICE_URL: http://catalog:8002
+      LLM_PROVIDER: ${LLM_PROVIDER:-auto}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      CLAUDE_MODEL: ${CLAUDE_MODEL:-claude-sonnet-5-5}
+      OLLAMA_URL: ${OLLAMA_URL:-http://ollama:11434}
+      OLLAMA_MODEL: ${OLLAMA_MODEL:-qwen2.5:3b}
+    depends_on:
+      postgres-ai: { condition: service_healthy }
+      catalog: { condition: service_started }
+
+  # LLM local gratuit (secours / hors-ligne) — profil optionnel :
+  #   docker compose --profile ollama up -d ollama
+  #   docker compose exec ollama ollama pull qwen2.5:3b   (qwen2.5:7b : >= 16 Go de RAM)
+  ollama:
+    image: ollama/ollama:0.40.6
+    profiles: ["ollama"]
+    ports:
+      - "11434:11434"
+    volumes:
+      - ollama:/root/.ollama
+
   gateway:
     build: { context: ., dockerfile: gateway/Dockerfile }
     ports:
@@ -153,8 +183,9 @@ services:
       REVIEW_SERVICE_URL: http://review:8005
       NOTIFICATION_SERVICE_URL: http://notification:8006
       ADMIN_SERVICE_URL: http://admin:8007
+      AI_SERVICE_URL: http://ai:8008
       CORS_ORIGINS: '["http://localhost:5173","http://localhost:5174","http://localhost:8080"]'
-    depends_on: [auth, catalog, booking, payment, review, notification, admin]
+    depends_on: [auth, catalog, booking, payment, review, notification, admin, ai]
 
   # Site client Next.js (SSR/SEO)
   client:
@@ -177,3 +208,5 @@ volumes:
     name: voyara_pgdata_ai
   avatars:
     name: touribook_avatars
+  ollama:
+    name: voyara_ollama

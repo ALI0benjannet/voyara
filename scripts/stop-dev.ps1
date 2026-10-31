@@ -1,12 +1,12 @@
 # Arrete tous les microservices Voyara demarres par dev.ps1
-# (tue les processus qui ecoutent sur les ports 8000-8007)
+# (tue les processus qui ecoutent sur les ports 8000-8008 ; 8008 = moteur IA)
 #
 # Avec --reload, uvicorn lance un reloader + un worker enfant
 # (multiprocessing spawn_main(parent_pid=...)) qui herite du socket. Tuer le seul
 # PID en ecoute laisse ce worker orphelin servir l'ancien code : on tue donc
 # l'arbre complet, plus les workers dont le parent est deja mort.
 
-$ports = 8000..8007
+$ports = 8000..8008
 $stopped = 0
 
 function Stop-Tree([int]$procId) {

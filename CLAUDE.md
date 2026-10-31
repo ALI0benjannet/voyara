@@ -20,7 +20,7 @@ modèle de données : [docs/mcd.md](docs/mcd.md) · moteur IA : [docs/ia/README.
 | `services/review` | 8005 | `voyara_review` | Avis et favoris |
 | `services/notification` | 8006 | — | E-mails SMTP — interne uniquement |
 | `services/admin` | 8007 | — | BFF de l'espace admin (agrégation `asyncio.gather` + `/batch`) |
-| `services/ai` *(partiel — ADR-007)* | 8008 | `voyara_ai` (pgvector, conteneur `postgres-ai` :5435) | Moteur IA — étape 1 : modèles + scripts (POI dont aéroports, météo) ; scaffold FastAPI à l'étape 3 |
+| `services/ai` | 8008 | `voyara_ai` (pgvector, conteneur `postgres-ai` :5435) | Moteur IA (ADR-007) : routes `/api/ai/*` via le gateway, couche LLM hybride Claude / Ollama (`app/llm/`, journal `llm_appels`), client catalog (`app/clients/`), POI dont aéroports, météo |
 | `frontend/apps/client` | 5173 | — | Next.js 16 App Router (SSR/SEO) |
 | `frontend/apps/admin` | 5174 (`/admin`) | — | SPA Vite/React |
 
@@ -58,8 +58,9 @@ python -m venv .venv
 
 # Démarrage
 docker compose up -d postgres         # Postgres sur localhost:5434
-.\scripts\dev.ps1                     # postgres-ai (:5435) + gateway + 7 services (-Seed : crée l'admin initial)
-.\scripts\stop-dev.ps1                # arrête les ports 8000-8007 et le conteneur postgres-ai
+.\scripts\dev.ps1                     # postgres-ai (:5435) + gateway + 8 services dont ai (-Seed : crée l'admin initial)
+.\scripts\stop-dev.ps1                # arrête les ports 8000-8008 et le conteneur postgres-ai
+docker compose --profile ollama up -d ollama   # LLM local (puis : docker compose exec ollama ollama pull qwen2.5:3b)
 cd frontend; npm run dev              # client :5173 + admin :5174/admin
 
 # Vérifications
@@ -67,7 +68,8 @@ cd frontend; npm run dev              # client :5173 + admin :5174/admin
 
 # Tests
 cd services\auth; ..\..\.venv\Scripts\python -m pytest     # backend (parcours auth)
-cd services\ai; ..\..\.venv\Scripts\python -m pytest       # moteur IA (postgres-ai démarré, réseau simulé)
+cd services\ai; ..\..\.venv\Scripts\python -m pytest       # moteur IA (postgres-ai démarré ; LLM, catalog et réseau simulés)
+cd services\ai; ..\..\.venv\Scripts\python scripts\essai_llm.py --provider auto --mode json   # vrai appel LLM
 cd services\catalog; ..\..\.venv\Scripts\python -m pytest  # export interne, tags IA, transport (postgres démarré, migrations add_tags_ia_columns + add_transport_ia appliquées)
 cd frontend; npm run test                                   # vitest (client)
 cd frontend; npm run typecheck                              # TypeScript strict (2 apps)
@@ -96,7 +98,12 @@ dates ISO 8601) :
 
 Base existante : migrations idempotentes `services/catalog/scripts/add_tags_ia_columns.py` (étape 2)
 puis `add_transport_ia.py` (étape 2-bis). En dev Windows, appeler les services sur `127.0.0.1`
-(et non `localhost` : ~2 s de pénalité IPv6 par appel, cf. architecture.md §12 n° 13).
+(et non `localhost` : pénalité IPv6 à chaque connexion, cf. architecture.md §12 n° 13 — corrigé à l'étape 3).
+
+**Couche LLM (étape 3)** : le métier n'appelle que `ClientLLM.generer(...)` (`services/ai/app/llm/fabrique.py`),
+jamais un SDK directement. `LLM_PROVIDER` = `claude` | `ollama` | `auto` ; aucune bascule sur un refus de
+sécurité ; `temperature` n'est jamais envoyée à Claude (version d'API 2026-10-21) ; chaque appel est
+journalisé dans `llm_appels`. Sans clé Anthropic, tout fonctionne avec Ollama (`qwen2.5:3b` sur un poste 8 Go).
 
 - **Source des étapes** : [AgentIA_Voyara/Guide_Moteur_IA_Voyara.pdf](AgentIA_Voyara/Guide_Moteur_IA_Voyara.pdf)
   (**version 2**, étapes 0 à 13 + 2-bis, un prompt par étape ; la version HTML est la v1) et la présentation

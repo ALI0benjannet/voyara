@@ -17,7 +17,7 @@ class Settings(CommonSettings):
     POSTGRES_DB: str = "voyara"
 
     # URL du service de notification (envoi d'e-mails)
-    NOTIFICATION_SERVICE_URL: str = "http://localhost:8006"
+    NOTIFICATION_SERVICE_URL: str = "http://127.0.0.1:8006"
 
     # Durées de vie des tokens envoyés par e-mail
     EMAIL_VERIFICATION_EXPIRE_HOURS: int = 24

@@ -103,6 +103,17 @@ docker compose ps          # attendre que postgres et postgres-ai soient "health
 `postgres-ai` (image `pgvector/pgvector:pg16`, ~150 Mo à télécharger la première fois) porte la
 base `voyara_ai` du moteur IA, sur le port 5435. `dev.ps1` le démarre aussi, `stop-dev.ps1` l'arrête.
 
+**LLM du moteur IA (facultatif).** Sans clé Anthropic, le service `ai` utilise Ollama, un modèle
+local gratuit :
+
+```powershell
+docker compose --profile ollama up -d ollama
+docker compose exec ollama ollama pull qwen2.5:3b     # ~1,9 Go ; qwen2.5:7b demande >= 16 Go de RAM
+```
+
+Avec une clé Anthropic, la placer **toi-même** dans `services/ai/.env` (`ANTHROPIC_API_KEY=...`),
+jamais dans un fichier versionné. `LLM_PROVIDER=auto` (défaut) essaie Claude puis bascule sur Ollama.
+
 ---
 
 ## 5. Première fois seulement : créer les bases, les tables et les données de démo
@@ -246,9 +257,11 @@ npm run dev
 cd services\auth
 ..\..\.venv\Scripts\python -m pytest
 
-# Moteur IA (postgres-ai démarré ; Overpass et Open-Meteo sont simulés, pas d'Internet)
+# Moteur IA (postgres-ai démarré ; Overpass, Open-Meteo, Claude, Ollama et catalog sont simulés)
 cd ..\ai
 ..\..\.venv\Scripts\python -m pytest
+# Essai manuel d'un vrai appel LLM (Ollama démarré, ou clé Claude dans services/ai/.env)
+..\..\.venv\Scripts\python scripts\essai_llm.py --provider auto --mode json
 
 # Notebook d'analyse des données (figures dans docs/ia/figures/)
 cd ..\..

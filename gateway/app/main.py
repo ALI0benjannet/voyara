@@ -39,6 +39,7 @@ ROUTES: list[tuple[str, str, str]] = [
     ("/api/v1/payments", settings.PAYMENT_SERVICE_URL, "payment"),
     ("/api/v1/reviews", settings.REVIEW_SERVICE_URL, "review"),
     ("/api/v1/favorites", settings.REVIEW_SERVICE_URL, "review"),
+    ("/api/ai", settings.AI_SERVICE_URL, "ai"),  # moteur IA (ADR-007) — préfixe hors /api/v1
     ("/static/activities", settings.CATALOG_SERVICE_URL, "catalog"),  # photos d'activités
     ("/static/offres", settings.CATALOG_SERVICE_URL, "catalog"),  # photos des séjours et voitures
     ("/static", settings.AUTH_SERVICE_URL, "auth"),  # avatars servis par auth-service
@@ -52,6 +53,7 @@ SERVICES_HEALTH = {
     "review": settings.REVIEW_SERVICE_URL,
     "notification": settings.NOTIFICATION_SERVICE_URL,
     "admin": settings.ADMIN_SERVICE_URL,
+    "ai": settings.AI_SERVICE_URL,
 }
 
 # Headers hop-by-hop à ne pas retransmettre
