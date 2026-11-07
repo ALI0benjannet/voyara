@@ -15,7 +15,7 @@ class Settings(CommonSettings):
     POSTGRES_DB: str = "voyara_catalog"
 
     # Garde à la suppression d'activité : vérifie qu'aucune réservation n'existe
-    BOOKING_SERVICE_URL: str = "http://localhost:8003"
+    BOOKING_SERVICE_URL: str = "http://127.0.0.1:8003"
 
     # Crée les tables au démarrage (dev). En production : Alembic.
     AUTO_CREATE_TABLES: bool = True

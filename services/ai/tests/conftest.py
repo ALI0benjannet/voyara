@@ -34,3 +34,9 @@ def db(test_engine):
     session.close()
     transaction.rollback()
     connection.close()
+
+
+@pytest.fixture
+def anyio_backend():
+    """Tests asynchrones (couche LLM, client catalog) via le plugin anyio, sur asyncio."""
+    return "asyncio"

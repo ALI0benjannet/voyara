@@ -14,7 +14,7 @@ class Settings(CommonSettings):
     POSTGRES_PORT: int = 5432
     POSTGRES_DB: str = "voyara_payment"
 
-    BOOKING_SERVICE_URL: str = "http://localhost:8003"
+    BOOKING_SERVICE_URL: str = "http://127.0.0.1:8003"
 
     # Stripe — si STRIPE_SECRET_KEY est vide, le service passe en MODE SIMULATION
     # (bouton « Simuler le paiement » côté front, clairement étiqueté démo).

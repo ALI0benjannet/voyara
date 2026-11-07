@@ -14,8 +14,8 @@ class Settings(CommonSettings):
     POSTGRES_PORT: int = 5432
     POSTGRES_DB: str = "voyara_review"
 
-    CATALOG_SERVICE_URL: str = "http://localhost:8002"
-    BOOKING_SERVICE_URL: str = "http://localhost:8003"
+    CATALOG_SERVICE_URL: str = "http://127.0.0.1:8002"
+    BOOKING_SERVICE_URL: str = "http://127.0.0.1:8003"
 
     AUTO_CREATE_TABLES: bool = True
 

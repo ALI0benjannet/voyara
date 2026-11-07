@@ -13,13 +13,14 @@ class Settings(BaseSettings):
     PROJECT_NAME: str = "Voyara API Gateway"
     ENVIRONMENT: str = "development"
 
-    AUTH_SERVICE_URL: str = "http://localhost:8001"
-    CATALOG_SERVICE_URL: str = "http://localhost:8002"
-    BOOKING_SERVICE_URL: str = "http://localhost:8003"
-    PAYMENT_SERVICE_URL: str = "http://localhost:8004"
-    REVIEW_SERVICE_URL: str = "http://localhost:8005"
-    NOTIFICATION_SERVICE_URL: str = "http://localhost:8006"
-    ADMIN_SERVICE_URL: str = "http://localhost:8007"
+    AUTH_SERVICE_URL: str = "http://127.0.0.1:8001"
+    CATALOG_SERVICE_URL: str = "http://127.0.0.1:8002"
+    BOOKING_SERVICE_URL: str = "http://127.0.0.1:8003"
+    PAYMENT_SERVICE_URL: str = "http://127.0.0.1:8004"
+    REVIEW_SERVICE_URL: str = "http://127.0.0.1:8005"
+    NOTIFICATION_SERVICE_URL: str = "http://127.0.0.1:8006"
+    ADMIN_SERVICE_URL: str = "http://127.0.0.1:8007"
+    AI_SERVICE_URL: str = "http://127.0.0.1:8008"  # moteur IA (ADR-007)
 
     CORS_ORIGINS: List[str] = ["http://localhost:5173"]
 

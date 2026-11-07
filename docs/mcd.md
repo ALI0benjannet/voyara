@@ -304,7 +304,26 @@ erDiagram
         int code_meteo "WMO, nullable"
         datetime maj_le "expire apres 6 h"
     }
+    LLM_APPELS {
+        int id PK
+        datetime cree_le
+        string provider "claude | ollama"
+        string modele
+        string usage "essai, nlu, agent..."
+        string statut "succes | erreur | refus | bascule"
+        int tokens_entree
+        int tokens_sortie
+        int latence_ms
+        float cout_estime "USD, nullable"
+        text erreur "classe + message tronque, nullable"
+        int appel_parent_id "index : tentative precedente (bascule)"
+    }
 ```
+
+`llm_appels` (étape 3) : une ligne par tentative d'appel LLM. Ni prompt, ni réponse, ni clé :
+seulement des métadonnées de coût, de latence et de fiabilité. Une bascule Claude → Ollama donne
+deux lignes chaînées par `appel_parent_id`. L'extension `vector` (pgvector) est activée dans
+`voyara_ai` au démarrage du service ; les tables d'embeddings arrivent à l'étape 5.
 
 ## 6. Vue d'ensemble — relations inter-services (logiques, sans FK)
 

@@ -1,6 +1,7 @@
 # ==========================================================================
 # Demarre tous les microservices Voyara en local (sans Docker pour les
 # services ; la base Postgres peut etre le conteneur `docker compose up -d postgres`).
+# Moteur IA : LLM local optionnel -> docker compose --profile ollama up -d ollama
 #
 #   .\scripts\dev.ps1            # demarre tout
 #   .\scripts\dev.ps1 -Seed      # + cree l'admin initial
@@ -68,6 +69,8 @@ $services = @(
     @{ Name = "review";       Dir = "services\review";       Port = 8005 },
     @{ Name = "notification"; Dir = "services\notification"; Port = 8006 },
     @{ Name = "admin";        Dir = "services\admin";        Port = 8007 },
+    # Moteur IA (ADR-007) : base voyara_ai dans postgres-ai ; LLM Claude ou Ollama (LLM_PROVIDER)
+    @{ Name = "ai";           Dir = "services\ai";           Port = 8008 },
     @{ Name = "gateway";      Dir = "gateway";               Port = 8000 }
 )
 
@@ -83,6 +86,7 @@ foreach ($svc in $services) {
 Write-Host ""
 Write-Host "Gateway  : http://localhost:8000         (point d'entree unique)" -ForegroundColor Green
 Write-Host "Sante    : http://localhost:8000/health  (etat de tous les services)" -ForegroundColor Green
+Write-Host "Moteur IA: http://localhost:8000/api/ai/health (base, pgvector, LLM)" -ForegroundColor Green
 Write-Host "Frontends: cd frontend; npm run dev      (client :5173 + admin :5174/admin)" -ForegroundColor Green
 Write-Host ""
 Write-Host "Arret : .\scripts\stop-dev.ps1" -ForegroundColor Yellow
