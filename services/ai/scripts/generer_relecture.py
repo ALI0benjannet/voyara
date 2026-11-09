@@ -26,6 +26,8 @@ RELECTEURS = ("ali", "boutheina", "ons", "ghayth")
 GRAINE = 20261109
 FEUILLE = "Relecture"
 VRAI, FAUX = "vrai", "faux"
+# « ; » et non « , » : une activité dite par le client peut contenir une virgule.
+SEPARATEUR_LISTE = " ; "
 
 # (en-tête Excel, chemin dans `attendu`, type) — type : texte | entier | nombre | liste | bool | choix:<vocabulaire>
 COLONNES_CHAMPS: tuple[tuple[str, tuple[str, ...], str], ...] = (
@@ -43,6 +45,7 @@ COLONNES_CHAMPS: tuple[tuple[str, tuple[str, ...], str], ...] = (
     ("nb_enfants", ("nb_enfants",), "entier"),
     ("type_voyage", ("type_voyage",), "choix:types"),
     ("preferences", ("preferences",), "liste"),
+    ("activites_souhaitees", ("activites_souhaitees",), "liste"),
     ("niveau_marche_max", ("contraintes", "niveau_marche_max"), "entier"),
     ("mobilite_reduite", ("contraintes", "mobilite_reduite"), "bool"),
     ("horaires", ("contraintes", "horaires"), "texte"),
@@ -84,7 +87,7 @@ def vers_cellule(valeur: Any, type_: str) -> Any:
     if type_ == "bool":
         return VRAI if valeur else FAUX
     if type_ == "liste":
-        return ", ".join(valeur) or None
+        return SEPARATEUR_LISTE.join(valeur) or None
     return valeur
 
 
@@ -126,7 +129,8 @@ def ecrire_classeur(chemin: Path, relecteur: str, demandes: list[dict]) -> None:
         for col, nom in enumerate(EN_TETES, start=1):
             cellule = feuille.cell(rangee, col)
             cellule.alignment = Alignment(wrap_text=True, vertical="top")
-            if nom in ("date_debut", "budget_devise", "ville_depart", "horaires", "autres_villes", "preferences"):
+            if nom in ("date_debut", "budget_devise", "ville_depart", "horaires", "autres_villes", "preferences",
+                       "activites_souhaitees"):
                 cellule.number_format = "@"  # texte : Excel ne transforme pas 2026-12-20 en date
             if nom in ("statut", "commentaire"):
                 cellule.fill = FOND_SAISIE
@@ -151,6 +155,7 @@ def ecrire_classeur(chemin: Path, relecteur: str, demandes: list[dict]) -> None:
         validation.add(f"{lettre[nom]}2:{lettre[nom]}{derniere}")
 
     largeurs = {"texte": 60, "ecarts_vs_equipe": 45, "a_trancher": 40, "commentaire": 40, "preferences": 22,
+                "activites_souhaitees": 35,
                 "autres_villes": 24, "id": 8}
     for nom, col in lettre.items():
         feuille.column_dimensions[col].width = largeurs.get(nom, 13)
@@ -167,7 +172,8 @@ def ecrire_classeur(chemin: Path, relecteur: str, demandes: list[dict]) -> None:
         "4. Commentaire : expliquer toute correction ou tout doute.",
         "Lignes orange : annotation différente de celle de l'équipe (colonne ecarts_vs_equipe : équipe → jeu).",
         "Lignes jaunes : cas à trancher à la main (colonne a_trancher).",
-        "Listes : séparer par des virgules (ex. « plage, culture »). Booléens : vrai / faux / vide. "
+        "Listes : séparer par des points-virgules (ex. « plage ; culture » ; « quad ; nuit sous tente »). "
+        "activites_souhaitees = textes courts tels que dits par le client (voir README §3). Booléens : vrai / faux / vide. "
         "Dates : AAAA-MM-JJ. Devise : code ISO (TND, EUR…).",
         "Ne pas modifier les colonnes grises (id, source, jeu, date_reference, texte), ni l'ordre des colonnes.",
         "Champs recalculés à l'import, absents du fichier : budget_total_dt, champs_manquants.",

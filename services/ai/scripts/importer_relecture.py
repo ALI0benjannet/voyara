@@ -70,7 +70,11 @@ def depuis_cellule(valeur: Any, type_: str, nom: str) -> Any:
             raise ValeurInvalide(f"{nom} = {valeur!r} : nombre attendu") from None
         return int(nombre) if nombre.is_integer() else nombre
     if type_ == "liste":
-        return [v.strip() for v in str(valeur).split(",") if v.strip()]
+        texte = str(valeur)
+        # Séparateur « ; » ; la virgule reste tolérée pour les vocabulaires fermés (thèmes, villes),
+        # jamais pour les activités, qui peuvent en contenir une.
+        separateur = "," if ";" not in texte and nom != "activites_souhaitees" else ";"
+        return [v.strip() for v in texte.split(separateur) if v.strip()]
     texte = valeur.isoformat()[:10] if hasattr(valeur, "isoformat") else str(valeur)  # date saisie par Excel
     if nom == "budget_devise":
         texte = texte.upper()

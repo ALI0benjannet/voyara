@@ -61,6 +61,15 @@ def calculer(demandes: list[dict]) -> list[dict]:
             "kappa": round(k, 3) if k is not None else None,
             "interpretation": interpreter(k) if champ in CHAMPS_CATEGORIELS else "—",
         })
+    # Activités : codes normalisés côté équipe, textes tels que dits côté jeu → seul le nombre se compare.
+    a = [eq["nb_activites"] for eq, _ in paires]
+    b = [len(at["activites_souhaitees"]) for _, at in paires]
+    accords = sum(x == y for x, y in zip(a, b))
+    lignes.append({
+        "champ": "activites (nombre)", "n": len(paires), "accords": accords,
+        "accord_pct": round(100 * accords / len(paires), 1) if paires else None, "kappa": None,
+        "interpretation": "—",
+    })
     return lignes
 
 
@@ -101,6 +110,8 @@ def main() -> None:
         "Lecture : κ corrige l'accord du hasard (`null` compte comme une catégorie) ; échelle de Landis et "
         "Koch : > 0,8 presque parfait, > 0,6 substantiel, > 0,4 modéré. Les champs numériques ou listes "
         "(voyageurs, durée, montant, autres villes, champs manquants) n'ont qu'un pourcentage d'accord exact. "
+        "Pour les activités, l'équipe note des codes normalisés (`nuit_desert`) et le jeu des textes tels que "
+        "dits (« nuit sous tente ») : seul le **nombre** d'activités par demande est comparé. "
         "Une partie des désaccords est **voulue** : les règles du README (budget par personne converti en "
         "total, date manquante pour un vol, type de voyage plus strict) ont été appliquées après coup à "
         "l'annotation B.",

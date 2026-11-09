@@ -34,8 +34,8 @@ def _toutes(dossier=j.DOSSIER_EVAL):
 
 def test_jeu_complet_valide_et_compose():
     demandes = _toutes()
-    assert len(demandes) == 160
-    assert len({d["id"] for d in demandes}) == 160
+    assert len(demandes) == 190  # 130 humaines (équipe v2) + 60 générées
+    assert len({d["id"] for d in demandes}) == 190
     erreurs = {d["id"]: j.valider(d) for d in demandes if j.valider(d)}
     assert erreurs == {}
     test_genere = [d for d in demandes if d["jeu"] == "test"]
@@ -61,7 +61,7 @@ def _demande(**attendu):
         "destination": "Sousse", "autres_villes": [], "date_debut": None, "duree_jours": 3, "nb_nuits": 3,
         "budget_montant": 500, "budget_devise": "TND", "budget_base": "total", "budget_illimite": False,
         "budget_total_dt": 500, "nb_voyageurs": 2, "nb_adultes": 2, "nb_enfants": 0, "type_voyage": "couple",
-        "preferences": [], "contraintes": {"niveau_marche_max": None, "mobilite_reduite": None, "horaires": None},
+        "preferences": [], "activites_souhaitees": [], "contraintes": {"niveau_marche_max": None, "mobilite_reduite": None, "horaires": None},
         "langue": "fr", "ville_depart": None,
         "besoins_transport": {"vol": "indifferent", "voiture": "indifferent", "transfert": "indifferent"},
         "preferences_transport": {"vol_direct": None, "boite_auto": None, "priorite": None},
@@ -90,6 +90,8 @@ def test_vol_sans_depart_ni_date_et_devise():
     ({"date_debut": "2026-11-01"}, "antérieure"),
     ({"budget_illimite": True}, "budget_illimite"),
     ({"ville_depart": "Sousse"}, "identique"),
+    ({"activites_souhaitees": ["quad", "Quad"]}, "doublon"),
+    ({"activites_souhaitees": ["a ; b"]}, "réservé"),
 ])
 def test_valider_signale_les_incoherences(modif, extrait):
     erreurs = j.valider(_demande(**modif))
@@ -116,7 +118,7 @@ def test_ecarts_equipe_budget_par_personne():
 def test_repartition_stratifiee_et_deterministe():
     demandes = _toutes()
     parts = repartir(demandes, RELECTEURS, 1)
-    assert sorted(len(p) for p in parts.values()) == [40, 40, 40, 40]
+    assert sorted(len(p) for p in parts.values()) == [47, 47, 48, 48]
     assert sorted(d["id"] for p in parts.values() for d in p) == sorted(d["id"] for d in demandes)
     for langue in j.LANGUES:
         effectifs = [sum(d["attendu"]["langue"] == langue for d in p) for p in parts.values()]
@@ -127,7 +129,7 @@ def test_repartition_stratifiee_et_deterministe():
 @pytest.mark.parametrize("valeur, type_, attendu", [
     ("vrai", "bool", True), ("faux", "bool", False), (None, "bool", None),
     ("3", "entier", 3), (3.0, "entier", 3), ("1,5", "nombre", 1.5), ("plage, culture", "liste", ["plage", "culture"]),
-    ("", "liste", []), ("eur", "texte", "eur"),
+    ("", "liste", []), ("eur", "texte", "eur"), ("quad ; nuit sous tente", "liste", ["quad", "nuit sous tente"]),
 ])
 def test_depuis_cellule(valeur, type_, attendu):
     assert depuis_cellule(valeur, type_, "champ") == attendu
@@ -156,6 +158,7 @@ def test_aller_retour_excel(jeu_copie, tmp_path):
     feuille.cell(rangee["G-001"], col["statut"]).value = "valide"
     # H-041 : cas « je » tranché en solo, corrigé
     for nom, valeur in (("nb_voyageurs", 1), ("nb_adultes", 1), ("nb_enfants", 0), ("type_voyage", "solo"),
+                        ("activites_souhaitees", "medina ; sidi bou said, le soir"),
                         ("statut", "corrige"), ("commentaire", "un seul voyageur")):
         feuille.cell(rangee["H-041"], col[nom]).value = valeur
     # G-101 : modifié mais laissé « valide » → avertissement, passé en corrige
@@ -176,13 +179,34 @@ def test_aller_retour_excel(jeu_copie, tmp_path):
     assert rapport.non_relues == ["H-015 (ali)"]
     assert any("H-002" in e and "ski" in e for e in rapport.erreurs)
     assert any("G-101" in a for a in rapport.avertissements)
-    assert len(rapport.non_distribuees) == 155
+    assert len(rapport.non_distribuees) == 185
 
     apres = {d["id"]: d for d in _toutes(jeu_copie)}
     h041 = apres["H-041"]
     assert h041["statut"] == "corrige" and h041["relu_par"] == "ali" and "a_trancher" not in h041
     assert h041["attendu"]["champs_manquants"] == []  # recalculé : le nombre de voyageurs est connu
     assert h041["commentaire_relecture"] == "un seul voyageur"
+    assert h041["attendu"]["activites_souhaitees"] == ["medina", "sidi bou said, le soir"]  # virgule conservée
     assert apres["G-101"]["statut"] == "corrige" and apres["G-101"]["attendu"]["duree_jours"] == 7
     assert apres["G-001"]["statut"] == "valide" and apres["G-001"]["attendu"] == index["G-001"]["attendu"]
     assert apres["H-002"]["statut"] == "a_relire" and apres["H-002"]["attendu"] == index["H-002"]["attendu"]
+
+
+# --- Activités souhaitées (F1 tolérant) ----------------------------------------------
+
+@pytest.mark.parametrize("a, b, attendu", [
+    ("le musée du Bardo", "musée du bardo", True),          # articles, casse
+    ("Carthage", "visite de Carthage", True),               # inclusion
+    ("quad dans les dunes", "quad", True),
+    ("المدينة العتيقة", "مدينة العتيقة", True),              # article arabe « ال »
+    ("plongée", "kayak", False),
+    ("nuit sous tente", "nuit en campement", False),        # 1 mot commun sur 4 : < 50 %
+])
+def test_activites_correspondent(a, b, attendu):
+    assert j.activites_correspondent(a, b) is attendu
+
+
+def test_apparier_activites_un_a_un():
+    # « quad » ne peut servir qu'une fois ; F1 = 2·VP / (prédites + attendues)
+    assert j.apparier_activites(["quad", "spa"], ["quad dans les dunes", "quad en soirée", "spa"]) == 2
+    assert j.apparier_activites([], ["golf"]) == 0

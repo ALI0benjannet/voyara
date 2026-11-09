@@ -7,13 +7,13 @@ Demandes de voyage annotées à la main pour mesurer l'extraction de `DemandeVoy
 |---|---|
 | `nlu_dev.jsonl` | demandes générées du jeu dev (≈ 40 %) : sert à ajuster les prompts, les exemples few-shot et les règles |
 | `nlu_test.jsonl` | demandes générées du jeu test (≈ 60 %) : **regardé seulement pour l'évaluation finale** (aucun exemple few-shot n'en provient, un test le vérifie) |
-| `demandes_humaines_a_annoter.jsonl` | 100 demandes écrites par l'équipe (`source = humain`), **pré-annotées** selon ce README (`statut = a_relire`) ; `annotation_equipe` garde l'annotation d'origine pour comparaison |
-| `brut/demandes_equipe.json` | export d'origine de l'équipe (100 objets, format de leur outil). **Converti le 09/11/2026 d'un module TypeScript (`export const INITIAL_DATA: VoyaraItem[] = [...]`) en JSON valide**, contenu identique (vérifié objet par objet). Un outil qui l'importait comme module TS doit désormais le lire comme JSON |
+| `demandes_humaines_a_annoter.jsonl` | 130 demandes écrites par l'équipe (`source = humain`), **pré-annotées** depuis la v2 selon ce README (`statut = a_relire`) ; `annotation_equipe` garde l'annotation d'origine (dont les codes `activites` de l'équipe) pour comparaison |
+| `brut/demandes_equipe.json` | export de l'équipe, **v2** (130 objets, JSON valide) : demandes 1 à 100 aux textes inchangés + 30 nouvelles (101 à 130) centrées sur des activités ; champ `activites` (codes normalisés) ajouté, `notes` retiré. La v1 (100 objets) avait d'abord été un module TypeScript (`export const INITIAL_DATA: VoyaraItem[] = [...]`), converti en JSON le 09/11/2026 ; elle reste dans l'historique Git (commit `37c6d6b`) |
 | `nlu_demandes.jsonl` | généré par `scripts/evaluer_nlu.py` (toutes les demandes retenues, avec leur jeu) : ne pas éditer |
 
-**Composition** (décidée le 09/11/2026) : **160 demandes** = 100 `humain` + 60 `genere` ; ≥ 20 en
-arabe ou darija ; ≥ 25 avec transport ; dans le test, ≥ 70 % hors Djerba. Les scores sont publiés
-séparément pour `humain` et `genere`.
+**Composition** (09/11/2026, demandes équipe v2) : **190 demandes** = 130 `humain` + 60 `genere` ;
+≥ 20 en arabe ou darija ; ≥ 25 avec transport ; dans le test, ≥ 70 % hors Djerba. Les scores sont
+publiés séparément pour `humain` et `genere`.
 
 **Relecture (toutes les demandes, humaines et générées)** : en équipe, avec un fichier Excel par
 relecteur (`docs/ia/relecture/relecture_<nom>.xlsx`, 40 demandes chacun, stratifié par langue) :
@@ -47,7 +47,8 @@ mettre `"dev"` ou `"test"`.
    "budget_montant": 1400, "budget_devise": "TND", "budget_base": "total", "budget_illimite": false,
    "budget_total_dt": 1400,
    "nb_voyageurs": 4, "nb_adultes": 2, "nb_enfants": 2, "type_voyage": "famille",
-   "preferences": [], "contraintes": {"niveau_marche_max": null, "mobilite_reduite": null, "horaires": null},
+   "preferences": [], "activites_souhaitees": [],
+   "contraintes": {"niveau_marche_max": null, "mobilite_reduite": null, "horaires": null},
    "langue": "fr", "ville_depart": "Tunis",
    "besoins_transport": {"vol": "oui", "voiture": "indifferent", "transfert": "indifferent"},
    "preferences_transport": {"vol_direct": null, "boite_auto": null, "priorite": null},
@@ -79,6 +80,7 @@ mettre `"dev"` ou `"test"`.
 | `duree_jours` / `nb_nuits` | 1 à 60 / 0 à 60 |
 | `type_voyage` | `famille` · `couple` · `solo` · `amis` · `groupe` · `null` |
 | `preferences` | thèmes de l'étape 2 : `plage`, `culture`, `histoire`, `nature`, `gastronomie`, `aventure`, `detente`, `shopping`, `nautique`, `desert` |
+| `activites_souhaitees` | liste de textes courts (≤ 80 caractères, sans « ; »), tels que dits par le client, dans sa langue ; vocabulaire libre |
 | `langue` | `fr` · `en` · `ar` · `darija` |
 | `besoins_transport.*` | `oui` · `non` · `indifferent` |
 | `preferences_transport.priorite` | `prix` · `confort` · `null` |
@@ -129,7 +131,8 @@ un budget, une date ni une ville de départ.**
   par jour × `duree_jours` ; « par mois » pour un séjour d'un mois = le montant. Si le
   multiplicateur est inconnu → `null`.
 - `budget_base` garde la forme d'origine (`total`, `par_personne`, `par_nuit`, `par_jour`), pour
-  vérifier la multiplication. « Par personne et par nuit » → `par_personne` (cas H-018 à trancher).
+  vérifier la multiplication. « Par personne et par nuit » → `par_nuit` (choix de l'équipe en v2,
+  H-018 : 80 × 8 personnes × 3 nuits = 1 920 DT).
 - `budget_total_dt` = `budget_montant` **seulement si la devise est TND**, sinon `null`. Le LLM ne
   convertit jamais ; une conversion éventuelle viendra plus tard d'un taux configuré et affiché.
 - « Pas de limite », « budget sans problème » → `budget_illimite = true`, `budget_montant = null`,
@@ -171,6 +174,31 @@ un budget, une date ni une ville de départ.**
 | désert, Sahara, dunes, sahra, nuit sous tente | `desert` |
 
 - « musées » seul → `culture` ; « histoire et musées » → `culture` + `histoire`.
+
+### Activités souhaitées `activites_souhaitees`
+
+Elles servent à la recherche de l'étape 5 ; les **thèmes** (`preferences`) restent remplis en parallèle.
+
+- Une activité = **une chose concrète à faire ou un lieu précis à visiter**, telle que le client
+  la dit : « quad dans les dunes », « musée du Bardo », « hammam », « جامع عقبة », « jet ski ».
+- **Textes du client, dans sa langue** (pas de traduction, pas de code) ; on retire le verbe
+  d'introduction et l'article de tête (« visiter la grande mosquée » → « grande mosquée »), on garde
+  le complément qui précise l'activité (« dîner avec vue sur le golfe »).
+- **Une entrée par activité** ; les alternatives comptent séparément (« plongée ou snorkeling »,
+  « kitesurf wala windsurf » → deux entrées). Ordre du texte.
+- **Exclus** : les mots qui ne sont qu'un thème (plage, mer, désert, sahra, culture, histoire, nature,
+  détente, gastronomie, shopping, sports nautiques, visites culturelles) → seulement dans
+  `preferences` ; les villes du catalogue (→ `destination` / `autres_villes`) ; les critères
+  d'hébergement (piscine, wifi, 5 étoiles) ; le transport (4x4 de location, chauffeur) ; les
+  horaires (« au coucher du soleil » → `contraintes.horaires`). Un lieu précis hors catalogue
+  (Chebika, Carthage, Friguia park) **est** une activité.
+- Les codes `activites` de l'équipe (`nuit_desert`, `visite_monument`…) restent dans
+  `annotation_equipe` : seul leur nombre est comparé dans l'accord entre annotateurs.
+- **Évaluation (F1)** : après normalisation (minuscules, sans accents, ponctuation, mots vides ni
+  article arabe « ال »), une activité prédite correspond à une attendue si elles sont égales, si
+  l'une contient l'autre, ou si leurs mots se recouvrent à 50 % ou plus (indice de Jaccard) ;
+  appariement un à un. F1 = 2·VP / (nb prédites + nb attendues). Implémentation :
+  `scripts/jeu_nlu.py` (`activites_correspondent`, `apparier_activites`).
 - Ce qui n'a pas de thème (photo, cafés, soirées, piscine, wifi, hôtel 5 étoiles) → rien.
 - `niveau_marche_max` : 1 = marche très difficile, fauteuil roulant, mobilité réduite ; 2 = « pas
   trop fatigant », « on marche peu », « éviter les longues marches », « pas d'escaliers » ;

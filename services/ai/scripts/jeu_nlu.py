@@ -6,6 +6,8 @@ Aucune dépendance au service (pas de base, pas de réseau) : utilisable seul de
 """
 
 import json
+import re
+import unicodedata
 from datetime import date
 from pathlib import Path
 from typing import Any
@@ -28,6 +30,56 @@ CHAMPS_MANQUANTS = ("destination", "duree", "budget", "voyageurs", "ville_depart
 STATUTS = ("a_relire", "valide", "corrige")
 STATUTS_RELUS = ("valide", "corrige")
 DUREE_MAX_JOURS = 60  # au-delà de 14 : avertissement « planning limité à 14 jours » (étape 7)
+LONGUEUR_MAX_ACTIVITE = 80
+
+
+# --- Activités souhaitées : normalisation et appariement (F1) --------------------
+# Les activités sont des textes courts tels que dits par le client : une comparaison exacte
+# serait trop sévère (« musée du Bardo » vs « le musée du bardo »). Règle d'appariement
+# (README §3) : après normalisation, deux activités correspondent si elles sont égales, si l'une
+# contient l'autre, ou si leurs mots se recouvrent à 50 % ou plus (Jaccard) ; appariement un à un.
+
+_MOTS_VIDES = {
+    "le", "la", "les", "l", "un", "une", "des", "du", "de", "d", "au", "aux", "en", "et", "ou", "a",
+    "the", "a", "an", "of", "to", "and", "or", "in", "on", "w", "f", "el", "l", "fil", "wala",
+}
+
+
+def normaliser_activite(texte: str) -> list[str]:
+    """Mots significatifs : minuscules, sans accents ni ponctuation, sans mots vides ni « ال »."""
+    sans_accents = "".join(c for c in unicodedata.normalize("NFKD", texte) if not unicodedata.combining(c))
+    mots = re.findall(r"\w+", sans_accents.lower())
+    sortie = []
+    for mot in mots:
+        if len(mot) > 3 and mot.startswith("ال"):
+            mot = mot[2:]
+        if mot not in _MOTS_VIDES:
+            sortie.append(mot)
+    return sortie
+
+
+def activites_correspondent(a: str, b: str) -> bool:
+    ma, mb = normaliser_activite(a), normaliser_activite(b)
+    if not ma or not mb:
+        return False
+    ja, jb = " ".join(ma), " ".join(mb)
+    if ja == jb or f" {ja} " in f" {jb} " or f" {jb} " in f" {ja} ":
+        return True
+    sa, sb = set(ma), set(mb)
+    return len(sa & sb) / len(sa | sb) >= 0.5
+
+
+def apparier_activites(predites: list[str], attendues: list[str]) -> int:
+    """Nombre de vrais positifs (appariement glouton un à un, dans l'ordre des attendues)."""
+    libres = list(predites)
+    vrais = 0
+    for attendue in attendues:
+        for i, predite in enumerate(libres):
+            if activites_correspondent(predite, attendue):
+                vrais += 1
+                del libres[i]
+                break
+    return vrais
 
 
 # --- Lecture / écriture ----------------------------------------------------------
@@ -186,6 +238,20 @@ def valider(demande: dict) -> list[str]:
         if len(set(prefs)) != len(prefs):
             err("preferences contient un doublon")
 
+    activites = a.get("activites_souhaitees")
+    if not isinstance(activites, list):
+        err("activites_souhaitees doit être une liste")
+    else:
+        for activite in activites:
+            if not isinstance(activite, str) or not activite.strip():
+                err(f"activites_souhaitees : texte non vide attendu ({activite!r})")
+            elif len(activite) > LONGUEUR_MAX_ACTIVITE:
+                err(f"activites_souhaitees : « {activite[:30]}… » dépasse {LONGUEUR_MAX_ACTIVITE} caractères")
+            elif ";" in activite:
+                err(f"activites_souhaitees : « {activite} » contient « ; » (séparateur réservé)")
+        if len({x.strip().lower() for x in activites if isinstance(x, str)}) != len(activites):
+            err("activites_souhaitees contient un doublon")
+
     c = a.get("contraintes") or {}
     entier("niveau_marche_max", c.get("niveau_marche_max"), 1, 3)
     booleen("mobilite_reduite", c.get("mobilite_reduite"))
@@ -245,6 +311,8 @@ def attendu_equipe(e: dict) -> dict:
                     else "non" if transport & {"sans_voiture", "voiture_perso"} else "indifferent"),
         "transfert": "oui" if transport & {"transfert_aeroport", "chauffeur_prive"} else "indifferent",
         "champs_manquants": sorted(manquants.get(m, m) for m in e.get("infos_manquantes") or []),
+        # Codes normalisés de l'équipe (v2) : seul leur nombre est comparable aux textes du jeu.
+        "nb_activites": len(e.get("activites") or []),
     }
 
 
