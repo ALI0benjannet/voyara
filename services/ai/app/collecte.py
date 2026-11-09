@@ -85,7 +85,7 @@ def selectionner_aeroports(elements: list[dict], maintenant: datetime) -> list[d
 
     Un aéroport peut sortir deux fois (nœud + contour) : on garde le contour
     (centre géométrique) plutôt que le nœud. Les aéroports à plus de 60 km de
-    toute ville couverte (Sfax, Gafsa, Tabarka...) sont ignorés."""
+    toute ville couverte (Sfax, Gafsa, Gabès...) sont ignorés."""
     par_iata: dict[str, dict] = {}
     for element in sorted(elements, key=lambda e: (e.get("type") == "node", e.get("id", 0))):
         position = coordonnees(element)
