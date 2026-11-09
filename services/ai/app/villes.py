@@ -26,6 +26,8 @@ VILLES: tuple[Ville, ...] = (
     Ville("Monastir", 35.7643, 10.8113, 5000),
     Ville("Tozeur", 33.9197, 8.1335, 6000),
     Ville("Kairouan", 35.6781, 10.0963, 4000),
+    # Tabarka : le rayon couvre le port, le fort génois et l'aéroport Tabarka–Aïn Draham (TBJ)
+    Ville("Tabarka", 36.9544, 8.7580, 6000),
 )
 
 

@@ -82,7 +82,7 @@ def test_vol_sans_depart_ni_date_et_devise():
 
 
 @pytest.mark.parametrize("modif, extrait", [
-    ({"destination": "Tabarka"}, "destination"),
+    ({"destination": "Bizerte"}, "destination"),
     ({"duree_jours": 61, "nb_nuits": 61}, "hors limites"),
     ({"duree_jours": 3, "nb_nuits": 5}, "incohérents"),
     ({"preferences": ["ski"]}, "preferences"),

@@ -17,7 +17,8 @@ FICHIER_HUMAINES = "demandes_humaines_a_annoter.jsonl"
 FICHIERS_JEU = (FICHIER_HUMAINES, "nlu_dev.jsonl", "nlu_test.jsonl")
 
 # --- Vocabulaire (README §2) ---------------------------------------------------
-VILLES_CATALOGUE = ("Djerba", "Tunis", "Sidi Bou Saïd", "Sousse", "Hammamet", "Monastir", "Tozeur", "Kairouan")
+VILLES_CATALOGUE = ("Djerba", "Tunis", "Sidi Bou Saïd", "Sousse", "Hammamet", "Monastir", "Tozeur", "Kairouan",
+                    "Tabarka")
 # Thèmes de l'étape 2 (services/catalog/app/tags_ia.py)
 THEMES = ("plage", "culture", "histoire", "nature", "gastronomie",
           "aventure", "detente", "shopping", "nautique", "desert")

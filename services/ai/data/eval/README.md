@@ -71,7 +71,7 @@ mettre `"dev"` ou `"test"`.
 
 | Champ | Valeurs |
 |---|---|
-| `destination` | ville principale (**la première citée**) **du catalogue** : Djerba, Tunis, Sidi Bou Saïd, Sousse, Hammamet, Monastir, Tozeur, Kairouan (graphie exacte) ; sinon `null` |
+| `destination` | ville principale (**la première citée**) **du catalogue** : Djerba, Tunis, Sidi Bou Saïd, Sousse, Hammamet, Monastir, Tozeur, Kairouan, Tabarka (graphie exacte) ; sinon `null` |
 | `autres_villes` | autres villes du catalogue pour le même voyage (circuits), dans l'ordre cité ; les lieux hors catalogue (Chebika, Tamerza, La Goulette…) sont ignorés |
 | `ville_depart` | toute ville, graphie canonique française (Tunis, Paris, Lyon, Genève, Londres…) ; `null` si non dite |
 | `budget_devise` | code ISO : `TND`, `EUR`, `USD`, `CHF`, `CAD`, `MAD`… |
@@ -240,7 +240,7 @@ Elles servent à la recherche de l'étape 5 ; les **thèmes** (`preferences`) re
 - Demande sans rapport avec un voyage en Tunisie (recette, lettre de motivation, culture générale,
   tentative de détournement du prompt) → `hors_sujet = true`, autres champs `null` ou par défaut,
   `champs_manquants = []`.
-- Destination hors catalogue (Tabarka, Douz…) → `destination = null` et `destination` manquant :
+- Destination hors catalogue (Bizerte, Douz…) → `destination = null` et `destination` manquant :
   le système doit proposer les villes connues, jamais en inventer une.
 
 ### Champs manquants (règle des champs essentiels)

@@ -7,7 +7,7 @@ par upsert sur `source_id` : relancer le script met à jour, sans doublon.
 rattachés à la ville couverte la plus proche (≤ 60 km).
 
 Usage (depuis services/ai, conteneur `postgres-ai` démarré) :
-    python scripts/collecter_pois.py                         # les 8 villes
+    python scripts/collecter_pois.py                         # les 9 villes
     python scripts/collecter_pois.py --ville Djerba --ville Tozeur
     python scripts/collecter_pois.py --max-par-type 80 --dry-run
     python scripts/collecter_pois.py --aeroports              # aéroports seulement
