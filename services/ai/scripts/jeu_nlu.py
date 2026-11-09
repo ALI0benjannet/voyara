@@ -17,8 +17,13 @@ FICHIER_HUMAINES = "demandes_humaines_a_annoter.jsonl"
 FICHIERS_JEU = (FICHIER_HUMAINES, "nlu_dev.jsonl", "nlu_test.jsonl")
 
 # --- Vocabulaire (README §2) ---------------------------------------------------
+# Les 29 villes du référentiel du moteur IA (app/villes.py) : chefs-lieux des 24 gouvernorats
+# + Sidi Bou Saïd, Hammamet, Djerba, Tabarka et Douz (09/11/2026)
 VILLES_CATALOGUE = ("Djerba", "Tunis", "Sidi Bou Saïd", "Sousse", "Hammamet", "Monastir", "Tozeur", "Kairouan",
-                    "Tabarka")
+                    "Tabarka",
+                    "Ariana", "Ben Arous", "La Manouba", "Nabeul", "Zaghouan", "Bizerte", "Béja", "Jendouba",
+                    "Le Kef", "Siliana", "Mahdia", "Sfax", "Kasserine", "Sidi Bouzid", "Gabès", "Médenine",
+                    "Tataouine", "Gafsa", "Kébili", "Douz")
 # Thèmes de l'étape 2 (services/catalog/app/tags_ia.py)
 THEMES = ("plage", "culture", "histoire", "nature", "gastronomie",
           "aventure", "detente", "shopping", "nautique", "desert")

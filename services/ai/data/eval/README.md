@@ -11,7 +11,7 @@ Demandes de voyage annotées à la main pour mesurer l'extraction de `DemandeVoy
 | `brut/demandes_equipe.json` | export de l'équipe, **v2** (130 objets, JSON valide) : demandes 1 à 100 aux textes inchangés + 30 nouvelles (101 à 130) centrées sur des activités ; champ `activites` (codes normalisés) ajouté, `notes` retiré. La v1 (100 objets) avait d'abord été un module TypeScript (`export const INITIAL_DATA: VoyaraItem[] = [...]`), converti en JSON le 09/11/2026 ; elle reste dans l'historique Git (commit `37c6d6b`) |
 | `nlu_demandes.jsonl` | généré par `scripts/evaluer_nlu.py` (toutes les demandes retenues, avec leur jeu) : ne pas éditer |
 
-**Composition** (09/11/2026, demandes équipe v2) : **190 demandes** = 130 `humain` + 60 `genere` ;
+**Composition** (09/11/2026, demandes équipe v2) : **192 demandes** = 130 `humain` + 62 `genere` ;
 ≥ 20 en arabe ou darija ; ≥ 25 avec transport ; dans le test, ≥ 70 % hors Djerba. Les scores sont
 publiés séparément pour `humain` et `genere`.
 
@@ -71,7 +71,7 @@ mettre `"dev"` ou `"test"`.
 
 | Champ | Valeurs |
 |---|---|
-| `destination` | ville principale (**la première citée**) **du catalogue** : Djerba, Tunis, Sidi Bou Saïd, Sousse, Hammamet, Monastir, Tozeur, Kairouan, Tabarka (graphie exacte) ; sinon `null` |
+| `destination` | ville principale (**la première citée**) **du catalogue**, graphie exacte, parmi les 29 villes du moteur IA (`app/villes.py`) : les chefs-lieux des 24 gouvernorats (Tunis, Ariana, Ben Arous, La Manouba, Nabeul, Zaghouan, Bizerte, Béja, Jendouba, Le Kef, Siliana, Sousse, Monastir, Mahdia, Sfax, Kairouan, Kasserine, Sidi Bouzid, Gabès, Médenine, Tataouine, Gafsa, Tozeur, Kébili) + Sidi Bou Saïd, Hammamet, Djerba, Tabarka, Douz ; sinon `null` |
 | `autres_villes` | autres villes du catalogue pour le même voyage (circuits), dans l'ordre cité ; les lieux hors catalogue (Chebika, Tamerza, La Goulette…) sont ignorés |
 | `ville_depart` | toute ville, graphie canonique française (Tunis, Paris, Lyon, Genève, Londres…) ; `null` si non dite |
 | `budget_devise` | code ISO : `TND`, `EUR`, `USD`, `CHF`, `CAD`, `MAD`… |
@@ -240,8 +240,13 @@ Elles servent à la recherche de l'étape 5 ; les **thèmes** (`preferences`) re
 - Demande sans rapport avec un voyage en Tunisie (recette, lettre de motivation, culture générale,
   tentative de détournement du prompt) → `hors_sujet = true`, autres champs `null` ou par défaut,
   `champs_manquants = []`.
-- Destination hors catalogue (Bizerte, Douz…) → `destination = null` et `destination` manquant :
-  le système doit proposer les villes connues, jamais en inventer une.
+- Destination hors catalogue (Matmata, Ksar Ghilane, Kélibia, ou une ville étrangère : Alger,
+  Paris…) → `destination = null` et `destination` manquant : le système doit proposer les villes
+  connues, jamais en inventer une. Les cas de référence sont G-137 (dev) et G-138 (test).
+- **Nom de gouvernorat** : il désigne toujours la ville chef-lieu du même nom (« Nabeul » → Nabeul,
+  « Médenine » → Médenine, « Kébili » → Kébili). Hammamet, Djerba, Tabarka et Douz restent des villes à
+  part : on ne les remplace jamais par leur chef-lieu. « Kef » et « El Kef » s'annotent « Le Kef », et
+  « Manouba », « La Manouba ».
 
 ### Champs manquants (règle des champs essentiels)
 

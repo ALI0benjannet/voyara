@@ -69,15 +69,33 @@ def distance_km(lat1: float, lon1: float, lat2: float, lon2: float) -> float:
 
 
 DISTANCE_MAX_AEROPORT_KM = 60
+# Exceptions à la règle de la ville la plus proche : l'aéroport de Tunis-Carthage est à
+# 3,8 km du centre d'Ariana (7,9 km de Tunis), mais le catalogue le rattache à Tunis
+# (`AEROPORTS_REFERENCE` de services/catalog/app/lieux.py) et les voyageurs aussi.
+VILLE_IMPOSEE_PAR_IATA = {"TUN": "Tunis"}
 
 
 def ville_la_plus_proche(latitude: float, longitude: float,
                          max_km: float = DISTANCE_MAX_AEROPORT_KM) -> Ville | None:
     """Ville couverte la plus proche d'un point, ou None au-delà de `max_km`."""
     distance, ville = min(
-        (distance_km(latitude, longitude, v.latitude, v.longitude), v) for v in VILLES
+        ((distance_km(latitude, longitude, v.latitude, v.longitude), v) for v in VILLES),
+        key=lambda paire: paire[0],
     )
     return ville if distance <= max_km else None
+
+
+def ville_de_rattachement(latitude: float, longitude: float, ville: Ville) -> Ville:
+    """Ville à laquelle rattacher un POI trouvé par la collecte de `ville`.
+
+    Parmi `ville` et les villes dont le cercle de collecte contient le point, celle dont
+    le centre est le plus proche. Un point qui n'est que dans le cercle de `ville` lui
+    reste rattaché, même s'il est plus près du centre d'une ville voisine."""
+    candidates = [ville] + [
+        v for v in VILLES
+        if v != ville and distance_km(latitude, longitude, v.latitude, v.longitude) * 1000 <= v.rayon_m
+    ]
+    return min(candidates, key=lambda v: distance_km(latitude, longitude, v.latitude, v.longitude))
 
 
 def selectionner_aeroports(elements: list[dict], maintenant: datetime) -> list[dict]:
@@ -85,7 +103,8 @@ def selectionner_aeroports(elements: list[dict], maintenant: datetime) -> list[d
 
     Un aéroport peut sortir deux fois (nœud + contour) : on garde le contour
     (centre géométrique) plutôt que le nœud. Les aéroports à plus de 60 km de
-    toute ville couverte (Sfax, Gafsa, Gabès...) sont ignorés."""
+    toute ville couverte (El Borma...) sont ignorés ; `VILLE_IMPOSEE_PAR_IATA`
+    prime sur la distance (TUN → Tunis)."""
     par_iata: dict[str, dict] = {}
     for element in sorted(elements, key=lambda e: (e.get("type") == "node", e.get("id", 0))):
         position = coordonnees(element)
@@ -94,7 +113,9 @@ def selectionner_aeroports(elements: list[dict], maintenant: datetime) -> list[d
         ville = ville_la_plus_proche(*position)
         poi = element_vers_poi(element, ville.nom, maintenant) if ville else None
         if poi and poi["type"] == "aeroport":
-            par_iata.setdefault(poi["tags"]["iata"].upper(), poi)
+            code = poi["tags"]["iata"].upper()
+            poi["ville"] = VILLE_IMPOSEE_PAR_IATA.get(code, poi["ville"])
+            par_iata.setdefault(code, poi)
     return [par_iata[code] for code in sorted(par_iata)]
 
 
@@ -144,9 +165,16 @@ def _cle_tri(poi: dict) -> tuple[str, int]:
 
 
 def selectionner(elements: list[dict], ville: Ville, max_par_type: int, maintenant: datetime) -> list[dict]:
-    """Convertit les éléments et plafonne chaque type de façon déterministe (ordre des id OSM)."""
+    """Convertit les éléments et plafonne chaque type de façon déterministe (ordre des id OSM).
+
+    Rattachement unique : un élément situé aussi dans le cercle d'une autre ville, et plus
+    proche de son centre, est écarté (il sera collecté avec elle). Sans ce filtre, un POI
+    dans deux cercles (Grand Tunis) prendrait la ville de la dernière collecte lancée."""
     pois = {}
     for element in elements:
+        position = coordonnees(element)
+        if position and ville_de_rattachement(*position, ville) != ville:
+            continue
         poi = element_vers_poi(element, ville.nom, maintenant)
         if poi:
             pois[poi["source_id"]] = poi  # un objet peut sortir de deux filtres

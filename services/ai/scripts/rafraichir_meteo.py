@@ -1,7 +1,7 @@
 """Remplit le cache météo (`voyara_ai.meteo_cache`) depuis Open-Meteo.
 
 Usage (depuis services/ai, conteneur `postgres-ai` démarré) :
-    python scripts/rafraichir_meteo.py                   # les 9 villes, 7 jours
+    python scripts/rafraichir_meteo.py                   # les 29 villes, 7 jours
     python scripts/rafraichir_meteo.py --ville Djerba --jours 3
 """
 
