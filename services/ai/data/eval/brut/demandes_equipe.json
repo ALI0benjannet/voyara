@@ -1,1705 +1,2343 @@
-import { VoyaraItem } from '../types/voyara';
-
-export const INITIAL_DATA: VoyaraItem[] = [
-  {
-    id: 1,
-    langue: 'fr',
-    message: "salut, on est un couple, on veut 4 jours a sidi bou said, budget 1200 dt, on aime les cafés avec vue et la photo",
-    villes: ['Sidi Bou Saïd'],
-    transport: [],
-    vol_depuis: null,
-    nb_personnes: 2,
-    type_groupe: 'couple',
-    budget_montant: 1200,
-    budget_devise: 'TND',
-    budget_type: 'total',
-    duree_jours: 4,
-    infos_manquantes: [],
-    contraintes: ['café avec vue', 'photo'],
-    statut: 'valide',
-    notes: 'Exemple complet'
-  },
-  {
-    id: 2,
-    langue: 'fr',
-    message: "Bonjour, vol depuis Paris vers Tunis pour 2 adultes et 2 enfants (6 et 9 ans), 7 nuits, budget 3500€ tout compris. Vol direct svp",
-    villes: ['Tunis'],
-    transport: ['vol'],
-    vol_depuis: 'Paris',
-    nb_personnes: 4,
-    type_groupe: 'famille_enfants',
-    budget_montant: 3500,
-    budget_devise: 'EUR',
-    budget_type: 'total',
-    duree_jours: 7,
-    infos_manquantes: [],
-    contraintes: ['vol direct', 'enfants 6 et 9 ans'],
-    statut: 'a_faire'
-  },
-  {
-    id: 3,
-    langue: 'darija_latin',
-    message: "3aslema, n7eb nemchi l tozeur m3a s7abi, 5 personnes, 3 jours, budget 600 dt lkol. nheb sahra w quad",
-    villes: ['Tozeur'],
-    transport: [],
-    vol_depuis: null,
-    nb_personnes: 5,
-    type_groupe: 'amis',
-    budget_montant: 600,
-    budget_devise: 'TND',
-    budget_type: 'total',
-    duree_jours: 3,
-    infos_manquantes: [],
-    contraintes: ['désert', 'quad'],
-    statut: 'a_faire'
-  },
-  {
-    id: 4,
-    langue: 'fr',
-    message: "je cherche un truc pas cher a sousse pour moi tout seul, genre 3 nuits, max 250dt, sans voiture je prend le louage",
-    villes: ['Sousse'],
-    transport: ['sans_voiture'],
-    vol_depuis: null,
-    nb_personnes: 1,
-    type_groupe: 'solo',
-    budget_montant: 250,
-    budget_devise: 'TND',
-    budget_type: 'total',
-    duree_jours: 3,
-    infos_manquantes: [],
-    contraintes: ['louage'],
-    statut: 'a_faire'
-  },
-  {
-    id: 5,
-    langue: 'darija_arabe',
-    message: "عسلامة، حابين نمشيو للحمامات أنا ومرتي وولادي زوز، جمعة كاملة، الميزانية 2500 دينار، نحبو أوتيل فيه بيسين للصغار",
-    villes: ['Hammamet'],
-    transport: [],
-    vol_depuis: null,
-    nb_personnes: 4,
-    type_groupe: 'famille_enfants',
-    budget_montant: 2500,
-    budget_devise: 'TND',
-    budget_type: 'total',
-    duree_jours: 7,
-    infos_manquantes: [],
-    contraintes: ['piscine enfants'],
-    statut: 'a_faire'
-  },
-  {
-    id: 6,
-    langue: 'fr',
-    message: "On atterrit a Monastir samedi soir, on est 4, il nous faut un transfert aéroport jusqu'a l'hotel puis 5 jours sur place. budget environ 1800 dt",
-    villes: ['Monastir'],
-    transport: ['transfert_aeroport'],
-    vol_depuis: null,
-    nb_personnes: 4,
-    type_groupe: 'amis',
-    budget_montant: 1800,
-    budget_devise: 'TND',
-    budget_type: 'total',
-    duree_jours: 5,
-    infos_manquantes: [],
-    contraintes: ['arrivée samedi soir'],
-    statut: 'a_faire'
-  },
-  {
-    id: 7,
-    langue: 'fr',
-    message: "Kairouan une journée, on veut visiter la grande mosquée et les tapis. on est 3 copines",
-    villes: ['Kairouan'],
-    transport: [],
-    vol_depuis: null,
-    nb_personnes: 3,
-    type_groupe: 'amis',
-    budget_montant: null,
-    budget_devise: null,
-    budget_type: null,
-    duree_jours: 1,
-    infos_manquantes: ['budget'],
-    contraintes: ['grande mosquée', 'artisanat tapis'],
-    statut: 'a_faire'
-  },
-  {
-    id: 8,
-    langue: 'darija_latin',
-    message: "bonsoir, ena w mrati 7abin weekend f djerba, 2 lilet, budget 900 dt, w n7eb kraya karhba automatique",
-    villes: ['Djerba'],
-    transport: ['location_voiture'],
-    vol_depuis: null,
-    nb_personnes: 2,
-    type_groupe: 'couple',
-    budget_montant: 900,
-    budget_devise: 'TND',
-    budget_type: 'total',
-    duree_jours: 2,
-    infos_manquantes: [],
-    contraintes: ['boîte auto'],
-    statut: 'a_faire'
-  },
-  {
-    id: 9,
-    langue: 'fr',
-    message: "Salut ! vol depuis Lyon pour Tozeur c possible ? on est 2, 4 jours, budget 1500€, on veut voir le désert et les oasis, on marche pas beaucoup",
-    villes: ['Tozeur'],
-    transport: ['vol'],
-    vol_depuis: 'Lyon',
-    nb_personnes: 2,
-    type_groupe: 'couple',
-    budget_montant: 1500,
-    budget_devise: 'EUR',
-    budget_type: 'total',
-    duree_jours: 4,
-    infos_manquantes: [],
-    contraintes: ['marche peu', 'oasis', 'désert'],
-    statut: 'a_faire'
-  },
-  {
-    id: 10,
-    langue: 'arabe',
-    message: "مرحبا، أرغب في رحلة ثقافية إلى القيروان وسوسة لمدة ثلاثة أيام لشخصين، الميزانية حوالي 900 دينار، بدون سيارة",
-    villes: ['Kairouan', 'Sousse'],
-    transport: ['sans_voiture'],
-    vol_depuis: null,
-    nb_personnes: 2,
-    type_groupe: 'couple',
-    budget_montant: 900,
-    budget_devise: 'TND',
-    budget_type: 'total',
-    duree_jours: 3,
-    infos_manquantes: [],
-    contraintes: ['culturel'],
-    statut: 'a_faire'
-  },
-  {
-    id: 11,
-    langue: 'fr',
-    message: "Bjr, famille de 5 (3 enfants dont un bébé), 10 jours entre Hammamet et Sousse, budget 4000dt, on aura besoin d'une voiture 7 places",
-    villes: ['Hammamet', 'Sousse'],
-    transport: ['location_voiture'],
-    vol_depuis: null,
-    nb_personnes: 5,
-    type_groupe: 'famille_enfants',
-    budget_montant: 4000,
-    budget_devise: 'TND',
-    budget_type: 'total',
-    duree_jours: 10,
-    infos_manquantes: [],
-    contraintes: ['bébé', 'véhicule 7 places'],
-    statut: 'a_faire'
-  },
-  {
-    id: 12,
-    langue: 'en',
-    message: "Hi, solo traveler here, 6 days: Tunis + Sidi Bou Said + Kairouan, budget around 700 USD, flying from Rome",
-    villes: ['Tunis', 'Sidi Bou Saïd', 'Kairouan'],
-    transport: ['vol'],
-    vol_depuis: 'Rome',
-    nb_personnes: 1,
-    type_groupe: 'solo',
-    budget_montant: 700,
-    budget_devise: 'USD',
-    budget_type: 'total',
-    duree_jours: 6,
-    infos_manquantes: [],
-    contraintes: [],
-    statut: 'a_faire'
-  },
-  {
-    id: 13,
-    langue: 'darija_latin',
-    message: "ya5i fama chay 3la tunis lel weekend? ena w zouz s7abi, budget sghir 300 dt lkol, ma3andnach karhba",
-    villes: ['Tunis'],
-    transport: ['sans_voiture'],
-    vol_depuis: null,
-    nb_personnes: 3,
-    type_groupe: 'amis',
-    budget_montant: 300,
-    budget_devise: 'TND',
-    budget_type: 'total',
-    duree_jours: 2,
-    infos_manquantes: [],
-    contraintes: [],
-    statut: 'a_faire'
-  },
-  {
-    id: 14,
-    langue: 'fr',
-    message: "bonjour je voudrais organiser l'anniversaire de ma femme a sidi bou said, diner romantique + 2 nuits dans un bel hotel, budget pas de limite",
-    villes: ['Sidi Bou Saïd'],
-    transport: [],
-    vol_depuis: null,
-    nb_personnes: 2,
-    type_groupe: 'couple',
-    budget_montant: null,
-    budget_devise: null,
-    budget_type: null,
-    duree_jours: 2,
-    infos_manquantes: [],
-    contraintes: ['anniversaire', 'dîner romantique', 'haut de gamme'],
-    statut: 'a_faire'
-  },
-  {
-    id: 15,
-    langue: 'fr',
-    message: "Vol direct Bruxelles–Monastir pour 6 amis, 1 semaine début juillet, budget 700€ par personne, on veut plage et soirées",
-    villes: ['Monastir'],
-    transport: ['vol'],
-    vol_depuis: 'Bruxelles',
-    nb_personnes: 6,
-    type_groupe: 'amis',
-    budget_montant: 700,
-    budget_devise: 'EUR',
-    budget_type: 'par_personne',
-    duree_jours: 7,
-    infos_manquantes: [],
-    contraintes: ['vol direct', 'vie nocturne', 'plage'],
-    statut: 'a_faire'
-  },
-  {
-    id: 16,
-    langue: 'darija_arabe',
-    message: "نحب نعمل خرجة لتوزر نهار السبت والأحد مع عايلتي، 4 أشخاص، الميزانية 800 دينار، وحابين نكريو كرهبة من تونس",
-    villes: ['Tozeur'],
-    transport: ['location_voiture'],
-    vol_depuis: null,
-    nb_personnes: 4,
-    type_groupe: 'famille_enfants',
-    budget_montant: 800,
-    budget_devise: 'TND',
-    budget_type: 'total',
-    duree_jours: 2,
-    infos_manquantes: [],
-    contraintes: ['départ de Tunis'],
-    statut: 'a_faire'
-  },
-  {
-    id: 17,
-    langue: 'fr',
-    message: "Je suis à mobilité réduite, je cherche 3 jours à Monastir avec ma fille, hôtel accessible, budget 1000 dt, transfert depuis l'aéroport de Monastir obligatoire",
-    villes: ['Monastir'],
-    transport: ['transfert_aeroport'],
-    vol_depuis: null,
-    nb_personnes: 2,
-    type_groupe: 'famille_enfants',
-    budget_montant: 1000,
-    budget_devise: 'TND',
-    budget_type: 'total',
-    duree_jours: 3,
-    infos_manquantes: [],
-    contraintes: ['PMR', 'hôtel accessible'],
-    statut: 'a_faire'
-  },
-  {
-    id: 18,
-    langue: 'fr',
-    message: "hello on est un groupe de 8 étudiants on veut faire hammamet pas cher 3 jours genre 80dt par tete par nuit",
-    villes: ['Hammamet'],
-    transport: [],
-    vol_depuis: null,
-    nb_personnes: 8,
-    type_groupe: 'groupe',
-    budget_montant: 80,
-    budget_devise: 'TND',
-    budget_type: 'par_personne',
-    duree_jours: 3,
-    infos_manquantes: [],
-    contraintes: ['étudiants', 'économique'],
-    statut: 'a_faire'
-  },
-  {
-    id: 19,
-    langue: 'darija_latin',
-    message: "salam, chnowa a7sen program l kairouan nhar wa7ed? ena wa7di, 100 dt, njik bel train men tunis",
-    villes: ['Kairouan'],
-    transport: ['sans_voiture'],
-    vol_depuis: null,
-    nb_personnes: 1,
-    type_groupe: 'solo',
-    budget_montant: 100,
-    budget_devise: 'TND',
-    budget_type: 'total',
-    duree_jours: 1,
-    infos_manquantes: [],
-    contraintes: ['train'],
-    statut: 'a_faire'
-  },
-  {
-    id: 20,
-    langue: 'fr',
-    message: "Couple retraité, 2 semaines de thalasso entre Hammamet et Monastir, budget confortable ~5000€, vol depuis Marseille, et on ne veut pas conduire",
-    villes: ['Hammamet', 'Monastir'],
-    transport: ['vol', 'sans_voiture'],
-    vol_depuis: 'Marseille',
-    nb_personnes: 2,
-    type_groupe: 'couple',
-    budget_montant: 5000,
-    budget_devise: 'EUR',
-    budget_type: 'total',
-    duree_jours: 14,
-    infos_manquantes: [],
-    contraintes: ['thalasso', 'retraités', 'ne pas conduire'],
-    statut: 'a_faire'
-  },
-  {
-    id: 21,
-    langue: 'fr',
-    message: "on veut aller a tozeur",
-    villes: ['Tozeur'],
-    transport: [],
-    vol_depuis: null,
-    nb_personnes: null,
-    type_groupe: null,
-    budget_montant: null,
-    budget_devise: null,
-    budget_type: null,
-    duree_jours: null,
-    infos_manquantes: ['budget', 'duree', 'personnes'],
-    contraintes: [],
-    statut: 'a_faire'
-  },
-  {
-    id: 22,
-    langue: 'darija_latin',
-    message: "3andi 4 jours congé, n7eb nemchi sousse w monastir m3a 5ti, budget 700 dt, w n7eb transfert men l'aéroport enfidha",
-    villes: ['Sousse', 'Monastir'],
-    transport: ['transfert_aeroport'],
-    vol_depuis: null,
-    nb_personnes: 2,
-    type_groupe: 'amis',
-    budget_montant: 700,
-    budget_devise: 'TND',
-    budget_type: 'total',
-    duree_jours: 4,
-    infos_manquantes: [],
-    contraintes: ['aéroport Enfidha'],
-    statut: 'a_faire'
-  },
-  {
-    id: 23,
-    langue: 'arabe',
-    message: "السلام عليكم، نحن عائلة من ستة أفراد، نريد قضاء خمسة أيام في الحمامات، رحلة جوية من الجزائر العاصمة، الميزانية 3000 دولار",
-    villes: ['Hammamet'],
-    transport: ['vol'],
-    vol_depuis: 'Alger',
-    nb_personnes: 6,
-    type_groupe: 'famille_enfants',
-    budget_montant: 3000,
-    budget_devise: 'USD',
-    budget_type: 'total',
-    duree_jours: 5,
-    infos_manquantes: [],
-    contraintes: [],
-    statut: 'a_faire'
-  },
-  {
-    id: 24,
-    langue: 'fr',
-    message: "Je voyage seule, 5 jours Tunis + Sidi Bou Saïd, je veux un quartier sûr, budget 600 dt, pas de voiture",
-    villes: ['Tunis', 'Sidi Bou Saïd'],
-    transport: ['sans_voiture'],
-    vol_depuis: null,
-    nb_personnes: 1,
-    type_groupe: 'solo',
-    budget_montant: 600,
-    budget_devise: 'TND',
-    budget_type: 'total',
-    duree_jours: 5,
-    infos_manquantes: [],
-    contraintes: ['quartier sûr', 'solo female'],
-    statut: 'a_faire'
-  },
-  {
-    id: 25,
-    langue: 'fr',
-    message: "Location voiture boîte auto à l'aéroport Tunis-Carthage, on fait Tunis → Kairouan → Tozeur en 6 jours, couple, 2000 dt",
-    villes: ['Tunis', 'Kairouan', 'Tozeur'],
-    transport: ['location_voiture'],
-    vol_depuis: null,
-    nb_personnes: 2,
-    type_groupe: 'couple',
-    budget_montant: 2000,
-    budget_devise: 'TND',
-    budget_type: 'total',
-    duree_jours: 6,
-    infos_manquantes: [],
-    contraintes: ['boîte auto', 'road trip'],
-    statut: 'a_faire'
-  },
-  {
-    id: 26,
-    langue: 'darija_arabe',
-    message: "عندي ميزانية 150 دينار برك، نحب نقضي نهار في سيدي بوسعيد مع صاحبتي، شنوة تنصحني؟",
-    villes: ['Sidi Bou Saïd'],
-    transport: [],
-    vol_depuis: null,
-    nb_personnes: 2,
-    type_groupe: 'couple',
-    budget_montant: 150,
-    budget_devise: 'TND',
-    budget_type: 'total',
-    duree_jours: 1,
-    infos_manquantes: [],
-    contraintes: ['petit budget'],
-    statut: 'a_faire'
-  },
-  {
-    id: 27,
-    langue: 'fr',
-    message: "slt, mariage d'un pote a sousse, on est 4 potes, 2 nuits, on cherche un appart pas loin de la plage, 400dt",
-    villes: ['Sousse'],
-    transport: [],
-    vol_depuis: null,
-    nb_personnes: 4,
-    type_groupe: 'amis',
-    budget_montant: 400,
-    budget_devise: 'TND',
-    budget_type: 'total',
-    duree_jours: 2,
-    infos_manquantes: [],
-    contraintes: ['bord de mer', 'appartement'],
-    statut: 'a_faire'
-  },
-  {
-    id: 28,
-    langue: 'fr',
-    message: "Famille avec 2 ados, vol depuis Genève, 8 jours à Djerba, budget 4500 CHF, on veut faire du kitesurf",
-    villes: ['Djerba'],
-    transport: ['vol'],
-    vol_depuis: 'Genève',
-    nb_personnes: 4,
-    type_groupe: 'famille_enfants',
-    budget_montant: 4500,
-    budget_devise: 'CHF',
-    budget_type: 'total',
-    duree_jours: 8,
-    infos_manquantes: [],
-    contraintes: ['kitesurf', 'ados'],
-    statut: 'a_faire'
-  },
-  {
-    id: 29,
-    langue: 'darija_latin',
-    message: "nheb nwarri l wledi sahra, 3 sghar, ena w mrati, 4 jours f tozeur, budget 1500dt, nemchiw b karhebtna",
-    villes: ['Tozeur'],
-    transport: ['voiture_perso'],
-    vol_depuis: null,
-    nb_personnes: 5,
-    type_groupe: 'famille_enfants',
-    budget_montant: 1500,
-    budget_devise: 'TND',
-    budget_type: 'total',
-    duree_jours: 4,
-    infos_manquantes: [],
-    contraintes: ['désert'],
-    statut: 'a_faire'
-  },
-  {
-    id: 30,
-    langue: 'fr',
-    message: "Weekend Hammamet entre filles, 5 personnes, spa + plage, budget 250 dt chacune, on vient de Tunis en louage",
-    villes: ['Hammamet'],
-    transport: ['sans_voiture'],
-    vol_depuis: null,
-    nb_personnes: 5,
-    type_groupe: 'amis',
-    budget_montant: 250,
-    budget_devise: 'TND',
-    budget_type: 'par_personne',
-    duree_jours: 2,
-    infos_manquantes: [],
-    contraintes: ['spa', 'plage', 'louage'],
-    statut: 'a_faire'
-  },
-  {
-    id: 31,
-    langue: 'en',
-    message: "Hey, me and my gf want 5 days in Tunis & Sidi Bou Said, flying from London, direct flight if possible, mid budget",
-    villes: ['Tunis', 'Sidi Bou Saïd'],
-    transport: ['vol'],
-    vol_depuis: 'Londres',
-    nb_personnes: 2,
-    type_groupe: 'couple',
-    budget_montant: null,
-    budget_devise: null,
-    budget_type: null,
-    duree_jours: 5,
-    infos_manquantes: [],
-    contraintes: ['direct flight'],
-    statut: 'a_faire'
-  },
-  {
-    id: 32,
-    langue: 'darija_latin',
-    message: "kifech nemchi l monastir men sfax? n7eb nkari karhba 3 jours, ena w 2 s7abi, budget 500",
-    villes: ['Monastir'],
-    transport: ['location_voiture'],
-    vol_depuis: null,
-    nb_personnes: 3,
-    type_groupe: 'amis',
-    budget_montant: 500,
-    budget_devise: 'TND',
-    budget_type: 'total',
-    duree_jours: 3,
-    infos_manquantes: [],
-    contraintes: ['départ Sfax'],
-    statut: 'a_faire'
-  },
-  {
-    id: 33,
-    langue: 'fr',
-    message: "Bonjour, nous sommes un groupe de 12 seniors, circuit culturel de 7 jours : Tunis, Kairouan, Sousse, Monastir. Bus privé avec chauffeur souhaité. Budget 900€/personne.",
-    villes: ['Tunis', 'Kairouan', 'Sousse', 'Monastir'],
-    transport: ['chauffeur_prive'],
-    vol_depuis: null,
-    nb_personnes: 12,
-    type_groupe: 'groupe',
-    budget_montant: 900,
-    budget_devise: 'EUR',
-    budget_type: 'par_personne',
-    duree_jours: 7,
-    infos_manquantes: [],
-    contraintes: ['seniors', 'minibus privé', 'circuit culturel'],
-    statut: 'a_faire'
-  },
-  {
-    id: 34,
-    langue: 'arabe',
-    message: "أريد برنامجا لزيارة متحف باردو والمدينة العتيقة في تونس، يومان، شخص واحد",
-    villes: ['Tunis'],
-    transport: [],
-    vol_depuis: null,
-    nb_personnes: 1,
-    type_groupe: 'solo',
-    budget_montant: null,
-    budget_devise: null,
-    budget_type: null,
-    duree_jours: 2,
-    infos_manquantes: ['budget'],
-    contraintes: ['musée du Bardo', 'médina'],
-    statut: 'a_faire'
-  },
-  {
-    id: 35,
-    langue: 'fr',
-    message: "Je pars de Montréal, vol avec escale ok, 2 semaines en Tunisie : Tunis, Hammamet, Tozeur. Solo, budget 2500 CAD",
-    villes: ['Tunis', 'Hammamet', 'Tozeur'],
-    transport: ['vol'],
-    vol_depuis: 'Montréal',
-    nb_personnes: 1,
-    type_groupe: 'solo',
-    budget_montant: 2500,
-    budget_devise: 'CAD',
-    budget_type: 'total',
-    duree_jours: 14,
-    infos_manquantes: [],
-    contraintes: ['vol avec escale'],
-    statut: 'a_faire'
-  },
-  {
-    id: 36,
-    langue: 'darija_arabe',
-    message: "حبيت نعمل مفاجأة لراجلي، ليلتين في سوسة، أوتيل 5 نجوم، الميزانية ما عندهاش مشكل",
-    villes: ['Sousse'],
-    transport: [],
-    vol_depuis: null,
-    nb_personnes: 2,
-    type_groupe: 'couple',
-    budget_montant: null,
-    budget_devise: null,
-    budget_type: null,
-    duree_jours: 2,
-    infos_manquantes: [],
-    contraintes: ['hôtel 5 étoiles', 'surprise'],
-    statut: 'a_faire'
-  },
-  {
-    id: 37,
-    langue: 'fr',
-    message: "couple avec un bébé de 8 mois, 4 jours sousse, on veut pas trop bouger, hotel avec tout sur place, 1300 dt, transfert depuis enfidha",
-    villes: ['Sousse'],
-    transport: ['transfert_aeroport'],
-    vol_depuis: null,
-    nb_personnes: 2,
-    type_groupe: 'famille_enfants',
-    budget_montant: 1300,
-    budget_devise: 'TND',
-    budget_type: 'total',
-    duree_jours: 4,
-    infos_manquantes: [],
-    contraintes: ['bébé 8 mois', 'all-in / tout sur place'],
-    statut: 'a_faire'
-  },
-  {
-    id: 38,
-    langue: 'darija_latin',
-    message: "chbeb 6, n7ebou nesehrou f hammamet yasmine, 3 lilet, kol wa7ed 200 dt, w n7ebou nkariw zouz kraheb",
-    villes: ['Hammamet'],
-    transport: ['location_voiture'],
-    vol_depuis: null,
-    nb_personnes: 6,
-    type_groupe: 'amis',
-    budget_montant: 200,
-    budget_devise: 'TND',
-    budget_type: 'par_personne',
-    duree_jours: 3,
-    infos_manquantes: [],
-    contraintes: ['fête / soirées', '2 voitures'],
-    statut: 'a_faire'
-  },
-  {
-    id: 39,
-    langue: 'fr',
-    message: "Bonjour, j'aimerais découvrir Kairouan pendant le Mouled, 2 jours, avec mon mari, environ 500 dt",
-    villes: ['Kairouan'],
-    transport: [],
-    vol_depuis: null,
-    nb_personnes: 2,
-    type_groupe: 'couple',
-    budget_montant: 500,
-    budget_devise: 'TND',
-    budget_type: 'total',
-    duree_jours: 2,
-    infos_manquantes: [],
-    contraintes: ['Mouled / fête religieuse'],
-    statut: 'a_faire'
-  },
-  {
-    id: 40,
-    langue: 'fr',
-    message: "Vol Paris-Tozeur direct ça existe ? sinon via Tunis. 3 amis, 5 jours, rando et désert, 900€ chacun",
-    villes: ['Tozeur'],
-    transport: ['vol'],
-    vol_depuis: 'Paris',
-    nb_personnes: 3,
-    type_groupe: 'amis',
-    budget_montant: 900,
-    budget_devise: 'EUR',
-    budget_type: 'par_personne',
-    duree_jours: 5,
-    infos_manquantes: [],
-    contraintes: ['rando', 'désert'],
-    statut: 'a_faire'
-  },
-  {
-    id: 41,
-    langue: 'darija_latin',
-    message: "bonjour, 3andi 2 jours f tunis 9bal ma ntiir, nheb nchouf l medina w sidi bou said, budget 200 dt, w transfert lel matar",
-    villes: ['Tunis', 'Sidi Bou Saïd'],
-    transport: ['transfert_aeroport'],
-    vol_depuis: null,
-    nb_personnes: 1,
-    type_groupe: 'solo',
-    budget_montant: 200,
-    budget_devise: 'TND',
-    budget_type: 'total',
-    duree_jours: 2,
-    infos_manquantes: [],
-    contraintes: ['transit aéroport'],
-    statut: 'a_faire'
-  },
-  {
-    id: 42,
-    langue: 'fr',
-    message: "On est 2 couples, 6 jours entre Sidi Bou Saïd et Hammamet, voiture de location obligatoire, boîte manuelle ça va, budget 2400 dt total",
-    villes: ['Sidi Bou Saïd', 'Hammamet'],
-    transport: ['location_voiture'],
-    vol_depuis: null,
-    nb_personnes: 4,
-    type_groupe: 'amis',
-    budget_montant: 2400,
-    budget_devise: 'TND',
-    budget_type: 'total',
-    duree_jours: 6,
-    infos_manquantes: [],
-    contraintes: ['boîte manuelle'],
-    statut: 'a_faire'
-  },
-  {
-    id: 43,
-    langue: 'arabe',
-    message: "أنا طالب، أبحث عن رحلة اقتصادية إلى المنستير لثلاثة أيام، ميزانيتي 200 دينار، سأستخدم القطار",
-    villes: ['Monastir'],
-    transport: ['sans_voiture'],
-    vol_depuis: null,
-    nb_personnes: 1,
-    type_groupe: 'solo',
-    budget_montant: 200,
-    budget_devise: 'TND',
-    budget_type: 'total',
-    duree_jours: 3,
-    infos_manquantes: [],
-    contraintes: ['train', 'économique'],
-    statut: 'a_faire'
-  },
-  {
-    id: 44,
-    langue: 'fr',
-    message: "famille nombreuse 7 personnes dont la grand-mère qui marche mal, 5 jours Monastir, budget 3000 dt, minibus depuis l'aeroport de Tunis",
-    villes: ['Monastir'],
-    transport: ['transfert_aeroport'],
-    vol_depuis: null,
-    nb_personnes: 7,
-    type_groupe: 'famille_enfants',
-    budget_montant: 3000,
-    budget_devise: 'TND',
-    budget_type: 'total',
-    duree_jours: 5,
-    infos_manquantes: [],
-    contraintes: ['marche difficile', 'minibus'],
-    statut: 'a_faire'
-  },
-  {
-    id: 45,
-    langue: 'darija_arabe',
-    message: "نحب نزور جامع عقبة في القيروان ونرجع في نفس النهار، أنا وأمي، ما عندناش كرهبة",
-    villes: ['Kairouan'],
-    transport: ['sans_voiture'],
-    vol_depuis: null,
-    nb_personnes: 2,
-    type_groupe: 'famille_enfants',
-    budget_montant: null,
-    budget_devise: null,
-    budget_type: null,
-    duree_jours: 1,
-    infos_manquantes: ['budget'],
-    contraintes: ['mosquée Okba'],
-    statut: 'a_faire'
-  },
-  {
-    id: 46,
-    langue: 'fr',
-    message: "Budget max 1000 dt pour une semaine à Sousse pour moi et mon fils de 12 ans",
-    villes: ['Sousse'],
-    transport: [],
-    vol_depuis: null,
-    nb_personnes: 2,
-    type_groupe: 'famille_enfants',
-    budget_montant: 1000,
-    budget_devise: 'TND',
-    budget_type: 'total',
-    duree_jours: 7,
-    infos_manquantes: [],
-    contraintes: ['enfant 12 ans'],
-    statut: 'a_faire'
-  },
-  {
-    id: 47,
-    langue: 'en',
-    message: "Solo backpacker, 10 days, Tunis Kairouan Tozeur Sousse, budget 50 euros a day, no car, buses and louages only",
-    villes: ['Tunis', 'Kairouan', 'Tozeur', 'Sousse'],
-    transport: ['sans_voiture'],
-    vol_depuis: null,
-    nb_personnes: 1,
-    type_groupe: 'solo',
-    budget_montant: 50,
-    budget_devise: 'EUR',
-    budget_type: 'par_jour',
-    duree_jours: 10,
-    infos_manquantes: [],
-    contraintes: ['backpack', 'bus / louage'],
-    statut: 'a_faire'
-  },
-  {
-    id: 48,
-    langue: 'darija_latin',
-    message: "ena w madame 7abin n3amlou honeymoon f sidi bou said 5 jours, budget 3000dt, w transfert men carthage",
-    villes: ['Sidi Bou Saïd'],
-    transport: ['transfert_aeroport'],
-    vol_depuis: null,
-    nb_personnes: 2,
-    type_groupe: 'couple',
-    budget_montant: 3000,
-    budget_devise: 'TND',
-    budget_type: 'total',
-    duree_jours: 5,
-    infos_manquantes: [],
-    contraintes: ['lune de miel'],
-    statut: 'a_faire'
-  },
-  {
-    id: 49,
-    langue: 'fr',
-    message: "voyage scolaire : 30 élèves + 3 profs, 2 jours Kairouan et Sousse, budget serré 60dt/élève, bus obligatoire",
-    villes: ['Kairouan', 'Sousse'],
-    transport: ['chauffeur_prive'],
-    vol_depuis: null,
-    nb_personnes: 33,
-    type_groupe: 'groupe',
-    budget_montant: 60,
-    budget_devise: 'TND',
-    budget_type: 'par_personne',
-    duree_jours: 2,
-    infos_manquantes: [],
-    contraintes: ['voyage scolaire', 'grand bus'],
-    statut: 'a_faire'
-  },
-  {
-    id: 50,
-    langue: 'fr',
-    message: "Couple franco-tunisien, vol depuis Nice vers Monastir, 10 jours, on veut louer une voiture à l'arrivée pour voir la famille et faire Kairouan",
-    villes: ['Monastir', 'Kairouan'],
-    transport: ['vol', 'location_voiture'],
-    vol_depuis: 'Nice',
-    nb_personnes: 2,
-    type_groupe: 'couple',
-    budget_montant: null,
-    budget_devise: null,
-    budget_type: null,
-    duree_jours: 10,
-    infos_manquantes: ['budget'],
-    contraintes: [],
-    statut: 'a_faire'
-  },
-  {
-    id: 51,
-    langue: 'darija_latin',
-    message: "s7ab el 5ir, 3andna 3 jours f hammamet ena w 3 s7abi, budget 1000 lkol, w ma n7ebouch karhba",
-    villes: ['Hammamet'],
-    transport: ['sans_voiture'],
-    vol_depuis: null,
-    nb_personnes: 4,
-    type_groupe: 'amis',
-    budget_montant: 1000,
-    budget_devise: 'TND',
-    budget_type: 'total',
-    duree_jours: 3,
-    infos_manquantes: [],
-    contraintes: [],
-    statut: 'a_faire'
-  },
-  {
-    id: 52,
-    langue: 'fr',
-    message: "Je fais du télétravail, je cherche un mois à Sousse, studio avec bon wifi, budget 1500 dt pour le mois",
-    villes: ['Sousse'],
-    transport: [],
-    vol_depuis: null,
-    nb_personnes: 1,
-    type_groupe: 'solo',
-    budget_montant: 1500,
-    budget_devise: 'TND',
-    budget_type: 'total',
-    duree_jours: 30,
-    infos_manquantes: [],
-    contraintes: ['wifi performant', 'télétravail', 'long séjour'],
-    statut: 'a_faire'
-  },
-  {
-    id: 53,
-    langue: 'darija_arabe',
-    message: "عسلامة، فما سفرة لتوزر بالطيارة من تونس؟ أنا وراجلي، 3 أيام، 1200 دينار",
-    villes: ['Tozeur'],
-    transport: ['vol'],
-    vol_depuis: 'Tunis',
-    nb_personnes: 2,
-    type_groupe: 'couple',
-    budget_montant: 1200,
-    budget_devise: 'TND',
-    budget_type: 'total',
-    duree_jours: 3,
-    infos_manquantes: [],
-    contraintes: ['vol intérieur'],
-    statut: 'a_faire'
-  },
-  {
-    id: 54,
-    langue: 'fr',
-    message: "Bonjour, on vient en croisière, escale d'une journée à La Goulette, on veut visiter Tunis et Sidi Bou Saïd, 4 adultes, guide + véhicule",
-    villes: ['Tunis', 'Sidi Bou Saïd'],
-    transport: ['chauffeur_prive'],
-    vol_depuis: null,
-    nb_personnes: 4,
-    type_groupe: 'amis',
-    budget_montant: null,
-    budget_devise: null,
-    budget_type: null,
-    duree_jours: 1,
-    infos_manquantes: ['budget'],
-    contraintes: ['escale croisière', 'guide privé'],
-    statut: 'a_faire'
-  },
-  {
-    id: 55,
-    langue: 'arabe',
-    message: "أبحث عن عطلة عائلية في سوسة لمدة أسبوع، زوجان وثلاثة أطفال، ميزانية متوسطة حوالي 2200 دينار، ونرغب في استئجار سيارة عائلية",
-    villes: ['Sousse'],
-    transport: ['location_voiture'],
-    vol_depuis: null,
-    nb_personnes: 5,
-    type_groupe: 'famille_enfants',
-    budget_montant: 2200,
-    budget_devise: 'TND',
-    budget_type: 'total',
-    duree_jours: 7,
-    infos_manquantes: [],
-    contraintes: ['voiture familiale'],
-    statut: 'a_faire'
-  },
-  {
-    id: 56,
-    langue: 'fr',
-    message: "salut on veut faire un road trip 10 jours en camping car si possible, Tunis Hammamet Kairouan Tozeur, 2 personnes, 2500 dt",
-    villes: ['Tunis', 'Hammamet', 'Kairouan', 'Tozeur'],
-    transport: ['location_voiture'],
-    vol_depuis: null,
-    nb_personnes: 2,
-    type_groupe: 'couple',
-    budget_montant: 2500,
-    budget_devise: 'TND',
-    budget_type: 'total',
-    duree_jours: 10,
-    infos_manquantes: [],
-    contraintes: ['camping-car', 'road trip'],
-    statut: 'a_faire'
-  },
-  {
-    id: 57,
-    langue: 'darija_latin',
-    message: "n7eb nemchi monastir lel ribat w lb7ar, ena wa7di, nhar wala zouz, 120 dt",
-    villes: ['Monastir'],
-    transport: [],
-    vol_depuis: null,
-    nb_personnes: 1,
-    type_groupe: 'solo',
-    budget_montant: 120,
-    budget_devise: 'TND',
-    budget_type: 'total',
-    duree_jours: 2,
-    infos_manquantes: [],
-    contraintes: ['Ribat'],
-    statut: 'a_faire'
-  },
-  {
-    id: 58,
-    langue: 'fr',
-    message: "Groupe de 10 collègues, séminaire + team building à Hammamet, 3 jours, budget entreprise 8000 dt, transfert aéroport Tunis aller-retour",
-    villes: ['Hammamet'],
-    transport: ['transfert_aeroport'],
-    vol_depuis: null,
-    nb_personnes: 10,
-    type_groupe: 'groupe',
-    budget_montant: 8000,
-    budget_devise: 'TND',
-    budget_type: 'total',
-    duree_jours: 3,
-    infos_manquantes: [],
-    contraintes: ['séminaire', 'team building', 'entreprise'],
-    statut: 'a_faire'
-  },
-  {
-    id: 59,
-    langue: 'fr',
-    message: "Je voudrais un séjour bien-être à Sidi Bou Saïd, seule, 3 nuits, hammam et massage, budget 700 dt",
-    villes: ['Sidi Bou Saïd'],
-    transport: [],
-    vol_depuis: null,
-    nb_personnes: 1,
-    type_groupe: 'solo',
-    budget_montant: 700,
-    budget_devise: 'TND',
-    budget_type: 'total',
-    duree_jours: 3,
-    infos_manquantes: [],
-    contraintes: ['hammam', 'massage', 'bien-être'],
-    statut: 'a_faire'
-  },
-  {
-    id: 60,
-    langue: 'darija_arabe',
-    message: "حابين نمشيو للحمامات نهار الأحد، 4 صحاب، كل واحد عندو 50 دينار، نمشيو بالتران",
-    villes: ['Hammamet'],
-    transport: ['sans_voiture'],
-    vol_depuis: null,
-    nb_personnes: 4,
-    type_groupe: 'amis',
-    budget_montant: 50,
-    budget_devise: 'TND',
-    budget_type: 'par_personne',
-    duree_jours: 1,
-    infos_manquantes: [],
-    contraintes: ['train'],
-    statut: 'a_faire'
-  },
-  {
-    id: 61,
-    langue: 'fr',
-    message: "Bonjour, vol depuis Casablanca pour Tunis, 2 personnes, 5 jours, budget 12000 MAD",
-    villes: ['Tunis'],
-    transport: ['vol'],
-    vol_depuis: 'Casablanca',
-    nb_personnes: 2,
-    type_groupe: 'couple',
-    budget_montant: 12000,
-    budget_devise: 'MAD',
-    budget_type: 'total',
-    duree_jours: 5,
-    infos_manquantes: [],
-    contraintes: [],
-    statut: 'a_faire'
-  },
-  {
-    id: 62,
-    langue: 'en',
-    message: "Family of 4, kids 5 and 7, one week in Hammamet, flying from Frankfurt, need car seats in the rental car, budget 3000 EUR",
-    villes: ['Hammamet'],
-    transport: ['vol', 'location_voiture'],
-    vol_depuis: 'Francfort',
-    nb_personnes: 4,
-    type_groupe: 'famille_enfants',
-    budget_montant: 3000,
-    budget_devise: 'EUR',
-    budget_type: 'total',
-    duree_jours: 7,
-    infos_manquantes: [],
-    contraintes: ['sièges auto enfants'],
-    statut: 'a_faire'
-  },
-  {
-    id: 63,
-    langue: 'darija_latin',
-    message: "kifeh nl9a hotel rkhis f sousse? 2 nuits ena w 5ouya",
-    villes: ['Sousse'],
-    transport: [],
-    vol_depuis: null,
-    nb_personnes: 2,
-    type_groupe: 'amis',
-    budget_montant: null,
-    budget_devise: null,
-    budget_type: null,
-    duree_jours: 2,
-    infos_manquantes: ['budget'],
-    contraintes: ['hôtel économique'],
-    statut: 'a_faire'
-  },
-  {
-    id: 64,
-    langue: 'fr',
-    message: "On est une famille, on veut aller à Tozeur en décembre, combien ça coute ?",
-    villes: ['Tozeur'],
-    transport: [],
-    vol_depuis: null,
-    nb_personnes: null,
-    type_groupe: 'famille_enfants',
-    budget_montant: null,
-    budget_devise: null,
-    budget_type: null,
-    duree_jours: null,
-    infos_manquantes: ['budget', 'duree', 'personnes'],
-    contraintes: ['décembre'],
-    statut: 'a_faire'
-  },
-  {
-    id: 65,
-    langue: 'fr',
-    message: "Couple de photographes, 4 jours Tozeur + Chebika + Tamerza, location 4x4 indispensable, budget 2200 dt",
-    villes: ['Tozeur'],
-    transport: ['location_voiture'],
-    vol_depuis: null,
-    nb_personnes: 2,
-    type_groupe: 'couple',
-    budget_montant: 2200,
-    budget_devise: 'TND',
-    budget_type: 'total',
-    duree_jours: 4,
-    infos_manquantes: [],
-    contraintes: ['location 4x4', 'oasis de montagne'],
-    statut: 'a_faire'
-  },
-  {
-    id: 66,
-    langue: 'darija_arabe',
-    message: "أنا وبنات عمي 4، حابين نعملو ويكاند في سوسة، 600 دينار الكل، ونجيو بالكرهبة متاعنا",
-    villes: ['Sousse'],
-    transport: ['voiture_perso'],
-    vol_depuis: null,
-    nb_personnes: 4,
-    type_groupe: 'amis',
-    budget_montant: 600,
-    budget_devise: 'TND',
-    budget_type: 'total',
-    duree_jours: 2,
-    infos_manquantes: [],
-    contraintes: [],
-    statut: 'a_faire'
-  },
-  {
-    id: 67,
-    langue: 'fr',
-    message: "pour mes parents (70 ans), 5 jours à Monastir, calme, pas d'escaliers svp, transfert depuis aéroport Monastir, budget 1500 dt",
-    villes: ['Monastir'],
-    transport: ['transfert_aeroport'],
-    vol_depuis: null,
-    nb_personnes: 2,
-    type_groupe: 'couple',
-    budget_montant: 1500,
-    budget_devise: 'TND',
-    budget_type: 'total',
-    duree_jours: 5,
-    infos_manquantes: [],
-    contraintes: ['pas d escalier', 'calme', 'seniors'],
-    statut: 'a_faire'
-  },
-  {
-    id: 68,
-    langue: 'arabe',
-    message: "أرغب في جولة في المدينة العتيقة بتونس وزيارة جامع الزيتونة، رحلة ليوم واحد، شخصان، الميزانية 150 دينارا",
-    villes: ['Tunis'],
-    transport: [],
-    vol_depuis: null,
-    nb_personnes: 2,
-    type_groupe: 'couple',
-    budget_montant: 150,
-    budget_devise: 'TND',
-    budget_type: 'total',
-    duree_jours: 1,
-    infos_manquantes: [],
-    contraintes: ['جامع الزيتونة'],
-    statut: 'a_faire'
-  },
-  {
-    id: 69,
-    langue: 'fr',
-    message: "Vol direct Toulouse → Djerba, 2 adultes, 6 jours, budget 1600€",
-    villes: ['Djerba'],
-    transport: ['vol'],
-    vol_depuis: 'Toulouse',
-    nb_personnes: 2,
-    type_groupe: 'couple',
-    budget_montant: 1600,
-    budget_devise: 'EUR',
-    budget_type: 'total',
-    duree_jours: 6,
-    infos_manquantes: [],
-    contraintes: ['vol direct'],
-    statut: 'a_faire'
-  },
-  {
-    id: 70,
-    langue: 'darija_latin',
-    message: "bghit nemchi kairouan w sousse f nhar wa7ed m3a wled 3ammi, 3 personnes, kraya karhba men sousse, 250 dt",
-    villes: ['Kairouan', 'Sousse'],
-    transport: ['location_voiture'],
-    vol_depuis: null,
-    nb_personnes: 3,
-    type_groupe: 'amis',
-    budget_montant: 250,
-    budget_devise: 'TND',
-    budget_type: 'total',
-    duree_jours: 1,
-    infos_manquantes: [],
-    contraintes: [],
-    statut: 'a_faire'
-  },
-  {
-    id: 71,
-    langue: 'fr',
-    message: "On veut une semaine Hammamet all inclusive, 2 adultes 1 enfant, 2800 dt",
-    villes: ['Hammamet'],
-    transport: [],
-    vol_depuis: null,
-    nb_personnes: 3,
-    type_groupe: 'famille_enfants',
-    budget_montant: 2800,
-    budget_devise: 'TND',
-    budget_type: 'total',
-    duree_jours: 7,
-    infos_manquantes: [],
-    contraintes: ['all inclusive'],
-    statut: 'a_faire'
-  },
-  {
-    id: 72,
-    langue: 'fr',
-    message: "jsuis étudiant erasmus a tunis, je veux visiter sousse et monastir ce weekend avec 3 amis, max 100 dt par personne, en train",
-    villes: ['Sousse', 'Monastir'],
-    transport: ['sans_voiture'],
-    vol_depuis: null,
-    nb_personnes: 4,
-    type_groupe: 'amis',
-    budget_montant: 100,
-    budget_devise: 'TND',
-    budget_type: 'par_personne',
-    duree_jours: 2,
-    infos_manquantes: [],
-    contraintes: ['train', 'erasmus'],
-    statut: 'a_faire'
-  },
-  {
-    id: 73,
-    langue: 'darija_arabe',
-    message: "نحب نحجز لعايلتي في توزر، 5 أشخاص، 3 ليالي، فينا شيباني ما يمشيش برشا، 2000 دينار، ونحبو ترانسفار من مطار توزر",
-    villes: ['Tozeur'],
-    transport: ['transfert_aeroport'],
-    vol_depuis: null,
-    nb_personnes: 5,
-    type_groupe: 'famille_enfants',
-    budget_montant: 2000,
-    budget_devise: 'TND',
-    budget_type: 'total',
-    duree_jours: 3,
-    infos_manquantes: [],
-    contraintes: ['marche peu', 'personne âgée'],
-    statut: 'a_faire'
-  },
-  {
-    id: 74,
-    langue: 'fr',
-    message: "Bonjour, j'ai 3 jours à Tunis pour un congrès, je veux profiter le soir, solo, 400 dt, je me déplace en taxi",
-    villes: ['Tunis'],
-    transport: ['sans_voiture'],
-    vol_depuis: null,
-    nb_personnes: 1,
-    type_groupe: 'solo',
-    budget_montant: 400,
-    budget_devise: 'TND',
-    budget_type: 'total',
-    duree_jours: 3,
-    infos_manquantes: [],
-    contraintes: ['taxi', 'congrès'],
-    statut: 'a_faire'
-  },
-  {
-    id: 75,
-    langue: 'en',
-    message: "Luxury trip for 2, 7 nights, Sidi Bou Said and Hammamet, private driver the whole stay, budget 6000 EUR",
-    villes: ['Sidi Bou Saïd', 'Hammamet'],
-    transport: ['chauffeur_prive'],
-    vol_depuis: null,
-    nb_personnes: 2,
-    type_groupe: 'couple',
-    budget_montant: 6000,
-    budget_devise: 'EUR',
-    budget_type: 'total',
-    duree_jours: 7,
-    infos_manquantes: [],
-    contraintes: ['luxury'],
-    statut: 'a_faire'
-  },
-  {
-    id: 76,
-    langue: 'darija_latin',
-    message: "salam 3likom, ena w mrati w wledi 2, n7ebou 4 jours f monastir, budget 1600, w n7ebou nkariw karhba men l matar",
-    villes: ['Monastir'],
-    transport: ['location_voiture'],
-    vol_depuis: null,
-    nb_personnes: 4,
-    type_groupe: 'famille_enfants',
-    budget_montant: 1600,
-    budget_devise: 'TND',
-    budget_type: 'total',
-    duree_jours: 4,
-    infos_manquantes: [],
-    contraintes: [],
-    statut: 'a_faire'
-  },
-  {
-    id: 77,
-    langue: 'fr',
-    message: "Couple, 3 jours à Kairouan et Sousse, pas de voiture, on préfère les excursions organisées, budget 800 dt",
-    villes: ['Kairouan', 'Sousse'],
-    transport: ['sans_voiture'],
-    vol_depuis: null,
-    nb_personnes: 2,
-    type_groupe: 'couple',
-    budget_montant: 800,
-    budget_devise: 'TND',
-    budget_type: 'total',
-    duree_jours: 3,
-    infos_manquantes: [],
-    contraintes: ['excursions organisées'],
-    statut: 'a_faire'
-  },
-  {
-    id: 78,
-    langue: 'fr',
-    message: "Salut, je cherche le moins cher possible pour Hammamet, 2 personnes",
-    villes: ['Hammamet'],
-    transport: [],
-    vol_depuis: null,
-    nb_personnes: 2,
-    type_groupe: 'amis',
-    budget_montant: null,
-    budget_devise: null,
-    budget_type: null,
-    duree_jours: null,
-    infos_manquantes: ['budget', 'duree'],
-    contraintes: ['low cost'],
-    statut: 'a_faire'
-  },
-  {
-    id: 79,
-    langue: 'darija_arabe',
-    message: "عسلامة، جاي من باريس بالطيارة لمطار المنستير، نحب ترانسفار لسوسة، 10 أيام، أنا وعايلتي 4، 3000 أورو",
-    villes: ['Sousse'],
-    transport: ['vol', 'transfert_aeroport'],
-    vol_depuis: 'Paris',
-    nb_personnes: 4,
-    type_groupe: 'famille_enfants',
-    budget_montant: 3000,
-    budget_devise: 'EUR',
-    budget_type: 'total',
-    duree_jours: 10,
-    infos_manquantes: [],
-    contraintes: ['aéroport Monastir'],
-    statut: 'a_faire'
-  },
-  {
-    id: 80,
-    langue: 'fr',
-    message: "On voudrait voir les décors de Star Wars autour de Tozeur, 2 amis, 3 jours, voiture de location, 1000 dt",
-    villes: ['Tozeur'],
-    transport: ['location_voiture'],
-    vol_depuis: null,
-    nb_personnes: 2,
-    type_groupe: 'amis',
-    budget_montant: 1000,
-    budget_devise: 'TND',
-    budget_type: 'total',
-    duree_jours: 3,
-    infos_manquantes: [],
-    contraintes: ['Star Wars'],
-    statut: 'a_faire'
-  },
-  {
-    id: 81,
-    langue: 'arabe',
-    message: "نخطط لرحلة شهر عسل في الحمامات لمدة ستة أيام، الميزانية 4000 دينار، ونرغب في رحلة طيران من طرابلس",
-    villes: ['Hammamet'],
-    transport: ['vol'],
-    vol_depuis: 'Tripoli',
-    nb_personnes: 2,
-    type_groupe: 'couple',
-    budget_montant: 4000,
-    budget_devise: 'TND',
-    budget_type: 'total',
-    duree_jours: 6,
-    infos_manquantes: [],
-    contraintes: ['شهر عسل'],
-    statut: 'a_faire'
-  },
-  {
-    id: 82,
-    langue: 'fr',
-    message: "Grand-père + 2 petits-enfants (10 et 13 ans), 4 jours Sousse, parc aquatique, 1100 dt",
-    villes: ['Sousse'],
-    transport: [],
-    vol_depuis: null,
-    nb_personnes: 3,
-    type_groupe: 'famille_enfants',
-    budget_montant: 1100,
-    budget_devise: 'TND',
-    budget_type: 'total',
-    duree_jours: 4,
-    infos_manquantes: [],
-    contraintes: ['parc aquatique'],
-    statut: 'a_faire'
-  },
-  {
-    id: 83,
-    langue: 'darija_latin',
-    message: "ya jma3a, chkoun ya3ref program 7lou f sidi bou said lel 3echia? ena w s7abti 3, budget 40 dt kol wa7da",
-    villes: ['Sidi Bou Saïd'],
-    transport: [],
-    vol_depuis: null,
-    nb_personnes: 4,
-    type_groupe: 'amis',
-    budget_montant: 40,
-    budget_devise: 'TND',
-    budget_type: 'par_personne',
-    duree_jours: 1,
-    infos_manquantes: [],
-    contraintes: ['sortie après-midi'],
-    statut: 'a_faire'
-  },
-  {
-    id: 84,
-    langue: 'fr',
-    message: "Je veux une nuit dans le désert près de Tozeur sous tente, couple, budget 500 dt, vol depuis Tunis-Carthage",
-    villes: ['Tozeur'],
-    transport: ['vol'],
-    vol_depuis: 'Tunis',
-    nb_personnes: 2,
-    type_groupe: 'couple',
-    budget_montant: 500,
-    budget_devise: 'TND',
-    budget_type: 'total',
-    duree_jours: 1,
-    infos_manquantes: [],
-    contraintes: ['nuit sous tente', 'désert'],
-    statut: 'a_faire'
-  },
-  {
-    id: 85,
-    langue: 'fr',
-    message: "Équipe de foot amateur, 15 joueurs, stage 5 jours à Monastir, terrain + hôtel, budget 300 dt/personne, bus depuis l'aéroport",
-    villes: ['Monastir'],
-    transport: ['transfert_aeroport'],
-    vol_depuis: null,
-    nb_personnes: 15,
-    type_groupe: 'groupe',
-    budget_montant: 300,
-    budget_devise: 'TND',
-    budget_type: 'par_personne',
-    duree_jours: 5,
-    infos_manquantes: [],
-    contraintes: ['stage de foot', 'terrain sport'],
-    statut: 'a_faire'
-  },
-  {
-    id: 86,
-    langue: 'darija_arabe',
-    message: "حاب نمشي وحدي لتونس العاصمة 3 أيام، نحب الكافيات والمتاحف، 350 دينار",
-    villes: ['Tunis'],
-    transport: [],
-    vol_depuis: null,
-    nb_personnes: 1,
-    type_groupe: 'solo',
-    budget_montant: 350,
-    budget_devise: 'TND',
-    budget_type: 'total',
-    duree_jours: 3,
-    infos_manquantes: [],
-    contraintes: ['متاحف'],
-    statut: 'a_faire'
-  },
-  {
-    id: 87,
-    langue: 'fr',
-    message: "On arrive de Milan, vol direct pour Tunis, 4 amies, 5 jours Tunis + Hammamet, location d'une voiture automatique, 3200€",
-    villes: ['Tunis', 'Hammamet'],
-    transport: ['vol', 'location_voiture'],
-    vol_depuis: 'Milan',
-    nb_personnes: 4,
-    type_groupe: 'amis',
-    budget_montant: 3200,
-    budget_devise: 'EUR',
-    budget_type: 'total',
-    duree_jours: 5,
-    infos_manquantes: [],
-    contraintes: ['boîte auto', 'vol direct'],
-    statut: 'a_faire'
-  },
-  {
-    id: 88,
-    langue: 'darija_latin',
-    message: "family de 4, n7ebou nemchiw l hammamet 5 jours, budget 1800, ma n7ebouch nsou9ou",
-    villes: ['Hammamet'],
-    transport: ['sans_voiture'],
-    vol_depuis: null,
-    nb_personnes: 4,
-    type_groupe: 'famille_enfants',
-    budget_montant: 1800,
-    budget_devise: 'TND',
-    budget_type: 'total',
-    duree_jours: 5,
-    infos_manquantes: [],
-    contraintes: ['sans conduite'],
-    statut: 'a_faire'
-  },
-  {
-    id: 89,
-    langue: 'fr',
-    message: "Long séjour hiver pour un couple de retraités belges, 1 mois à Monastir, budget 2000€/mois",
-    villes: ['Monastir'],
-    transport: [],
-    vol_depuis: null,
-    nb_personnes: 2,
-    type_groupe: 'couple',
-    budget_montant: 2000,
-    budget_devise: 'EUR',
-    budget_type: 'total',
-    duree_jours: 30,
-    infos_manquantes: [],
-    contraintes: ['séjour hiver', 'retraités'],
-    statut: 'a_faire'
-  },
-  {
-    id: 90,
-    langue: 'arabe',
-    message: "أريد زيارة القيروان وتوزر في رحلة واحدة، أربعة أيام، مع زوجتي، الميزانية 1500 دينار، نحتاج سيارة بسائق",
-    villes: ['Kairouan', 'Tozeur'],
-    transport: ['chauffeur_prive'],
-    vol_depuis: null,
-    nb_personnes: 2,
-    type_groupe: 'couple',
-    budget_montant: 1500,
-    budget_devise: 'TND',
-    budget_type: 'total',
-    duree_jours: 4,
-    infos_manquantes: [],
-    contraintes: [],
-    statut: 'a_faire'
-  },
-  {
-    id: 91,
-    langue: 'fr',
-    message: "Mon copain et moi on veut faire Sousse en 2 jours avec un tout petit budget, genre 150dt à deux",
-    villes: ['Sousse'],
-    transport: [],
-    vol_depuis: null,
-    nb_personnes: 2,
-    type_groupe: 'couple',
-    budget_montant: 150,
-    budget_devise: 'TND',
-    budget_type: 'total',
-    duree_jours: 2,
-    infos_manquantes: [],
-    contraintes: ['petit budget'],
-    statut: 'a_faire'
-  },
-  {
-    id: 92,
-    langue: 'darija_arabe',
-    message: "عندي ضيوف جايين من ليون، 3 أشخاص، نحب نوريهم سيدي بوسعيد وتونس، 4 أيام، ميزانيتهم 1500 أورو، ونحب ترانسفار من المطار",
-    villes: ['Sidi Bou Saïd', 'Tunis'],
-    transport: ['transfert_aeroport'],
-    vol_depuis: null,
-    nb_personnes: 3,
-    type_groupe: 'groupe',
-    budget_montant: 1500,
-    budget_devise: 'EUR',
-    budget_type: 'total',
-    duree_jours: 4,
-    infos_manquantes: [],
-    contraintes: ['ضيوف من ليون'],
-    statut: 'a_faire'
-  },
-  {
-    id: 93,
-    langue: 'fr',
-    message: "voyage entre amis 4 personnes Kairouan Tozeur 4 jours, louer une voiture à Sousse et la rendre à Tozeur, 1600 dt",
-    villes: ['Kairouan', 'Tozeur'],
-    transport: ['location_voiture'],
-    vol_depuis: null,
-    nb_personnes: 4,
-    type_groupe: 'amis',
-    budget_montant: 1600,
-    budget_devise: 'TND',
-    budget_type: 'total',
-    duree_jours: 4,
-    infos_manquantes: [],
-    contraintes: ['one-way rental (Sousse -> Tozeur)'],
-    statut: 'a_faire'
-  },
-  {
-    id: 94,
-    langue: 'fr',
-    message: "Je suis végétarienne, 5 jours Hammamet seule, 900 dt, je veux des restos adaptés",
-    villes: ['Hammamet'],
-    transport: [],
-    vol_depuis: null,
-    nb_personnes: 1,
-    type_groupe: 'solo',
-    budget_montant: 900,
-    budget_devise: 'TND',
-    budget_type: 'total',
-    duree_jours: 5,
-    infos_manquantes: [],
-    contraintes: ['végétarienne'],
-    statut: 'a_faire'
-  },
-  {
-    id: 95,
-    langue: 'darija_latin',
-    message: "bonjour, n7eb nemchi l tozeur bel train lezard rouge, ena w mrati, 3 jours, 900dt, ma n7ebch karhba",
-    villes: ['Tozeur'],
-    transport: ['sans_voiture'],
-    vol_depuis: null,
-    nb_personnes: 2,
-    type_groupe: 'couple',
-    budget_montant: 900,
-    budget_devise: 'TND',
-    budget_type: 'total',
-    duree_jours: 3,
-    infos_manquantes: [],
-    contraintes: ['train Lézard Rouge'],
-    statut: 'a_faire'
-  },
-  {
-    id: 96,
-    langue: 'fr',
-    message: "Une semaine à Sidi Bou Saïd et Tunis pour une famille de 6, budget 3500 dt, on loue un van",
-    villes: ['Sidi Bou Saïd', 'Tunis'],
-    transport: ['location_voiture'],
-    vol_depuis: null,
-    nb_personnes: 6,
-    type_groupe: 'famille_enfants',
-    budget_montant: 3500,
-    budget_devise: 'TND',
-    budget_type: 'total',
-    duree_jours: 7,
-    infos_manquantes: [],
-    contraintes: ['van / grand véhicule'],
-    statut: 'a_faire'
-  },
-  {
-    id: 97,
-    langue: 'en',
-    message: "Hi, Tunis for 2 nights, business + leisure, airport pickup needed, 500 USD",
-    villes: ['Tunis'],
-    transport: ['transfert_aeroport'],
-    vol_depuis: null,
-    nb_personnes: 1,
-    type_groupe: 'solo',
-    budget_montant: 500,
-    budget_devise: 'USD',
-    budget_type: 'total',
-    duree_jours: 2,
-    infos_manquantes: [],
-    contraintes: ['business + leisure'],
-    statut: 'a_faire'
-  },
-  {
-    id: 98,
-    langue: 'darija_arabe',
-    message: "جايين بالطيارة من جدة لتونس، أنا وصاحبي، نحبو 5 أيام في سوسة، 900 دينار، ونحبو ترانسفار من المطار لسوسة",
-    villes: ['Sousse'],
-    transport: ['vol', 'transfert_aeroport'],
-    vol_depuis: 'Djeddah',
-    nb_personnes: 2,
-    type_groupe: 'amis',
-    budget_montant: 900,
-    budget_devise: 'TND',
-    budget_type: 'total',
-    duree_jours: 5,
-    infos_manquantes: [],
-    contraintes: ['رحلة من جدة'],
-    statut: 'a_faire'
-  },
-  {
-    id: 99,
-    langue: 'fr',
-    message: "Kairouan + Sousse + Monastir en 3 jours pour un couple qui ne marche pas beaucoup, chauffeur privé, 1200 dt",
-    villes: ['Kairouan', 'Sousse', 'Monastir'],
-    transport: ['chauffeur_prive'],
-    vol_depuis: null,
-    nb_personnes: 2,
-    type_groupe: 'couple',
-    budget_montant: 1200,
-    budget_devise: 'TND',
-    budget_type: 'total',
-    duree_jours: 3,
-    infos_manquantes: [],
-    contraintes: ['marche peu'],
-    statut: 'a_faire'
-  },
-  {
-    id: 100,
-    langue: 'darija_latin',
-    message: "ena w 3ayelti (5) n7ebou nemchiw lel 7ammamet fi sif, 7 jours",
-    villes: ['Hammamet'],
-    transport: [],
-    vol_depuis: null,
-    nb_personnes: 5,
-    type_groupe: 'famille_enfants',
-    budget_montant: null,
-    budget_devise: null,
-    budget_type: null,
-    duree_jours: 7,
-    infos_manquantes: ['budget'],
-    contraintes: ['été / sif'],
-    statut: 'a_faire'
+[
+  {
+    "id": 1,
+    "langue": "fr",
+    "message": "salut, on est un couple, on veut 4 jours a sidi bou said, budget 1200 dt, on aime les cafés avec vue et la photo",
+    "villes": [
+      "Sidi Bou Saïd"
+    ],
+    "transport": [],
+    "vol_depuis": null,
+    "nb_personnes": 2,
+    "type_groupe": "couple",
+    "budget_montant": 1200,
+    "budget_devise": "TND",
+    "budget_type": "total",
+    "duree_jours": 4,
+    "infos_manquantes": [],
+    "contraintes": [
+      "café avec vue",
+      "photo"
+    ],
+    "statut": "valide",
+    "notes": "Exemple complet"
+  },
+  {
+    "id": 2,
+    "langue": "fr",
+    "message": "Bonjour, vol depuis Paris vers Tunis pour 2 adultes et 2 enfants (6 et 9 ans), 7 nuits, budget 3500€ tout compris. Vol direct svp",
+    "villes": [
+      "Tunis"
+    ],
+    "transport": [
+      "vol"
+    ],
+    "vol_depuis": "Paris",
+    "nb_personnes": 4,
+    "type_groupe": "famille_enfants",
+    "budget_montant": 3500,
+    "budget_devise": "EUR",
+    "budget_type": "total",
+    "duree_jours": 7,
+    "infos_manquantes": [],
+    "contraintes": [
+      "vol direct",
+      "enfants 6 et 9 ans"
+    ],
+    "statut": "a_faire"
+  },
+  {
+    "id": 3,
+    "langue": "darija_latin",
+    "message": "3aslema, n7eb nemchi l tozeur m3a s7abi, 5 personnes, 3 jours, budget 600 dt lkol. nheb sahra w quad",
+    "villes": [
+      "Tozeur"
+    ],
+    "transport": [],
+    "vol_depuis": null,
+    "nb_personnes": 5,
+    "type_groupe": "amis",
+    "budget_montant": 600,
+    "budget_devise": "TND",
+    "budget_type": "total",
+    "duree_jours": 3,
+    "infos_manquantes": [],
+    "contraintes": [
+      "désert",
+      "quad"
+    ],
+    "statut": "a_faire"
+  },
+  {
+    "id": 4,
+    "langue": "fr",
+    "message": "je cherche un truc pas cher a sousse pour moi tout seul, genre 3 nuits, max 250dt, sans voiture je prend le louage",
+    "villes": [
+      "Sousse"
+    ],
+    "transport": [
+      "sans_voiture"
+    ],
+    "vol_depuis": null,
+    "nb_personnes": 1,
+    "type_groupe": "solo",
+    "budget_montant": 250,
+    "budget_devise": "TND",
+    "budget_type": "total",
+    "duree_jours": 3,
+    "infos_manquantes": [],
+    "contraintes": [
+      "louage"
+    ],
+    "statut": "a_faire"
+  },
+  {
+    "id": 5,
+    "langue": "darija_arabe",
+    "message": "عسلامة، حابين نمشيو للحمامات أنا ومرتي وولادي زوز، جمعة كاملة، الميزانية 2500 دينار، نحبو أوتيل فيه بيسين للصغار",
+    "villes": [
+      "Hammamet"
+    ],
+    "transport": [],
+    "vol_depuis": null,
+    "nb_personnes": 4,
+    "type_groupe": "famille_enfants",
+    "budget_montant": 2500,
+    "budget_devise": "TND",
+    "budget_type": "total",
+    "duree_jours": 7,
+    "infos_manquantes": [],
+    "contraintes": [
+      "piscine enfants"
+    ],
+    "statut": "a_faire"
+  },
+  {
+    "id": 6,
+    "langue": "fr",
+    "message": "On atterrit a Monastir samedi soir, on est 4, il nous faut un transfert aéroport jusqu'a l'hotel puis 5 jours sur place. budget environ 1800 dt",
+    "villes": [
+      "Monastir"
+    ],
+    "transport": [
+      "transfert_aeroport"
+    ],
+    "vol_depuis": null,
+    "nb_personnes": 4,
+    "type_groupe": "amis",
+    "budget_montant": 1800,
+    "budget_devise": "TND",
+    "budget_type": "total",
+    "duree_jours": 5,
+    "infos_manquantes": [],
+    "contraintes": [
+      "arrivée samedi soir"
+    ],
+    "statut": "a_faire"
+  },
+  {
+    "id": 7,
+    "langue": "fr",
+    "message": "Kairouan une journée, on veut visiter la grande mosquée et les tapis. on est 3 copines",
+    "villes": [
+      "Kairouan"
+    ],
+    "transport": [],
+    "vol_depuis": null,
+    "nb_personnes": 3,
+    "type_groupe": "amis",
+    "budget_montant": null,
+    "budget_devise": null,
+    "budget_type": null,
+    "duree_jours": 1,
+    "infos_manquantes": [
+      "budget"
+    ],
+    "contraintes": [
+      "grande mosquée",
+      "artisanat tapis"
+    ],
+    "statut": "a_faire"
+  },
+  {
+    "id": 8,
+    "langue": "darija_latin",
+    "message": "bonsoir, ena w mrati 7abin weekend f djerba, 2 lilet, budget 900 dt, w n7eb kraya karhba automatique",
+    "villes": [
+      "Djerba"
+    ],
+    "transport": [
+      "location_voiture"
+    ],
+    "vol_depuis": null,
+    "nb_personnes": 2,
+    "type_groupe": "couple",
+    "budget_montant": 900,
+    "budget_devise": "TND",
+    "budget_type": "total",
+    "duree_jours": 2,
+    "infos_manquantes": [],
+    "contraintes": [
+      "boîte auto"
+    ],
+    "statut": "a_faire"
+  },
+  {
+    "id": 9,
+    "langue": "fr",
+    "message": "Salut ! vol depuis Lyon pour Tozeur c possible ? on est 2, 4 jours, budget 1500€, on veut voir le désert et les oasis, on marche pas beaucoup",
+    "villes": [
+      "Tozeur"
+    ],
+    "transport": [
+      "vol"
+    ],
+    "vol_depuis": "Lyon",
+    "nb_personnes": 2,
+    "type_groupe": "couple",
+    "budget_montant": 1500,
+    "budget_devise": "EUR",
+    "budget_type": "total",
+    "duree_jours": 4,
+    "infos_manquantes": [],
+    "contraintes": [
+      "marche peu",
+      "oasis",
+      "désert"
+    ],
+    "statut": "a_faire"
+  },
+  {
+    "id": 10,
+    "langue": "arabe",
+    "message": "مرحبا، أرغب في رحلة ثقافية إلى القيروان وسوسة لمدة ثلاثة أيام لشخصين، الميزانية حوالي 900 دينار، بدون سيارة",
+    "villes": [
+      "Kairouan",
+      "Sousse"
+    ],
+    "transport": [
+      "sans_voiture"
+    ],
+    "vol_depuis": null,
+    "nb_personnes": 2,
+    "type_groupe": "couple",
+    "budget_montant": 900,
+    "budget_devise": "TND",
+    "budget_type": "total",
+    "duree_jours": 3,
+    "infos_manquantes": [],
+    "contraintes": [
+      "culturel"
+    ],
+    "statut": "a_faire"
+  },
+  {
+    "id": 11,
+    "langue": "fr",
+    "message": "Bjr, famille de 5 (3 enfants dont un bébé), 10 jours entre Hammamet et Sousse, budget 4000dt, on aura besoin d'une voiture 7 places",
+    "villes": [
+      "Hammamet",
+      "Sousse"
+    ],
+    "transport": [
+      "location_voiture"
+    ],
+    "vol_depuis": null,
+    "nb_personnes": 5,
+    "type_groupe": "famille_enfants",
+    "budget_montant": 4000,
+    "budget_devise": "TND",
+    "budget_type": "total",
+    "duree_jours": 10,
+    "infos_manquantes": [],
+    "contraintes": [
+      "bébé",
+      "véhicule 7 places"
+    ],
+    "statut": "a_faire"
+  },
+  {
+    "id": 12,
+    "langue": "en",
+    "message": "Hi, solo traveler here, 6 days: Tunis + Sidi Bou Said + Kairouan, budget around 700 USD, flying from Rome",
+    "villes": [
+      "Tunis",
+      "Sidi Bou Saïd",
+      "Kairouan"
+    ],
+    "transport": [
+      "vol"
+    ],
+    "vol_depuis": "Rome",
+    "nb_personnes": 1,
+    "type_groupe": "solo",
+    "budget_montant": 700,
+    "budget_devise": "USD",
+    "budget_type": "total",
+    "duree_jours": 6,
+    "infos_manquantes": [],
+    "contraintes": [],
+    "statut": "a_faire"
+  },
+  {
+    "id": 13,
+    "langue": "darija_latin",
+    "message": "ya5i fama chay 3la tunis lel weekend? ena w zouz s7abi, budget sghir 300 dt lkol, ma3andnach karhba",
+    "villes": [
+      "Tunis"
+    ],
+    "transport": [
+      "sans_voiture"
+    ],
+    "vol_depuis": null,
+    "nb_personnes": 3,
+    "type_groupe": "amis",
+    "budget_montant": 300,
+    "budget_devise": "TND",
+    "budget_type": "total",
+    "duree_jours": 2,
+    "infos_manquantes": [],
+    "contraintes": [],
+    "statut": "a_faire"
+  },
+  {
+    "id": 14,
+    "langue": "fr",
+    "message": "bonjour je voudrais organiser l'anniversaire de ma femme a sidi bou said, diner romantique + 2 nuits dans un bel hotel, budget pas de limite",
+    "villes": [
+      "Sidi Bou Saïd"
+    ],
+    "transport": [],
+    "vol_depuis": null,
+    "nb_personnes": 2,
+    "type_groupe": "couple",
+    "budget_montant": null,
+    "budget_devise": null,
+    "budget_type": null,
+    "duree_jours": 2,
+    "infos_manquantes": [],
+    "contraintes": [
+      "anniversaire",
+      "dîner romantique",
+      "haut de gamme"
+    ],
+    "statut": "a_faire"
+  },
+  {
+    "id": 15,
+    "langue": "fr",
+    "message": "Vol direct Bruxelles–Monastir pour 6 amis, 1 semaine début juillet, budget 700€ par personne, on veut plage et soirées",
+    "villes": [
+      "Monastir"
+    ],
+    "transport": [
+      "vol"
+    ],
+    "vol_depuis": "Bruxelles",
+    "nb_personnes": 6,
+    "type_groupe": "amis",
+    "budget_montant": 700,
+    "budget_devise": "EUR",
+    "budget_type": "par_personne",
+    "duree_jours": 7,
+    "infos_manquantes": [],
+    "contraintes": [
+      "vol direct",
+      "vie nocturne",
+      "plage"
+    ],
+    "statut": "a_faire"
+  },
+  {
+    "id": 16,
+    "langue": "darija_arabe",
+    "message": "نحب نعمل خرجة لتوزر نهار السبت والأحد مع عايلتي، 4 أشخاص، الميزانية 800 دينار، وحابين نكريو كرهبة من تونس",
+    "villes": [
+      "Tozeur"
+    ],
+    "transport": [
+      "location_voiture"
+    ],
+    "vol_depuis": null,
+    "nb_personnes": 4,
+    "type_groupe": "famille_enfants",
+    "budget_montant": 800,
+    "budget_devise": "TND",
+    "budget_type": "total",
+    "duree_jours": 2,
+    "infos_manquantes": [],
+    "contraintes": [
+      "départ de Tunis"
+    ],
+    "statut": "a_faire"
+  },
+  {
+    "id": 17,
+    "langue": "fr",
+    "message": "Je suis à mobilité réduite, je cherche 3 jours à Monastir avec ma fille, hôtel accessible, budget 1000 dt, transfert depuis l'aéroport de Monastir obligatoire",
+    "villes": [
+      "Monastir"
+    ],
+    "transport": [
+      "transfert_aeroport"
+    ],
+    "vol_depuis": null,
+    "nb_personnes": 2,
+    "type_groupe": "famille_enfants",
+    "budget_montant": 1000,
+    "budget_devise": "TND",
+    "budget_type": "total",
+    "duree_jours": 3,
+    "infos_manquantes": [],
+    "contraintes": [
+      "PMR",
+      "hôtel accessible"
+    ],
+    "statut": "a_faire"
+  },
+  {
+    "id": 18,
+    "langue": "fr",
+    "message": "hello on est un groupe de 8 étudiants on veut faire hammamet pas cher 3 jours genre 80dt par tete par nuit",
+    "villes": [
+      "Hammamet"
+    ],
+    "transport": [],
+    "vol_depuis": null,
+    "nb_personnes": 8,
+    "type_groupe": "groupe",
+    "budget_montant": 80,
+    "budget_devise": "TND",
+    "budget_type": "par_personne",
+    "duree_jours": 3,
+    "infos_manquantes": [],
+    "contraintes": [
+      "étudiants",
+      "économique"
+    ],
+    "statut": "a_faire"
+  },
+  {
+    "id": 19,
+    "langue": "darija_latin",
+    "message": "salam, chnowa a7sen program l kairouan nhar wa7ed? ena wa7di, 100 dt, njik bel train men tunis",
+    "villes": [
+      "Kairouan"
+    ],
+    "transport": [
+      "sans_voiture"
+    ],
+    "vol_depuis": null,
+    "nb_personnes": 1,
+    "type_groupe": "solo",
+    "budget_montant": 100,
+    "budget_devise": "TND",
+    "budget_type": "total",
+    "duree_jours": 1,
+    "infos_manquantes": [],
+    "contraintes": [
+      "train"
+    ],
+    "statut": "a_faire"
+  },
+  {
+    "id": 20,
+    "langue": "fr",
+    "message": "Couple retraité, 2 semaines de thalasso entre Hammamet et Monastir, budget confortable ~5000€, vol depuis Marseille, et on ne veut pas conduire",
+    "villes": [
+      "Hammamet",
+      "Monastir"
+    ],
+    "transport": [
+      "vol",
+      "sans_voiture"
+    ],
+    "vol_depuis": "Marseille",
+    "nb_personnes": 2,
+    "type_groupe": "couple",
+    "budget_montant": 5000,
+    "budget_devise": "EUR",
+    "budget_type": "total",
+    "duree_jours": 14,
+    "infos_manquantes": [],
+    "contraintes": [
+      "thalasso",
+      "retraités",
+      "ne pas conduire"
+    ],
+    "statut": "a_faire"
+  },
+  {
+    "id": 21,
+    "langue": "fr",
+    "message": "on veut aller a tozeur",
+    "villes": [
+      "Tozeur"
+    ],
+    "transport": [],
+    "vol_depuis": null,
+    "nb_personnes": null,
+    "type_groupe": null,
+    "budget_montant": null,
+    "budget_devise": null,
+    "budget_type": null,
+    "duree_jours": null,
+    "infos_manquantes": [
+      "budget",
+      "duree",
+      "personnes"
+    ],
+    "contraintes": [],
+    "statut": "a_faire"
+  },
+  {
+    "id": 22,
+    "langue": "darija_latin",
+    "message": "3andi 4 jours congé, n7eb nemchi sousse w monastir m3a 5ti, budget 700 dt, w n7eb transfert men l'aéroport enfidha",
+    "villes": [
+      "Sousse",
+      "Monastir"
+    ],
+    "transport": [
+      "transfert_aeroport"
+    ],
+    "vol_depuis": null,
+    "nb_personnes": 2,
+    "type_groupe": "amis",
+    "budget_montant": 700,
+    "budget_devise": "TND",
+    "budget_type": "total",
+    "duree_jours": 4,
+    "infos_manquantes": [],
+    "contraintes": [
+      "aéroport Enfidha"
+    ],
+    "statut": "a_faire"
+  },
+  {
+    "id": 23,
+    "langue": "arabe",
+    "message": "السلام عليكم، نحن عائلة من ستة أفراد، نريد قضاء خمسة أيام في الحمامات، رحلة جوية من الجزائر العاصمة، الميزانية 3000 دولار",
+    "villes": [
+      "Hammamet"
+    ],
+    "transport": [
+      "vol"
+    ],
+    "vol_depuis": "Alger",
+    "nb_personnes": 6,
+    "type_groupe": "famille_enfants",
+    "budget_montant": 3000,
+    "budget_devise": "USD",
+    "budget_type": "total",
+    "duree_jours": 5,
+    "infos_manquantes": [],
+    "contraintes": [],
+    "statut": "a_faire"
+  },
+  {
+    "id": 24,
+    "langue": "fr",
+    "message": "Je voyage seule, 5 jours Tunis + Sidi Bou Saïd, je veux un quartier sûr, budget 600 dt, pas de voiture",
+    "villes": [
+      "Tunis",
+      "Sidi Bou Saïd"
+    ],
+    "transport": [
+      "sans_voiture"
+    ],
+    "vol_depuis": null,
+    "nb_personnes": 1,
+    "type_groupe": "solo",
+    "budget_montant": 600,
+    "budget_devise": "TND",
+    "budget_type": "total",
+    "duree_jours": 5,
+    "infos_manquantes": [],
+    "contraintes": [
+      "quartier sûr",
+      "solo female"
+    ],
+    "statut": "a_faire"
+  },
+  {
+    "id": 25,
+    "langue": "fr",
+    "message": "Location voiture boîte auto à l'aéroport Tunis-Carthage, on fait Tunis → Kairouan → Tozeur en 6 jours, couple, 2000 dt",
+    "villes": [
+      "Tunis",
+      "Kairouan",
+      "Tozeur"
+    ],
+    "transport": [
+      "location_voiture"
+    ],
+    "vol_depuis": null,
+    "nb_personnes": 2,
+    "type_groupe": "couple",
+    "budget_montant": 2000,
+    "budget_devise": "TND",
+    "budget_type": "total",
+    "duree_jours": 6,
+    "infos_manquantes": [],
+    "contraintes": [
+      "boîte auto",
+      "road trip"
+    ],
+    "statut": "a_faire"
+  },
+  {
+    "id": 26,
+    "langue": "darija_arabe",
+    "message": "عندي ميزانية 150 دينار برك، نحب نقضي نهار في سيدي بوسعيد مع صاحبتي، شنوة تنصحني؟",
+    "villes": [
+      "Sidi Bou Saïd"
+    ],
+    "transport": [],
+    "vol_depuis": null,
+    "nb_personnes": 2,
+    "type_groupe": "couple",
+    "budget_montant": 150,
+    "budget_devise": "TND",
+    "budget_type": "total",
+    "duree_jours": 1,
+    "infos_manquantes": [],
+    "contraintes": [
+      "petit budget"
+    ],
+    "statut": "a_faire"
+  },
+  {
+    "id": 27,
+    "langue": "fr",
+    "message": "slt, mariage d'un pote a sousse, on est 4 potes, 2 nuits, on cherche un appart pas loin de la plage, 400dt",
+    "villes": [
+      "Sousse"
+    ],
+    "transport": [],
+    "vol_depuis": null,
+    "nb_personnes": 4,
+    "type_groupe": "amis",
+    "budget_montant": 400,
+    "budget_devise": "TND",
+    "budget_type": "total",
+    "duree_jours": 2,
+    "infos_manquantes": [],
+    "contraintes": [
+      "bord de mer",
+      "appartement"
+    ],
+    "statut": "a_faire"
+  },
+  {
+    "id": 28,
+    "langue": "fr",
+    "message": "Famille avec 2 ados, vol depuis Genève, 8 jours à Djerba, budget 4500 CHF, on veut faire du kitesurf",
+    "villes": [
+      "Djerba"
+    ],
+    "transport": [
+      "vol"
+    ],
+    "vol_depuis": "Genève",
+    "nb_personnes": 4,
+    "type_groupe": "famille_enfants",
+    "budget_montant": 4500,
+    "budget_devise": "CHF",
+    "budget_type": "total",
+    "duree_jours": 8,
+    "infos_manquantes": [],
+    "contraintes": [
+      "kitesurf",
+      "ados"
+    ],
+    "statut": "a_faire"
+  },
+  {
+    "id": 29,
+    "langue": "darija_latin",
+    "message": "nheb nwarri l wledi sahra, 3 sghar, ena w mrati, 4 jours f tozeur, budget 1500dt, nemchiw b karhebtna",
+    "villes": [
+      "Tozeur"
+    ],
+    "transport": [
+      "voiture_perso"
+    ],
+    "vol_depuis": null,
+    "nb_personnes": 5,
+    "type_groupe": "famille_enfants",
+    "budget_montant": 1500,
+    "budget_devise": "TND",
+    "budget_type": "total",
+    "duree_jours": 4,
+    "infos_manquantes": [],
+    "contraintes": [
+      "désert"
+    ],
+    "statut": "a_faire"
+  },
+  {
+    "id": 30,
+    "langue": "fr",
+    "message": "Weekend Hammamet entre filles, 5 personnes, spa + plage, budget 250 dt chacune, on vient de Tunis en louage",
+    "villes": [
+      "Hammamet"
+    ],
+    "transport": [
+      "sans_voiture"
+    ],
+    "vol_depuis": null,
+    "nb_personnes": 5,
+    "type_groupe": "amis",
+    "budget_montant": 250,
+    "budget_devise": "TND",
+    "budget_type": "par_personne",
+    "duree_jours": 2,
+    "infos_manquantes": [],
+    "contraintes": [
+      "spa",
+      "plage",
+      "louage"
+    ],
+    "statut": "a_faire"
+  },
+  {
+    "id": 31,
+    "langue": "en",
+    "message": "Hey, me and my gf want 5 days in Tunis & Sidi Bou Said, flying from London, direct flight if possible, mid budget",
+    "villes": [
+      "Tunis",
+      "Sidi Bou Saïd"
+    ],
+    "transport": [
+      "vol"
+    ],
+    "vol_depuis": "Londres",
+    "nb_personnes": 2,
+    "type_groupe": "couple",
+    "budget_montant": null,
+    "budget_devise": null,
+    "budget_type": null,
+    "duree_jours": 5,
+    "infos_manquantes": [],
+    "contraintes": [
+      "direct flight"
+    ],
+    "statut": "a_faire"
+  },
+  {
+    "id": 32,
+    "langue": "darija_latin",
+    "message": "kifech nemchi l monastir men sfax? n7eb nkari karhba 3 jours, ena w 2 s7abi, budget 500",
+    "villes": [
+      "Monastir"
+    ],
+    "transport": [
+      "location_voiture"
+    ],
+    "vol_depuis": null,
+    "nb_personnes": 3,
+    "type_groupe": "amis",
+    "budget_montant": 500,
+    "budget_devise": "TND",
+    "budget_type": "total",
+    "duree_jours": 3,
+    "infos_manquantes": [],
+    "contraintes": [
+      "départ Sfax"
+    ],
+    "statut": "a_faire"
+  },
+  {
+    "id": 33,
+    "langue": "fr",
+    "message": "Bonjour, nous sommes un groupe de 12 seniors, circuit culturel de 7 jours : Tunis, Kairouan, Sousse, Monastir. Bus privé avec chauffeur souhaité. Budget 900€/personne.",
+    "villes": [
+      "Tunis",
+      "Kairouan",
+      "Sousse",
+      "Monastir"
+    ],
+    "transport": [
+      "chauffeur_prive"
+    ],
+    "vol_depuis": null,
+    "nb_personnes": 12,
+    "type_groupe": "groupe",
+    "budget_montant": 900,
+    "budget_devise": "EUR",
+    "budget_type": "par_personne",
+    "duree_jours": 7,
+    "infos_manquantes": [],
+    "contraintes": [
+      "seniors",
+      "minibus privé",
+      "circuit culturel"
+    ],
+    "statut": "a_faire"
+  },
+  {
+    "id": 34,
+    "langue": "arabe",
+    "message": "أريد برنامجا لزيارة متحف باردو والمدينة العتيقة في تونس، يومان، شخص واحد",
+    "villes": [
+      "Tunis"
+    ],
+    "transport": [],
+    "vol_depuis": null,
+    "nb_personnes": 1,
+    "type_groupe": "solo",
+    "budget_montant": null,
+    "budget_devise": null,
+    "budget_type": null,
+    "duree_jours": 2,
+    "infos_manquantes": [
+      "budget"
+    ],
+    "contraintes": [
+      "musée du Bardo",
+      "médina"
+    ],
+    "statut": "a_faire"
+  },
+  {
+    "id": 35,
+    "langue": "fr",
+    "message": "Je pars de Montréal, vol avec escale ok, 2 semaines en Tunisie : Tunis, Hammamet, Tozeur. Solo, budget 2500 CAD",
+    "villes": [
+      "Tunis",
+      "Hammamet",
+      "Tozeur"
+    ],
+    "transport": [
+      "vol"
+    ],
+    "vol_depuis": "Montréal",
+    "nb_personnes": 1,
+    "type_groupe": "solo",
+    "budget_montant": 2500,
+    "budget_devise": "CAD",
+    "budget_type": "total",
+    "duree_jours": 14,
+    "infos_manquantes": [],
+    "contraintes": [
+      "vol avec escale"
+    ],
+    "statut": "a_faire"
+  },
+  {
+    "id": 36,
+    "langue": "darija_arabe",
+    "message": "حبيت نعمل مفاجأة لراجلي، ليلتين في سوسة، أوتيل 5 نجوم، الميزانية ما عندهاش مشكل",
+    "villes": [
+      "Sousse"
+    ],
+    "transport": [],
+    "vol_depuis": null,
+    "nb_personnes": 2,
+    "type_groupe": "couple",
+    "budget_montant": null,
+    "budget_devise": null,
+    "budget_type": null,
+    "duree_jours": 2,
+    "infos_manquantes": [],
+    "contraintes": [
+      "hôtel 5 étoiles",
+      "surprise"
+    ],
+    "statut": "a_faire"
+  },
+  {
+    "id": 37,
+    "langue": "fr",
+    "message": "couple avec un bébé de 8 mois, 4 jours sousse, on veut pas trop bouger, hotel avec tout sur place, 1300 dt, transfert depuis enfidha",
+    "villes": [
+      "Sousse"
+    ],
+    "transport": [
+      "transfert_aeroport"
+    ],
+    "vol_depuis": null,
+    "nb_personnes": 2,
+    "type_groupe": "famille_enfants",
+    "budget_montant": 1300,
+    "budget_devise": "TND",
+    "budget_type": "total",
+    "duree_jours": 4,
+    "infos_manquantes": [],
+    "contraintes": [
+      "bébé 8 mois",
+      "all-in / tout sur place"
+    ],
+    "statut": "a_faire"
+  },
+  {
+    "id": 38,
+    "langue": "darija_latin",
+    "message": "chbeb 6, n7ebou nesehrou f hammamet yasmine, 3 lilet, kol wa7ed 200 dt, w n7ebou nkariw zouz kraheb",
+    "villes": [
+      "Hammamet"
+    ],
+    "transport": [
+      "location_voiture"
+    ],
+    "vol_depuis": null,
+    "nb_personnes": 6,
+    "type_groupe": "amis",
+    "budget_montant": 200,
+    "budget_devise": "TND",
+    "budget_type": "par_personne",
+    "duree_jours": 3,
+    "infos_manquantes": [],
+    "contraintes": [
+      "fête / soirées",
+      "2 voitures"
+    ],
+    "statut": "a_faire"
+  },
+  {
+    "id": 39,
+    "langue": "fr",
+    "message": "Bonjour, j'aimerais découvrir Kairouan pendant le Mouled, 2 jours, avec mon mari, environ 500 dt",
+    "villes": [
+      "Kairouan"
+    ],
+    "transport": [],
+    "vol_depuis": null,
+    "nb_personnes": 2,
+    "type_groupe": "couple",
+    "budget_montant": 500,
+    "budget_devise": "TND",
+    "budget_type": "total",
+    "duree_jours": 2,
+    "infos_manquantes": [],
+    "contraintes": [
+      "Mouled / fête religieuse"
+    ],
+    "statut": "a_faire"
+  },
+  {
+    "id": 40,
+    "langue": "fr",
+    "message": "Vol Paris-Tozeur direct ça existe ? sinon via Tunis. 3 amis, 5 jours, rando et désert, 900€ chacun",
+    "villes": [
+      "Tozeur"
+    ],
+    "transport": [
+      "vol"
+    ],
+    "vol_depuis": "Paris",
+    "nb_personnes": 3,
+    "type_groupe": "amis",
+    "budget_montant": 900,
+    "budget_devise": "EUR",
+    "budget_type": "par_personne",
+    "duree_jours": 5,
+    "infos_manquantes": [],
+    "contraintes": [
+      "rando",
+      "désert"
+    ],
+    "statut": "a_faire"
+  },
+  {
+    "id": 41,
+    "langue": "darija_latin",
+    "message": "bonjour, 3andi 2 jours f tunis 9bal ma ntiir, nheb nchouf l medina w sidi bou said, budget 200 dt, w transfert lel matar",
+    "villes": [
+      "Tunis",
+      "Sidi Bou Saïd"
+    ],
+    "transport": [
+      "transfert_aeroport"
+    ],
+    "vol_depuis": null,
+    "nb_personnes": 1,
+    "type_groupe": "solo",
+    "budget_montant": 200,
+    "budget_devise": "TND",
+    "budget_type": "total",
+    "duree_jours": 2,
+    "infos_manquantes": [],
+    "contraintes": [
+      "transit aéroport"
+    ],
+    "statut": "a_faire"
+  },
+  {
+    "id": 42,
+    "langue": "fr",
+    "message": "On est 2 couples, 6 jours entre Sidi Bou Saïd et Hammamet, voiture de location obligatoire, boîte manuelle ça va, budget 2400 dt total",
+    "villes": [
+      "Sidi Bou Saïd",
+      "Hammamet"
+    ],
+    "transport": [
+      "location_voiture"
+    ],
+    "vol_depuis": null,
+    "nb_personnes": 4,
+    "type_groupe": "amis",
+    "budget_montant": 2400,
+    "budget_devise": "TND",
+    "budget_type": "total",
+    "duree_jours": 6,
+    "infos_manquantes": [],
+    "contraintes": [
+      "boîte manuelle"
+    ],
+    "statut": "a_faire"
+  },
+  {
+    "id": 43,
+    "langue": "arabe",
+    "message": "أنا طالب، أبحث عن رحلة اقتصادية إلى المنستير لثلاثة أيام، ميزانيتي 200 دينار، سأستخدم القطار",
+    "villes": [
+      "Monastir"
+    ],
+    "transport": [
+      "sans_voiture"
+    ],
+    "vol_depuis": null,
+    "nb_personnes": 1,
+    "type_groupe": "solo",
+    "budget_montant": 200,
+    "budget_devise": "TND",
+    "budget_type": "total",
+    "duree_jours": 3,
+    "infos_manquantes": [],
+    "contraintes": [
+      "train",
+      "économique"
+    ],
+    "statut": "a_faire"
+  },
+  {
+    "id": 44,
+    "langue": "fr",
+    "message": "famille nombreuse 7 personnes dont la grand-mère qui marche mal, 5 jours Monastir, budget 3000 dt, minibus depuis l'aeroport de Tunis",
+    "villes": [
+      "Monastir"
+    ],
+    "transport": [
+      "transfert_aeroport"
+    ],
+    "vol_depuis": null,
+    "nb_personnes": 7,
+    "type_groupe": "famille_enfants",
+    "budget_montant": 3000,
+    "budget_devise": "TND",
+    "budget_type": "total",
+    "duree_jours": 5,
+    "infos_manquantes": [],
+    "contraintes": [
+      "marche difficile",
+      "minibus"
+    ],
+    "statut": "a_faire"
+  },
+  {
+    "id": 45,
+    "langue": "darija_arabe",
+    "message": "نحب نزور جامع عقبة في القيروان ونرجع في نفس النهار، أنا وأمي، ما عندناش كرهبة",
+    "villes": [
+      "Kairouan"
+    ],
+    "transport": [
+      "sans_voiture"
+    ],
+    "vol_depuis": null,
+    "nb_personnes": 2,
+    "type_groupe": "famille_enfants",
+    "budget_montant": null,
+    "budget_devise": null,
+    "budget_type": null,
+    "duree_jours": 1,
+    "infos_manquantes": [
+      "budget"
+    ],
+    "contraintes": [
+      "mosquée Okba"
+    ],
+    "statut": "a_faire"
+  },
+  {
+    "id": 46,
+    "langue": "fr",
+    "message": "Budget max 1000 dt pour une semaine à Sousse pour moi et mon fils de 12 ans",
+    "villes": [
+      "Sousse"
+    ],
+    "transport": [],
+    "vol_depuis": null,
+    "nb_personnes": 2,
+    "type_groupe": "famille_enfants",
+    "budget_montant": 1000,
+    "budget_devise": "TND",
+    "budget_type": "total",
+    "duree_jours": 7,
+    "infos_manquantes": [],
+    "contraintes": [
+      "enfant 12 ans"
+    ],
+    "statut": "a_faire"
+  },
+  {
+    "id": 47,
+    "langue": "en",
+    "message": "Solo backpacker, 10 days, Tunis Kairouan Tozeur Sousse, budget 50 euros a day, no car, buses and louages only",
+    "villes": [
+      "Tunis",
+      "Kairouan",
+      "Tozeur",
+      "Sousse"
+    ],
+    "transport": [
+      "sans_voiture"
+    ],
+    "vol_depuis": null,
+    "nb_personnes": 1,
+    "type_groupe": "solo",
+    "budget_montant": 50,
+    "budget_devise": "EUR",
+    "budget_type": "par_jour",
+    "duree_jours": 10,
+    "infos_manquantes": [],
+    "contraintes": [
+      "backpack",
+      "bus / louage"
+    ],
+    "statut": "a_faire"
+  },
+  {
+    "id": 48,
+    "langue": "darija_latin",
+    "message": "ena w madame 7abin n3amlou honeymoon f sidi bou said 5 jours, budget 3000dt, w transfert men carthage",
+    "villes": [
+      "Sidi Bou Saïd"
+    ],
+    "transport": [
+      "transfert_aeroport"
+    ],
+    "vol_depuis": null,
+    "nb_personnes": 2,
+    "type_groupe": "couple",
+    "budget_montant": 3000,
+    "budget_devise": "TND",
+    "budget_type": "total",
+    "duree_jours": 5,
+    "infos_manquantes": [],
+    "contraintes": [
+      "lune de miel"
+    ],
+    "statut": "a_faire"
+  },
+  {
+    "id": 49,
+    "langue": "fr",
+    "message": "voyage scolaire : 30 élèves + 3 profs, 2 jours Kairouan et Sousse, budget serré 60dt/élève, bus obligatoire",
+    "villes": [
+      "Kairouan",
+      "Sousse"
+    ],
+    "transport": [
+      "chauffeur_prive"
+    ],
+    "vol_depuis": null,
+    "nb_personnes": 33,
+    "type_groupe": "groupe",
+    "budget_montant": 60,
+    "budget_devise": "TND",
+    "budget_type": "par_personne",
+    "duree_jours": 2,
+    "infos_manquantes": [],
+    "contraintes": [
+      "voyage scolaire",
+      "grand bus"
+    ],
+    "statut": "a_faire"
+  },
+  {
+    "id": 50,
+    "langue": "fr",
+    "message": "Couple franco-tunisien, vol depuis Nice vers Monastir, 10 jours, on veut louer une voiture à l'arrivée pour voir la famille et faire Kairouan",
+    "villes": [
+      "Monastir",
+      "Kairouan"
+    ],
+    "transport": [
+      "vol",
+      "location_voiture"
+    ],
+    "vol_depuis": "Nice",
+    "nb_personnes": 2,
+    "type_groupe": "couple",
+    "budget_montant": null,
+    "budget_devise": null,
+    "budget_type": null,
+    "duree_jours": 10,
+    "infos_manquantes": [
+      "budget"
+    ],
+    "contraintes": [],
+    "statut": "a_faire"
+  },
+  {
+    "id": 51,
+    "langue": "darija_latin",
+    "message": "s7ab el 5ir, 3andna 3 jours f hammamet ena w 3 s7abi, budget 1000 lkol, w ma n7ebouch karhba",
+    "villes": [
+      "Hammamet"
+    ],
+    "transport": [
+      "sans_voiture"
+    ],
+    "vol_depuis": null,
+    "nb_personnes": 4,
+    "type_groupe": "amis",
+    "budget_montant": 1000,
+    "budget_devise": "TND",
+    "budget_type": "total",
+    "duree_jours": 3,
+    "infos_manquantes": [],
+    "contraintes": [],
+    "statut": "a_faire"
+  },
+  {
+    "id": 52,
+    "langue": "fr",
+    "message": "Je fais du télétravail, je cherche un mois à Sousse, studio avec bon wifi, budget 1500 dt pour le mois",
+    "villes": [
+      "Sousse"
+    ],
+    "transport": [],
+    "vol_depuis": null,
+    "nb_personnes": 1,
+    "type_groupe": "solo",
+    "budget_montant": 1500,
+    "budget_devise": "TND",
+    "budget_type": "total",
+    "duree_jours": 30,
+    "infos_manquantes": [],
+    "contraintes": [
+      "wifi performant",
+      "télétravail",
+      "long séjour"
+    ],
+    "statut": "a_faire"
+  },
+  {
+    "id": 53,
+    "langue": "darija_arabe",
+    "message": "عسلامة، فما سفرة لتوزر بالطيارة من تونس؟ أنا وراجلي، 3 أيام، 1200 دينار",
+    "villes": [
+      "Tozeur"
+    ],
+    "transport": [
+      "vol"
+    ],
+    "vol_depuis": "Tunis",
+    "nb_personnes": 2,
+    "type_groupe": "couple",
+    "budget_montant": 1200,
+    "budget_devise": "TND",
+    "budget_type": "total",
+    "duree_jours": 3,
+    "infos_manquantes": [],
+    "contraintes": [
+      "vol intérieur"
+    ],
+    "statut": "a_faire"
+  },
+  {
+    "id": 54,
+    "langue": "fr",
+    "message": "Bonjour, on vient en croisière, escale d'une journée à La Goulette, on veut visiter Tunis et Sidi Bou Saïd, 4 adultes, guide + véhicule",
+    "villes": [
+      "Tunis",
+      "Sidi Bou Saïd"
+    ],
+    "transport": [
+      "chauffeur_prive"
+    ],
+    "vol_depuis": null,
+    "nb_personnes": 4,
+    "type_groupe": "amis",
+    "budget_montant": null,
+    "budget_devise": null,
+    "budget_type": null,
+    "duree_jours": 1,
+    "infos_manquantes": [
+      "budget"
+    ],
+    "contraintes": [
+      "escale croisière",
+      "guide privé"
+    ],
+    "statut": "a_faire"
+  },
+  {
+    "id": 55,
+    "langue": "arabe",
+    "message": "أبحث عن عطلة عائلية في سوسة لمدة أسبوع، زوجان وثلاثة أطفال، ميزانية متوسطة حوالي 2200 دينار، ونرغب في استئجار سيارة عائلية",
+    "villes": [
+      "Sousse"
+    ],
+    "transport": [
+      "location_voiture"
+    ],
+    "vol_depuis": null,
+    "nb_personnes": 5,
+    "type_groupe": "famille_enfants",
+    "budget_montant": 2200,
+    "budget_devise": "TND",
+    "budget_type": "total",
+    "duree_jours": 7,
+    "infos_manquantes": [],
+    "contraintes": [
+      "voiture familiale"
+    ],
+    "statut": "a_faire"
+  },
+  {
+    "id": 56,
+    "langue": "fr",
+    "message": "salut on veut faire un road trip 10 jours en camping car si possible, Tunis Hammamet Kairouan Tozeur, 2 personnes, 2500 dt",
+    "villes": [
+      "Tunis",
+      "Hammamet",
+      "Kairouan",
+      "Tozeur"
+    ],
+    "transport": [
+      "location_voiture"
+    ],
+    "vol_depuis": null,
+    "nb_personnes": 2,
+    "type_groupe": "couple",
+    "budget_montant": 2500,
+    "budget_devise": "TND",
+    "budget_type": "total",
+    "duree_jours": 10,
+    "infos_manquantes": [],
+    "contraintes": [
+      "camping-car",
+      "road trip"
+    ],
+    "statut": "a_faire"
+  },
+  {
+    "id": 57,
+    "langue": "darija_latin",
+    "message": "n7eb nemchi monastir lel ribat w lb7ar, ena wa7di, nhar wala zouz, 120 dt",
+    "villes": [
+      "Monastir"
+    ],
+    "transport": [],
+    "vol_depuis": null,
+    "nb_personnes": 1,
+    "type_groupe": "solo",
+    "budget_montant": 120,
+    "budget_devise": "TND",
+    "budget_type": "total",
+    "duree_jours": 2,
+    "infos_manquantes": [],
+    "contraintes": [
+      "Ribat"
+    ],
+    "statut": "a_faire"
+  },
+  {
+    "id": 58,
+    "langue": "fr",
+    "message": "Groupe de 10 collègues, séminaire + team building à Hammamet, 3 jours, budget entreprise 8000 dt, transfert aéroport Tunis aller-retour",
+    "villes": [
+      "Hammamet"
+    ],
+    "transport": [
+      "transfert_aeroport"
+    ],
+    "vol_depuis": null,
+    "nb_personnes": 10,
+    "type_groupe": "groupe",
+    "budget_montant": 8000,
+    "budget_devise": "TND",
+    "budget_type": "total",
+    "duree_jours": 3,
+    "infos_manquantes": [],
+    "contraintes": [
+      "séminaire",
+      "team building",
+      "entreprise"
+    ],
+    "statut": "a_faire"
+  },
+  {
+    "id": 59,
+    "langue": "fr",
+    "message": "Je voudrais un séjour bien-être à Sidi Bou Saïd, seule, 3 nuits, hammam et massage, budget 700 dt",
+    "villes": [
+      "Sidi Bou Saïd"
+    ],
+    "transport": [],
+    "vol_depuis": null,
+    "nb_personnes": 1,
+    "type_groupe": "solo",
+    "budget_montant": 700,
+    "budget_devise": "TND",
+    "budget_type": "total",
+    "duree_jours": 3,
+    "infos_manquantes": [],
+    "contraintes": [
+      "hammam",
+      "massage",
+      "bien-être"
+    ],
+    "statut": "a_faire"
+  },
+  {
+    "id": 60,
+    "langue": "darija_arabe",
+    "message": "حابين نمشيو للحمامات نهار الأحد، 4 صحاب، كل واحد عندو 50 دينار، نمشيو بالتران",
+    "villes": [
+      "Hammamet"
+    ],
+    "transport": [
+      "sans_voiture"
+    ],
+    "vol_depuis": null,
+    "nb_personnes": 4,
+    "type_groupe": "amis",
+    "budget_montant": 50,
+    "budget_devise": "TND",
+    "budget_type": "par_personne",
+    "duree_jours": 1,
+    "infos_manquantes": [],
+    "contraintes": [
+      "train"
+    ],
+    "statut": "a_faire"
+  },
+  {
+    "id": 61,
+    "langue": "fr",
+    "message": "Bonjour, vol depuis Casablanca pour Tunis, 2 personnes, 5 jours, budget 12000 MAD",
+    "villes": [
+      "Tunis"
+    ],
+    "transport": [
+      "vol"
+    ],
+    "vol_depuis": "Casablanca",
+    "nb_personnes": 2,
+    "type_groupe": "couple",
+    "budget_montant": 12000,
+    "budget_devise": "MAD",
+    "budget_type": "total",
+    "duree_jours": 5,
+    "infos_manquantes": [],
+    "contraintes": [],
+    "statut": "a_faire"
+  },
+  {
+    "id": 62,
+    "langue": "en",
+    "message": "Family of 4, kids 5 and 7, one week in Hammamet, flying from Frankfurt, need car seats in the rental car, budget 3000 EUR",
+    "villes": [
+      "Hammamet"
+    ],
+    "transport": [
+      "vol",
+      "location_voiture"
+    ],
+    "vol_depuis": "Francfort",
+    "nb_personnes": 4,
+    "type_groupe": "famille_enfants",
+    "budget_montant": 3000,
+    "budget_devise": "EUR",
+    "budget_type": "total",
+    "duree_jours": 7,
+    "infos_manquantes": [],
+    "contraintes": [
+      "sièges auto enfants"
+    ],
+    "statut": "a_faire"
+  },
+  {
+    "id": 63,
+    "langue": "darija_latin",
+    "message": "kifeh nl9a hotel rkhis f sousse? 2 nuits ena w 5ouya",
+    "villes": [
+      "Sousse"
+    ],
+    "transport": [],
+    "vol_depuis": null,
+    "nb_personnes": 2,
+    "type_groupe": "amis",
+    "budget_montant": null,
+    "budget_devise": null,
+    "budget_type": null,
+    "duree_jours": 2,
+    "infos_manquantes": [
+      "budget"
+    ],
+    "contraintes": [
+      "hôtel économique"
+    ],
+    "statut": "a_faire"
+  },
+  {
+    "id": 64,
+    "langue": "fr",
+    "message": "On est une famille, on veut aller à Tozeur en décembre, combien ça coute ?",
+    "villes": [
+      "Tozeur"
+    ],
+    "transport": [],
+    "vol_depuis": null,
+    "nb_personnes": null,
+    "type_groupe": "famille_enfants",
+    "budget_montant": null,
+    "budget_devise": null,
+    "budget_type": null,
+    "duree_jours": null,
+    "infos_manquantes": [
+      "budget",
+      "duree",
+      "personnes"
+    ],
+    "contraintes": [
+      "décembre"
+    ],
+    "statut": "a_faire"
+  },
+  {
+    "id": 65,
+    "langue": "fr",
+    "message": "Couple de photographes, 4 jours Tozeur + Chebika + Tamerza, location 4x4 indispensable, budget 2200 dt",
+    "villes": [
+      "Tozeur"
+    ],
+    "transport": [
+      "location_voiture"
+    ],
+    "vol_depuis": null,
+    "nb_personnes": 2,
+    "type_groupe": "couple",
+    "budget_montant": 2200,
+    "budget_devise": "TND",
+    "budget_type": "total",
+    "duree_jours": 4,
+    "infos_manquantes": [],
+    "contraintes": [
+      "location 4x4",
+      "oasis de montagne"
+    ],
+    "statut": "a_faire"
+  },
+  {
+    "id": 66,
+    "langue": "darija_arabe",
+    "message": "أنا وبنات عمي 4، حابين نعملو ويكاند في سوسة، 600 دينار الكل، ونجيو بالكرهبة متاعنا",
+    "villes": [
+      "Sousse"
+    ],
+    "transport": [
+      "voiture_perso"
+    ],
+    "vol_depuis": null,
+    "nb_personnes": 4,
+    "type_groupe": "amis",
+    "budget_montant": 600,
+    "budget_devise": "TND",
+    "budget_type": "total",
+    "duree_jours": 2,
+    "infos_manquantes": [],
+    "contraintes": [],
+    "statut": "a_faire"
+  },
+  {
+    "id": 67,
+    "langue": "fr",
+    "message": "pour mes parents (70 ans), 5 jours à Monastir, calme, pas d'escaliers svp, transfert depuis aéroport Monastir, budget 1500 dt",
+    "villes": [
+      "Monastir"
+    ],
+    "transport": [
+      "transfert_aeroport"
+    ],
+    "vol_depuis": null,
+    "nb_personnes": 2,
+    "type_groupe": "couple",
+    "budget_montant": 1500,
+    "budget_devise": "TND",
+    "budget_type": "total",
+    "duree_jours": 5,
+    "infos_manquantes": [],
+    "contraintes": [
+      "pas d escalier",
+      "calme",
+      "seniors"
+    ],
+    "statut": "a_faire"
+  },
+  {
+    "id": 68,
+    "langue": "arabe",
+    "message": "أرغب في جولة في المدينة العتيقة بتونس وزيارة جامع الزيتونة، رحلة ليوم واحد، شخصان، الميزانية 150 دينارا",
+    "villes": [
+      "Tunis"
+    ],
+    "transport": [],
+    "vol_depuis": null,
+    "nb_personnes": 2,
+    "type_groupe": "couple",
+    "budget_montant": 150,
+    "budget_devise": "TND",
+    "budget_type": "total",
+    "duree_jours": 1,
+    "infos_manquantes": [],
+    "contraintes": [
+      "جامع الزيتونة"
+    ],
+    "statut": "a_faire"
+  },
+  {
+    "id": 69,
+    "langue": "fr",
+    "message": "Vol direct Toulouse → Djerba, 2 adultes, 6 jours, budget 1600€",
+    "villes": [
+      "Djerba"
+    ],
+    "transport": [
+      "vol"
+    ],
+    "vol_depuis": "Toulouse",
+    "nb_personnes": 2,
+    "type_groupe": "couple",
+    "budget_montant": 1600,
+    "budget_devise": "EUR",
+    "budget_type": "total",
+    "duree_jours": 6,
+    "infos_manquantes": [],
+    "contraintes": [
+      "vol direct"
+    ],
+    "statut": "a_faire"
+  },
+  {
+    "id": 70,
+    "langue": "darija_latin",
+    "message": "bghit nemchi kairouan w sousse f nhar wa7ed m3a wled 3ammi, 3 personnes, kraya karhba men sousse, 250 dt",
+    "villes": [
+      "Kairouan",
+      "Sousse"
+    ],
+    "transport": [
+      "location_voiture"
+    ],
+    "vol_depuis": null,
+    "nb_personnes": 3,
+    "type_groupe": "amis",
+    "budget_montant": 250,
+    "budget_devise": "TND",
+    "budget_type": "total",
+    "duree_jours": 1,
+    "infos_manquantes": [],
+    "contraintes": [],
+    "statut": "a_faire"
+  },
+  {
+    "id": 71,
+    "langue": "fr",
+    "message": "On veut une semaine Hammamet all inclusive, 2 adultes 1 enfant, 2800 dt",
+    "villes": [
+      "Hammamet"
+    ],
+    "transport": [],
+    "vol_depuis": null,
+    "nb_personnes": 3,
+    "type_groupe": "famille_enfants",
+    "budget_montant": 2800,
+    "budget_devise": "TND",
+    "budget_type": "total",
+    "duree_jours": 7,
+    "infos_manquantes": [],
+    "contraintes": [
+      "all inclusive"
+    ],
+    "statut": "a_faire"
+  },
+  {
+    "id": 72,
+    "langue": "fr",
+    "message": "jsuis étudiant erasmus a tunis, je veux visiter sousse et monastir ce weekend avec 3 amis, max 100 dt par personne, en train",
+    "villes": [
+      "Sousse",
+      "Monastir"
+    ],
+    "transport": [
+      "sans_voiture"
+    ],
+    "vol_depuis": null,
+    "nb_personnes": 4,
+    "type_groupe": "amis",
+    "budget_montant": 100,
+    "budget_devise": "TND",
+    "budget_type": "par_personne",
+    "duree_jours": 2,
+    "infos_manquantes": [],
+    "contraintes": [
+      "train",
+      "erasmus"
+    ],
+    "statut": "a_faire"
+  },
+  {
+    "id": 73,
+    "langue": "darija_arabe",
+    "message": "نحب نحجز لعايلتي في توزر، 5 أشخاص، 3 ليالي، فينا شيباني ما يمشيش برشا، 2000 دينار، ونحبو ترانسفار من مطار توزر",
+    "villes": [
+      "Tozeur"
+    ],
+    "transport": [
+      "transfert_aeroport"
+    ],
+    "vol_depuis": null,
+    "nb_personnes": 5,
+    "type_groupe": "famille_enfants",
+    "budget_montant": 2000,
+    "budget_devise": "TND",
+    "budget_type": "total",
+    "duree_jours": 3,
+    "infos_manquantes": [],
+    "contraintes": [
+      "marche peu",
+      "personne âgée"
+    ],
+    "statut": "a_faire"
+  },
+  {
+    "id": 74,
+    "langue": "fr",
+    "message": "Bonjour, j'ai 3 jours à Tunis pour un congrès, je veux profiter le soir, solo, 400 dt, je me déplace en taxi",
+    "villes": [
+      "Tunis"
+    ],
+    "transport": [
+      "sans_voiture"
+    ],
+    "vol_depuis": null,
+    "nb_personnes": 1,
+    "type_groupe": "solo",
+    "budget_montant": 400,
+    "budget_devise": "TND",
+    "budget_type": "total",
+    "duree_jours": 3,
+    "infos_manquantes": [],
+    "contraintes": [
+      "taxi",
+      "congrès"
+    ],
+    "statut": "a_faire"
+  },
+  {
+    "id": 75,
+    "langue": "en",
+    "message": "Luxury trip for 2, 7 nights, Sidi Bou Said and Hammamet, private driver the whole stay, budget 6000 EUR",
+    "villes": [
+      "Sidi Bou Saïd",
+      "Hammamet"
+    ],
+    "transport": [
+      "chauffeur_prive"
+    ],
+    "vol_depuis": null,
+    "nb_personnes": 2,
+    "type_groupe": "couple",
+    "budget_montant": 6000,
+    "budget_devise": "EUR",
+    "budget_type": "total",
+    "duree_jours": 7,
+    "infos_manquantes": [],
+    "contraintes": [
+      "luxury"
+    ],
+    "statut": "a_faire"
+  },
+  {
+    "id": 76,
+    "langue": "darija_latin",
+    "message": "salam 3likom, ena w mrati w wledi 2, n7ebou 4 jours f monastir, budget 1600, w n7ebou nkariw karhba men l matar",
+    "villes": [
+      "Monastir"
+    ],
+    "transport": [
+      "location_voiture"
+    ],
+    "vol_depuis": null,
+    "nb_personnes": 4,
+    "type_groupe": "famille_enfants",
+    "budget_montant": 1600,
+    "budget_devise": "TND",
+    "budget_type": "total",
+    "duree_jours": 4,
+    "infos_manquantes": [],
+    "contraintes": [],
+    "statut": "a_faire"
+  },
+  {
+    "id": 77,
+    "langue": "fr",
+    "message": "Couple, 3 jours à Kairouan et Sousse, pas de voiture, on préfère les excursions organisées, budget 800 dt",
+    "villes": [
+      "Kairouan",
+      "Sousse"
+    ],
+    "transport": [
+      "sans_voiture"
+    ],
+    "vol_depuis": null,
+    "nb_personnes": 2,
+    "type_groupe": "couple",
+    "budget_montant": 800,
+    "budget_devise": "TND",
+    "budget_type": "total",
+    "duree_jours": 3,
+    "infos_manquantes": [],
+    "contraintes": [
+      "excursions organisées"
+    ],
+    "statut": "a_faire"
+  },
+  {
+    "id": 78,
+    "langue": "fr",
+    "message": "Salut, je cherche le moins cher possible pour Hammamet, 2 personnes",
+    "villes": [
+      "Hammamet"
+    ],
+    "transport": [],
+    "vol_depuis": null,
+    "nb_personnes": 2,
+    "type_groupe": "amis",
+    "budget_montant": null,
+    "budget_devise": null,
+    "budget_type": null,
+    "duree_jours": null,
+    "infos_manquantes": [
+      "budget",
+      "duree"
+    ],
+    "contraintes": [
+      "low cost"
+    ],
+    "statut": "a_faire"
+  },
+  {
+    "id": 79,
+    "langue": "darija_arabe",
+    "message": "عسلامة، جاي من باريس بالطيارة لمطار المنستير، نحب ترانسفار لسوسة، 10 أيام، أنا وعايلتي 4، 3000 أورو",
+    "villes": [
+      "Sousse"
+    ],
+    "transport": [
+      "vol",
+      "transfert_aeroport"
+    ],
+    "vol_depuis": "Paris",
+    "nb_personnes": 4,
+    "type_groupe": "famille_enfants",
+    "budget_montant": 3000,
+    "budget_devise": "EUR",
+    "budget_type": "total",
+    "duree_jours": 10,
+    "infos_manquantes": [],
+    "contraintes": [
+      "aéroport Monastir"
+    ],
+    "statut": "a_faire"
+  },
+  {
+    "id": 80,
+    "langue": "fr",
+    "message": "On voudrait voir les décors de Star Wars autour de Tozeur, 2 amis, 3 jours, voiture de location, 1000 dt",
+    "villes": [
+      "Tozeur"
+    ],
+    "transport": [
+      "location_voiture"
+    ],
+    "vol_depuis": null,
+    "nb_personnes": 2,
+    "type_groupe": "amis",
+    "budget_montant": 1000,
+    "budget_devise": "TND",
+    "budget_type": "total",
+    "duree_jours": 3,
+    "infos_manquantes": [],
+    "contraintes": [
+      "Star Wars"
+    ],
+    "statut": "a_faire"
+  },
+  {
+    "id": 81,
+    "langue": "arabe",
+    "message": "نخطط لرحلة شهر عسل في الحمامات لمدة ستة أيام، الميزانية 4000 دينار، ونرغب في رحلة طيران من طرابلس",
+    "villes": [
+      "Hammamet"
+    ],
+    "transport": [
+      "vol"
+    ],
+    "vol_depuis": "Tripoli",
+    "nb_personnes": 2,
+    "type_groupe": "couple",
+    "budget_montant": 4000,
+    "budget_devise": "TND",
+    "budget_type": "total",
+    "duree_jours": 6,
+    "infos_manquantes": [],
+    "contraintes": [
+      "شهر عسل"
+    ],
+    "statut": "a_faire"
+  },
+  {
+    "id": 82,
+    "langue": "fr",
+    "message": "Grand-père + 2 petits-enfants (10 et 13 ans), 4 jours Sousse, parc aquatique, 1100 dt",
+    "villes": [
+      "Sousse"
+    ],
+    "transport": [],
+    "vol_depuis": null,
+    "nb_personnes": 3,
+    "type_groupe": "famille_enfants",
+    "budget_montant": 1100,
+    "budget_devise": "TND",
+    "budget_type": "total",
+    "duree_jours": 4,
+    "infos_manquantes": [],
+    "contraintes": [
+      "parc aquatique"
+    ],
+    "statut": "a_faire"
+  },
+  {
+    "id": 83,
+    "langue": "darija_latin",
+    "message": "ya jma3a, chkoun ya3ref program 7lou f sidi bou said lel 3echia? ena w s7abti 3, budget 40 dt kol wa7da",
+    "villes": [
+      "Sidi Bou Saïd"
+    ],
+    "transport": [],
+    "vol_depuis": null,
+    "nb_personnes": 4,
+    "type_groupe": "amis",
+    "budget_montant": 40,
+    "budget_devise": "TND",
+    "budget_type": "par_personne",
+    "duree_jours": 1,
+    "infos_manquantes": [],
+    "contraintes": [
+      "sortie après-midi"
+    ],
+    "statut": "a_faire"
+  },
+  {
+    "id": 84,
+    "langue": "fr",
+    "message": "Je veux une nuit dans le désert près de Tozeur sous tente, couple, budget 500 dt, vol depuis Tunis-Carthage",
+    "villes": [
+      "Tozeur"
+    ],
+    "transport": [
+      "vol"
+    ],
+    "vol_depuis": "Tunis",
+    "nb_personnes": 2,
+    "type_groupe": "couple",
+    "budget_montant": 500,
+    "budget_devise": "TND",
+    "budget_type": "total",
+    "duree_jours": 1,
+    "infos_manquantes": [],
+    "contraintes": [
+      "nuit sous tente",
+      "désert"
+    ],
+    "statut": "a_faire"
+  },
+  {
+    "id": 85,
+    "langue": "fr",
+    "message": "Équipe de foot amateur, 15 joueurs, stage 5 jours à Monastir, terrain + hôtel, budget 300 dt/personne, bus depuis l'aéroport",
+    "villes": [
+      "Monastir"
+    ],
+    "transport": [
+      "transfert_aeroport"
+    ],
+    "vol_depuis": null,
+    "nb_personnes": 15,
+    "type_groupe": "groupe",
+    "budget_montant": 300,
+    "budget_devise": "TND",
+    "budget_type": "par_personne",
+    "duree_jours": 5,
+    "infos_manquantes": [],
+    "contraintes": [
+      "stage de foot",
+      "terrain sport"
+    ],
+    "statut": "a_faire"
+  },
+  {
+    "id": 86,
+    "langue": "darija_arabe",
+    "message": "حاب نمشي وحدي لتونس العاصمة 3 أيام، نحب الكافيات والمتاحف، 350 دينار",
+    "villes": [
+      "Tunis"
+    ],
+    "transport": [],
+    "vol_depuis": null,
+    "nb_personnes": 1,
+    "type_groupe": "solo",
+    "budget_montant": 350,
+    "budget_devise": "TND",
+    "budget_type": "total",
+    "duree_jours": 3,
+    "infos_manquantes": [],
+    "contraintes": [
+      "متاحف"
+    ],
+    "statut": "a_faire"
+  },
+  {
+    "id": 87,
+    "langue": "fr",
+    "message": "On arrive de Milan, vol direct pour Tunis, 4 amies, 5 jours Tunis + Hammamet, location d'une voiture automatique, 3200€",
+    "villes": [
+      "Tunis",
+      "Hammamet"
+    ],
+    "transport": [
+      "vol",
+      "location_voiture"
+    ],
+    "vol_depuis": "Milan",
+    "nb_personnes": 4,
+    "type_groupe": "amis",
+    "budget_montant": 3200,
+    "budget_devise": "EUR",
+    "budget_type": "total",
+    "duree_jours": 5,
+    "infos_manquantes": [],
+    "contraintes": [
+      "boîte auto",
+      "vol direct"
+    ],
+    "statut": "a_faire"
+  },
+  {
+    "id": 88,
+    "langue": "darija_latin",
+    "message": "family de 4, n7ebou nemchiw l hammamet 5 jours, budget 1800, ma n7ebouch nsou9ou",
+    "villes": [
+      "Hammamet"
+    ],
+    "transport": [
+      "sans_voiture"
+    ],
+    "vol_depuis": null,
+    "nb_personnes": 4,
+    "type_groupe": "famille_enfants",
+    "budget_montant": 1800,
+    "budget_devise": "TND",
+    "budget_type": "total",
+    "duree_jours": 5,
+    "infos_manquantes": [],
+    "contraintes": [
+      "sans conduite"
+    ],
+    "statut": "a_faire"
+  },
+  {
+    "id": 89,
+    "langue": "fr",
+    "message": "Long séjour hiver pour un couple de retraités belges, 1 mois à Monastir, budget 2000€/mois",
+    "villes": [
+      "Monastir"
+    ],
+    "transport": [],
+    "vol_depuis": null,
+    "nb_personnes": 2,
+    "type_groupe": "couple",
+    "budget_montant": 2000,
+    "budget_devise": "EUR",
+    "budget_type": "total",
+    "duree_jours": 30,
+    "infos_manquantes": [],
+    "contraintes": [
+      "séjour hiver",
+      "retraités"
+    ],
+    "statut": "a_faire"
+  },
+  {
+    "id": 90,
+    "langue": "arabe",
+    "message": "أريد زيارة القيروان وتوزر في رحلة واحدة، أربعة أيام، مع زوجتي، الميزانية 1500 دينار، نحتاج سيارة بسائق",
+    "villes": [
+      "Kairouan",
+      "Tozeur"
+    ],
+    "transport": [
+      "chauffeur_prive"
+    ],
+    "vol_depuis": null,
+    "nb_personnes": 2,
+    "type_groupe": "couple",
+    "budget_montant": 1500,
+    "budget_devise": "TND",
+    "budget_type": "total",
+    "duree_jours": 4,
+    "infos_manquantes": [],
+    "contraintes": [],
+    "statut": "a_faire"
+  },
+  {
+    "id": 91,
+    "langue": "fr",
+    "message": "Mon copain et moi on veut faire Sousse en 2 jours avec un tout petit budget, genre 150dt à deux",
+    "villes": [
+      "Sousse"
+    ],
+    "transport": [],
+    "vol_depuis": null,
+    "nb_personnes": 2,
+    "type_groupe": "couple",
+    "budget_montant": 150,
+    "budget_devise": "TND",
+    "budget_type": "total",
+    "duree_jours": 2,
+    "infos_manquantes": [],
+    "contraintes": [
+      "petit budget"
+    ],
+    "statut": "a_faire"
+  },
+  {
+    "id": 92,
+    "langue": "darija_arabe",
+    "message": "عندي ضيوف جايين من ليون، 3 أشخاص، نحب نوريهم سيدي بوسعيد وتونس، 4 أيام، ميزانيتهم 1500 أورو، ونحب ترانسفار من المطار",
+    "villes": [
+      "Sidi Bou Saïd",
+      "Tunis"
+    ],
+    "transport": [
+      "transfert_aeroport"
+    ],
+    "vol_depuis": null,
+    "nb_personnes": 3,
+    "type_groupe": "groupe",
+    "budget_montant": 1500,
+    "budget_devise": "EUR",
+    "budget_type": "total",
+    "duree_jours": 4,
+    "infos_manquantes": [],
+    "contraintes": [
+      "ضيوف من ليون"
+    ],
+    "statut": "a_faire"
+  },
+  {
+    "id": 93,
+    "langue": "fr",
+    "message": "voyage entre amis 4 personnes Kairouan Tozeur 4 jours, louer une voiture à Sousse et la rendre à Tozeur, 1600 dt",
+    "villes": [
+      "Kairouan",
+      "Tozeur"
+    ],
+    "transport": [
+      "location_voiture"
+    ],
+    "vol_depuis": null,
+    "nb_personnes": 4,
+    "type_groupe": "amis",
+    "budget_montant": 1600,
+    "budget_devise": "TND",
+    "budget_type": "total",
+    "duree_jours": 4,
+    "infos_manquantes": [],
+    "contraintes": [
+      "one-way rental (Sousse -> Tozeur)"
+    ],
+    "statut": "a_faire"
+  },
+  {
+    "id": 94,
+    "langue": "fr",
+    "message": "Je suis végétarienne, 5 jours Hammamet seule, 900 dt, je veux des restos adaptés",
+    "villes": [
+      "Hammamet"
+    ],
+    "transport": [],
+    "vol_depuis": null,
+    "nb_personnes": 1,
+    "type_groupe": "solo",
+    "budget_montant": 900,
+    "budget_devise": "TND",
+    "budget_type": "total",
+    "duree_jours": 5,
+    "infos_manquantes": [],
+    "contraintes": [
+      "végétarienne"
+    ],
+    "statut": "a_faire"
+  },
+  {
+    "id": 95,
+    "langue": "darija_latin",
+    "message": "bonjour, n7eb nemchi l tozeur bel train lezard rouge, ena w mrati, 3 jours, 900dt, ma n7ebch karhba",
+    "villes": [
+      "Tozeur"
+    ],
+    "transport": [
+      "sans_voiture"
+    ],
+    "vol_depuis": null,
+    "nb_personnes": 2,
+    "type_groupe": "couple",
+    "budget_montant": 900,
+    "budget_devise": "TND",
+    "budget_type": "total",
+    "duree_jours": 3,
+    "infos_manquantes": [],
+    "contraintes": [
+      "train Lézard Rouge"
+    ],
+    "statut": "a_faire"
+  },
+  {
+    "id": 96,
+    "langue": "fr",
+    "message": "Une semaine à Sidi Bou Saïd et Tunis pour une famille de 6, budget 3500 dt, on loue un van",
+    "villes": [
+      "Sidi Bou Saïd",
+      "Tunis"
+    ],
+    "transport": [
+      "location_voiture"
+    ],
+    "vol_depuis": null,
+    "nb_personnes": 6,
+    "type_groupe": "famille_enfants",
+    "budget_montant": 3500,
+    "budget_devise": "TND",
+    "budget_type": "total",
+    "duree_jours": 7,
+    "infos_manquantes": [],
+    "contraintes": [
+      "van / grand véhicule"
+    ],
+    "statut": "a_faire"
+  },
+  {
+    "id": 97,
+    "langue": "en",
+    "message": "Hi, Tunis for 2 nights, business + leisure, airport pickup needed, 500 USD",
+    "villes": [
+      "Tunis"
+    ],
+    "transport": [
+      "transfert_aeroport"
+    ],
+    "vol_depuis": null,
+    "nb_personnes": 1,
+    "type_groupe": "solo",
+    "budget_montant": 500,
+    "budget_devise": "USD",
+    "budget_type": "total",
+    "duree_jours": 2,
+    "infos_manquantes": [],
+    "contraintes": [
+      "business + leisure"
+    ],
+    "statut": "a_faire"
+  },
+  {
+    "id": 98,
+    "langue": "darija_arabe",
+    "message": "جايين بالطيارة من جدة لتونس، أنا وصاحبي، نحبو 5 أيام في سوسة، 900 دينار، ونحبو ترانسفار من المطار لسوسة",
+    "villes": [
+      "Sousse"
+    ],
+    "transport": [
+      "vol",
+      "transfert_aeroport"
+    ],
+    "vol_depuis": "Djeddah",
+    "nb_personnes": 2,
+    "type_groupe": "amis",
+    "budget_montant": 900,
+    "budget_devise": "TND",
+    "budget_type": "total",
+    "duree_jours": 5,
+    "infos_manquantes": [],
+    "contraintes": [
+      "رحلة من جدة"
+    ],
+    "statut": "a_faire"
+  },
+  {
+    "id": 99,
+    "langue": "fr",
+    "message": "Kairouan + Sousse + Monastir en 3 jours pour un couple qui ne marche pas beaucoup, chauffeur privé, 1200 dt",
+    "villes": [
+      "Kairouan",
+      "Sousse",
+      "Monastir"
+    ],
+    "transport": [
+      "chauffeur_prive"
+    ],
+    "vol_depuis": null,
+    "nb_personnes": 2,
+    "type_groupe": "couple",
+    "budget_montant": 1200,
+    "budget_devise": "TND",
+    "budget_type": "total",
+    "duree_jours": 3,
+    "infos_manquantes": [],
+    "contraintes": [
+      "marche peu"
+    ],
+    "statut": "a_faire"
+  },
+  {
+    "id": 100,
+    "langue": "darija_latin",
+    "message": "ena w 3ayelti (5) n7ebou nemchiw lel 7ammamet fi sif, 7 jours",
+    "villes": [
+      "Hammamet"
+    ],
+    "transport": [],
+    "vol_depuis": null,
+    "nb_personnes": 5,
+    "type_groupe": "famille_enfants",
+    "budget_montant": null,
+    "budget_devise": null,
+    "budget_type": null,
+    "duree_jours": 7,
+    "infos_manquantes": [
+      "budget"
+    ],
+    "contraintes": [
+      "été / sif"
+    ],
+    "statut": "a_faire"
   }
-];
+]

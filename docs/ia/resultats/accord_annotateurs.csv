@@ -1,0 +1,15 @@
+champ,n,accords,accord_pct,kappa,interpretation
+destination,100,100,100.0,1.0,presque parfait
+autres_villes,100,100,100.0,,—
+langue,100,100,100.0,1.0,presque parfait
+type_voyage,100,82,82.0,0.776,substantiel
+nb_voyageurs,100,96,96.0,,—
+duree_jours,100,100,100.0,,—
+budget_montant,100,88,88.0,,—
+budget_devise,100,100,100.0,1.0,presque parfait
+budget_base,100,100,100.0,1.0,presque parfait
+ville_depart,100,94,94.0,0.852,presque parfait
+vol,100,92,92.0,0.792,substantiel
+voiture,100,93,93.0,0.861,presque parfait
+transfert,100,100,100.0,1.0,presque parfait
+champs_manquants,100,77,77.0,,—
