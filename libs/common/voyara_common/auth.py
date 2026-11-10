@@ -18,6 +18,8 @@ ROLE_TOURIST = 2
 
 # tokenUrl pointe vers la route du gateway (utile uniquement pour Swagger)
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login/form")
+# Variante des routes publiques : pas d'en-tête Authorization → None au lieu d'une erreur 401
+oauth2_scheme_optionnel = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/login/form", auto_error=False)
 
 CREDENTIALS_ERROR = HTTPException(
     status_code=status.HTTP_401_UNAUTHORIZED,
@@ -45,6 +47,16 @@ def get_current_identity(token: str = Depends(oauth2_scheme)) -> TokenIdentity:
         return TokenIdentity(user_id=int(payload["sub"]), role=int(payload["role"]))
     except (KeyError, TypeError, ValueError):
         raise CREDENTIALS_ERROR
+
+
+def get_optional_identity(token: str | None = Depends(oauth2_scheme_optionnel)) -> TokenIdentity | None:
+    """Identité si un token est fourni, None sinon (route ouverte aux visiteurs anonymes).
+
+    Un token **présent mais invalide ou expiré** reste une erreur 401 : on ne bascule pas en
+    silence sur l'anonyme, sinon un client croirait être connecté alors qu'il ne l'est plus."""
+    if token is None:
+        return None
+    return get_current_identity(token)
 
 
 def require_admin(identity: TokenIdentity = Depends(get_current_identity)) -> TokenIdentity:

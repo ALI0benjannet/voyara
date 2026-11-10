@@ -1,8 +1,8 @@
 """Microservice `ai` — moteur IA de Voyara (port 8008, ADR-007).
 
 Étape 3 : socle (configuration, base `voyara_ai` + pgvector, logs, limiteur, santé),
-couche LLM hybride et client catalog. Les endpoints métier arrivent à partir de l'étape 4
-sous le préfixe `/api/ai` routé par le gateway.
+couche LLM hybride et client catalog. Étape 4 : module 1, compréhension du voyageur
+(`POST /api/ai/comprendre`). Endpoints métier sous le préfixe `/api/ai` routé par le gateway.
 """
 
 import logging
@@ -21,6 +21,7 @@ from app.config import settings
 from app.database import Base, SessionLocal, engine
 from app.llm.fabrique import creer_client_llm
 from app.llm.journal import JournalLLM
+from app.nlu.routes import router as router_nlu
 from app.routes import router
 
 setup_logging(settings.SERVICE_NAME)
@@ -50,7 +51,7 @@ async def lifespan(app: FastAPI):
 app = FastAPI(
     title=settings.PROJECT_NAME,
     description="Moteur IA : compréhension, recherche, recommandation, itinéraire, agent.",
-    version="0.3.0",
+    version="0.4.0",
     docs_url="/docs",
     redoc_url=None,
     openapi_url=f"{settings.API_AI_PREFIX}/openapi.json",
@@ -69,3 +70,4 @@ def health():
 
 
 app.include_router(router, prefix=settings.API_AI_PREFIX)
+app.include_router(router_nlu, prefix=settings.API_AI_PREFIX)

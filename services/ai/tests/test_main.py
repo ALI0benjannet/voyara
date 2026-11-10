@@ -21,5 +21,5 @@ def test_health_et_health_detaillee():
 
 def test_routes_exposees():
     chemins = set(app.openapi()["paths"])
-    assert chemins == {"/health", "/api/ai/health"}
+    assert chemins == {"/health", "/api/ai/health", "/api/ai/comprendre"}
     assert not any("/internal" in c for c in chemins)

@@ -189,7 +189,8 @@ def test_aller_retour_excel(jeu_copie, tmp_path):
     assert h041["attendu"]["activites_souhaitees"] == ["medina", "sidi bou said, le soir"]  # virgule conservée
     assert apres["G-101"]["statut"] == "corrige" and apres["G-101"]["attendu"]["duree_jours"] == 7
     assert apres["G-001"]["statut"] == "valide" and apres["G-001"]["attendu"] == index["G-001"]["attendu"]
-    assert apres["H-002"]["statut"] == "a_relire" and apres["H-002"]["attendu"] == index["H-002"]["attendu"]
+    # ligne en erreur : ni ses valeurs ni son statut ne changent (quel que soit le statut de départ)
+    assert apres["H-002"]["statut"] == index["H-002"]["statut"] and apres["H-002"]["attendu"] == index["H-002"]["attendu"]
 
 
 # --- Activités souhaitées (F1 tolérant) ----------------------------------------------

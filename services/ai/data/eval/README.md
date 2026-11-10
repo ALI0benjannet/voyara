@@ -243,6 +243,10 @@ Elles servent à la recherche de l'étape 5 ; les **thèmes** (`preferences`) re
 - Destination hors catalogue (Matmata, Ksar Ghilane, Kélibia, ou une ville étrangère : Alger,
   Paris…) → `destination = null` et `destination` manquant : le système doit proposer les villes
   connues, jamais en inventer une. Les cas de référence sont G-137 (dev) et G-138 (test).
+  Une destination hors catalogue **n'est pas recopiée** dans `activites_souhaitees` (« 2 jours à
+  Ksar Ghilane » → `activites_souhaitees = []`) : la règle « un lieu précis hors catalogue est une
+  activité » vaut pour un site visité depuis une ville du catalogue (« Chebika » depuis Tozeur), pas
+  pour le lieu de séjour lui-même.
 - **Nom de gouvernorat** : il désigne toujours la ville chef-lieu du même nom (« Nabeul » → Nabeul,
   « Médenine » → Médenine, « Kébili » → Kébili). Hammamet, Djerba, Tabarka et Douz restent des villes à
   part : on ne les remplace jamais par leur chef-lieu. « Kef » et « El Kef » s'annotent « Le Kef », et
