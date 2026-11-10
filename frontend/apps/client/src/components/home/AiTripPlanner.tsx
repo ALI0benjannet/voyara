@@ -1,9 +1,12 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import { Landmark, Mountain, Sparkles, TextSearch, Umbrella, Utensils } from "lucide-react";
+import { Landmark, Loader2, Mountain, Sparkles, TextSearch, Umbrella, Utensils } from "lucide-react";
 
+import { cleErreurComprendre, useComprendre } from "@/features/ai/comprendre";
 import { useHydratedTranslation } from "@/features/i18n/use-hydrated-language";
+
+import { AiUnderstanding } from "./AiUnderstanding";
 
 /** Inspirations proposées sous le champ : un clic pré-remplit la demande. */
 const INSPIRATIONS = [
@@ -19,24 +22,25 @@ const INSPIRATIONS = [
  *  composant porte la carte de saisie et les inspirations. La recherche
  *  classique a rejoint l'en-tête (voir `useCondensedHeader`).
  *
- *  Emplacement réservé à l'agent IA (moteur prévu dans `services/ai`,
- *  ADR-007) : l'interface est en place, mais la demande n'est encore envoyée
- *  nulle part — valider affiche seulement un message « bientôt disponible ».
- *  Le branchement se fera ici, dans `submit`. */
+ *  Version minimale branchée sur le module 1 du moteur IA (`services/ai`,
+ *  ADR-007) : la demande est envoyée à `POST /api/ai/comprendre` via le
+ *  gateway, et la carte « Ce que nous avons compris » affiche la réponse. Le
+ *  planning complet (« Planifier mon voyage ») viendra à l'étape 9. */
 export function AiTripPlanner() {
   const { t } = useHydratedTranslation();
   const [prompt, setPrompt] = useState("");
-  const [submitted, setSubmitted] = useState(false);
+  const comprendre = useComprendre();
+  const enCours = comprendre.isPending;
 
   const submit = (event: FormEvent) => {
     event.preventDefault();
-    // TODO(agent IA) : appeler le service ai via le gateway.
-    setSubmitted(true);
+    const texte = prompt.trim();
+    if (!texte || enCours) return; // aucun envoi vide ni double envoi pendant l'appel
+    comprendre.mutate(texte);
   };
 
   const inspire = (label: string) => {
     setPrompt((current) => (current.trim() ? `${current.trim()}, ${label}` : label));
-    setSubmitted(false);
   };
 
   return (
@@ -51,11 +55,9 @@ export function AiTripPlanner() {
           <TextSearch aria-hidden className="text-primary mt-0.5 size-4 shrink-0" />
           <textarea
             value={prompt}
-            onChange={(e) => {
-              setPrompt(e.target.value);
-              setSubmitted(false);
-            }}
+            onChange={(e) => setPrompt(e.target.value)}
             rows={2}
+            maxLength={2000}
             placeholder={t("home.aiPlanner.placeholder")}
             aria-label={t("home.aiPlanner.title")}
             className="text-foreground placeholder:text-foreground/40 min-h-11 w-full resize-none bg-transparent text-sm focus:outline-none"
@@ -68,18 +70,27 @@ export function AiTripPlanner() {
           </span>
           <button
             type="submit"
-            className="bg-primary text-primary-foreground hover:bg-primary-hover focus-visible:ring-primary inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
+            disabled={enCours}
+            aria-busy={enCours}
+            className="bg-primary text-primary-foreground hover:bg-primary-hover focus-visible:ring-primary inline-flex items-center gap-2 rounded-full px-4 py-2 text-sm font-semibold transition-colors focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-wait disabled:opacity-70"
           >
-            <Sparkles aria-hidden className="size-4" />
-            {t("home.aiPlanner.generate")}
+            {enCours ? (
+              <Loader2 aria-hidden className="size-4 animate-spin" />
+            ) : (
+              <Sparkles aria-hidden className="size-4" />
+            )}
+            {enCours ? t("home.aiPlanner.loading") : t("home.aiPlanner.generate")}
           </button>
         </div>
-        {submitted && (
-          <p role="status" className="text-muted-foreground mt-2 text-xs">
-            {t("home.aiPlanner.soon")}
+        <p className="text-muted-foreground mt-2 text-xs">{t("home.aiPlanner.note")}</p>
+        {comprendre.isError && (
+          <p role="alert" className="text-destructive mt-2 text-xs font-medium">
+            {t(`home.aiPlanner.errors.${cleErreurComprendre(comprendre.error)}`)}
           </p>
         )}
       </form>
+
+      {comprendre.isSuccess && !enCours && <AiUnderstanding reponse={comprendre.data} />}
 
       {/* Une seule ligne, sans défilement : les pastilles se partagent la
           largeur restante (2 × 2 sur mobile, où le libellé est masqué). */}
