@@ -182,3 +182,4 @@ de PFE (étape 13).
 | 2 · Enrichissement sémantique du catalogue | [etape-02-enrichissement-catalogue.md](rapports/etape-02-enrichissement-catalogue.md) |
 | 2-bis · Hébergements et offres de transport pour l'IA | [etape-02bis-transport-catalogue.md](rapports/etape-02bis-transport-catalogue.md) |
 | 3 · Service `ai` et couche LLM hybride | [etape-03-service-ai-llm-hybride.md](rapports/etape-03-service-ai-llm-hybride.md) |
+| 4 · Module 1 : comprendre le voyageur (NLU) — livrée avec réserve | [etape-04-module1-comprehension.md](rapports/etape-04-module1-comprehension.md) |

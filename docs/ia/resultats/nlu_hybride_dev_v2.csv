@@ -1,0 +1,36 @@
+champ,transport,support,precision,rappel,f1,exactitude,dans_macro
+destination,False,74,1.000,1.000,1.000,1.000,True
+autres_villes,False,11,1.000,1.000,1.000,1.000,True
+date_debut,False,7,1.000,1.000,1.000,1.000,True
+duree_jours,False,71,1.000,1.000,1.000,1.000,True
+nb_nuits,False,66,1.000,1.000,1.000,1.000,True
+budget_montant,False,68,1.000,1.000,1.000,1.000,True
+budget_devise,False,68,1.000,1.000,1.000,1.000,True
+budget_base,False,68,1.000,1.000,1.000,1.000,True
+budget_illimite,False,0,—,—,—,1.000,False
+nb_voyageurs,False,69,0.944,0.986,0.965,0.935,True
+nb_adultes,False,60,0.937,0.983,0.959,0.935,True
+nb_enfants,False,10,0.909,1.000,0.952,0.987,True
+type_voyage,False,63,0.861,0.984,0.919,0.870,True
+preferences,False,52,0.963,1.000,0.981,0.974,True
+activites_souhaitees,False,63,0.896,0.952,0.923,0.883,True
+niveau_marche_max,False,5,0.556,1.000,0.714,0.948,True
+mobilite_reduite,False,3,1.000,1.000,1.000,1.000,False
+langue,False,77,1.000,1.000,1.000,1.000,True
+ville_depart,True,22,0.917,1.000,0.957,0.974,True
+vol,True,26,0.839,1.000,0.912,0.935,True
+voiture,True,20,0.769,1.000,0.870,0.922,True
+transfert,True,12,0.923,1.000,0.960,0.987,True
+vol_direct,True,5,1.000,1.000,1.000,1.000,True
+boite_auto,True,4,1.000,1.000,1.000,1.000,False
+priorite,True,2,1.000,1.000,1.000,1.000,False
+budget_inclut_transport,True,36,0.947,1.000,0.973,0.974,True
+hors_sujet,False,2,1.000,1.000,1.000,1.000,False
+champs_manquants,False,31,0.771,0.871,0.818,0.883,True
+
+f1_macro,0.952
+f1_micro,0.968
+f1_transport_macro,0.945
+f1_transport_micro,0.941
+ic95_f1_macro,[0.930 ; 0.968]
+ic95_f1_transport_macro,[0.908 ; 0.974]

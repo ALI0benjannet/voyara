@@ -11,6 +11,9 @@
 services/auth/static/avatars/*
 !services/auth/static/avatars/.gitkeep
 
+# Cache des sorties du LLM de l'évaluation NLU (scripts/evaluer_nlu.py) — régénérable
+services/ai/data/eval/cache/
+
 # Python
 __pycache__/
 *.py[cod]
@@ -41,3 +44,5 @@ logs/
 .DS_Store
 Thumbs.db
 .claude/settings.local.json
+# Fichiers de verrouillage Office (Excel ouvert)
+~$*

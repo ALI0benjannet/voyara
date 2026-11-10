@@ -17,8 +17,13 @@ FICHIER_HUMAINES = "demandes_humaines_a_annoter.jsonl"
 FICHIERS_JEU = (FICHIER_HUMAINES, "nlu_dev.jsonl", "nlu_test.jsonl")
 
 # --- Vocabulaire (README §2) ---------------------------------------------------
+# Les 29 villes du référentiel du moteur IA (app/villes.py) : chefs-lieux des 24 gouvernorats
+# + Sidi Bou Saïd, Hammamet, Djerba, Tabarka et Douz (09/11/2026)
 VILLES_CATALOGUE = ("Djerba", "Tunis", "Sidi Bou Saïd", "Sousse", "Hammamet", "Monastir", "Tozeur", "Kairouan",
-                    "Tabarka")
+                    "Tabarka",
+                    "Ariana", "Ben Arous", "La Manouba", "Nabeul", "Zaghouan", "Bizerte", "Béja", "Jendouba",
+                    "Le Kef", "Siliana", "Mahdia", "Sfax", "Kasserine", "Sidi Bouzid", "Gabès", "Médenine",
+                    "Tataouine", "Gafsa", "Kébili", "Douz")
 # Thèmes de l'étape 2 (services/catalog/app/tags_ia.py)
 THEMES = ("plage", "culture", "histoire", "nature", "gastronomie",
           "aventure", "detente", "shopping", "nautique", "desert")
@@ -343,3 +348,37 @@ def ecarts_equipe(demande: dict) -> list[str]:
         if v_equipe != v_jeu:
             sortie.append(f"{champ} : {v_equipe} → {v_jeu}")
     return sortie
+
+
+# --- Répartition dev / test des demandes humaines (README : « jeu": null ») -------
+GRAINE_REPARTITION = 20261109
+PART_DEV = 0.4
+
+
+def repartir_dev_test(demandes: list[dict], graine: int = GRAINE_REPARTITION,
+                      part_dev: float = PART_DEV) -> dict[str, str]:
+    """{id: "dev" | "test"} pour toutes les demandes. Un `jeu` déjà renseigné est respecté ; les
+    demandes à `jeu` null sont réparties langue par langue (stratification) : chaque groupe, trié par
+    id puis mélangé avec la graine fixe, envoie ses round(part_dev × n) premières demandes au dev.
+    Déterministe : même graine et mêmes demandes → même répartition, quel que soit l'ordre des fichiers."""
+    import random
+
+    jeux = {d["id"]: d["jeu"] for d in demandes if d.get("jeu") in ("dev", "test")}
+    alea = random.Random(graine)
+    a_repartir = [d for d in demandes if d.get("jeu") not in ("dev", "test")]
+    for langue in sorted({d["attendu"]["langue"] for d in a_repartir}):
+        groupe = sorted(d["id"] for d in a_repartir if d["attendu"]["langue"] == langue)
+        alea.shuffle(groupe)
+        nb_dev = round(part_dev * len(groupe))
+        for i, ident in enumerate(groupe):
+            jeux[ident] = "dev" if i < nb_dev else "test"
+    return jeux
+
+
+def demandes_du_jeu(jeu: str, dossier: Path = DOSSIER_EVAL, relues_seulement: bool = True) -> list[dict]:
+    """Demandes d'un jeu (`dev` ou `test`), humaines comprises, avec `jeu` renseigné ; par défaut
+    seulement les demandes relues (`valide` ou `corrige`), seules admises à l'évaluation."""
+    toutes = [d for lignes in charger_jeu(dossier).values() for d in lignes]
+    repartition = repartir_dev_test(toutes)
+    return [{**d, "jeu": repartition[d["id"]]} for d in toutes
+            if repartition[d["id"]] == jeu and (not relues_seulement or d.get("statut") in STATUTS_RELUS)]

@@ -48,6 +48,11 @@ class Settings(CommonSettings):
     OLLAMA_MODEL: str = "qwen2.5:3b"  # 7b : ~4,4 Go de RAM, trop pour un poste 8 Go
     OLLAMA_TIMEOUT_S: float = 180.0  # un 7B sur CPU peut prendre plusieurs dizaines de secondes
 
+    # --- Module 1, compréhension (étape 4) ---------------------------------
+    # Délai du LLM pour POST /api/ai/comprendre, au-delà : réponse des règles seules. Inférieur au
+    # délai du gateway (PROXY_TIMEOUT_SECONDS = 30 s) pour ne jamais finir en 504.
+    NLU_DELAI_LLM_S: float = 25.0
+
     @property
     def DATABASE_URL(self) -> str:
         return build_postgres_url(

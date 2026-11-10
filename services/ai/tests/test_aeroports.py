@@ -41,6 +41,7 @@ ELEMENTS = [
     aerodrome("way", 9003, "DJE", "Aéroport international de Djerba-Zarzis", 33.875, 10.775),
     aerodrome("way", 9004, "NBE", "Aéroport international d'Enfidha-Hammamet", 36.076, 10.439),
     aerodrome("way", 9005, "SFA", "Aéroport international de Sfax-Thyna", 34.718, 10.691),
+    aerodrome("way", 9006, "EBM", "Aéroport d'El Borma", 31.704, 9.254),  # à 177 km de Tataouine
 ]
 
 
@@ -58,15 +59,17 @@ def test_requete_nationale_par_code_iata():
 def test_distance_et_ville_la_plus_proche():
     assert round(distance_km(36.8, 10.17, 36.8, 10.17)) == 0
     assert 110 < distance_km(36.8065, 10.1815, 35.8256, 10.6411) < 125  # Tunis-Sousse à vol d'oiseau
-    assert ville_la_plus_proche(36.851, 10.227).nom == "Tunis"
+    assert ville_la_plus_proche(36.851, 10.227).nom == "Ariana"  # TUN : 3,8 km d'Ariana, 7,9 de Tunis
     assert ville_la_plus_proche(33.875, 10.775).nom == "Djerba"
-    assert ville_la_plus_proche(34.718, 10.691) is None  # Sfax : aucune ville couverte à 60 km
+    assert ville_la_plus_proche(34.718, 10.691).nom == "Sfax"  # couverte depuis les 29 villes
+    assert ville_la_plus_proche(31.704, 9.254) is None  # El Borma : aucune ville couverte à 60 km
 
 
 def test_selection_un_poi_par_iata_avec_ville():
     pois = selectionner_aeroports(ELEMENTS, MAINTENANT)
     assert [(p["tags"]["iata"], p["ville"]) for p in pois] == [
-        ("DJE", "Djerba"), ("NBE", "Sousse"), ("TUN", "Tunis"),
+        ("DJE", "Djerba"), ("NBE", "Sousse"), ("SFA", "Sfax"),
+        ("TUN", "Tunis"),  # exception VILLE_IMPOSEE_PAR_IATA, malgré Ariana plus proche
     ]
     tunis = next(p for p in pois if p["tags"]["iata"] == "TUN")
     assert tunis["source_id"] == "way/9001"  # le contour est préféré au nœud
@@ -78,11 +81,11 @@ def test_collecte_et_upsert_sans_doublon(db):
         return httpx.Response(200, json={"elements": ELEMENTS})
 
     client = httpx.Client(transport=httpx.MockTransport(gerer))
-    ids = ("way/9001", "way/9003", "way/9004")
+    ids = ("way/9001", "way/9003", "way/9004", "way/9005")
     pois = collecter_aeroports(client, URL, dormir=lambda s: None)
-    assert enregistrer(db, pois) == (3, 0)
-    assert enregistrer(db, collecter_aeroports(client, URL, dormir=lambda s: None)) == (0, 3)
-    assert db.query(func.count(Poi.id)).filter(Poi.source_id.in_(ids)).scalar() == 3
+    assert enregistrer(db, pois) == (4, 0)
+    assert enregistrer(db, collecter_aeroports(client, URL, dormir=lambda s: None)) == (0, 4)
+    assert db.query(func.count(Poi.id)).filter(Poi.source_id.in_(ids)).scalar() == 4
 
 
 def test_option_aeroports_du_script(monkeypatch, capsys):
@@ -97,4 +100,4 @@ def test_option_aeroports_du_script(monkeypatch, capsys):
     assert script.main(["--aeroports", "--dry-run"]) == 0
     sortie = capsys.readouterr().out
     assert villes_appelees == []  # pas de collecte par ville
-    assert "TUN" in sortie and "3 POI (dry-run" in sortie
+    assert "TUN" in sortie and "4 POI (dry-run" in sortie

@@ -34,8 +34,8 @@ def _toutes(dossier=j.DOSSIER_EVAL):
 
 def test_jeu_complet_valide_et_compose():
     demandes = _toutes()
-    assert len(demandes) == 190  # 130 humaines (équipe v2) + 60 générées
-    assert len({d["id"] for d in demandes}) == 190
+    assert len(demandes) == 192  # 130 humaines (équipe v2) + 62 générées (dont G-137, G-138 hors catalogue)
+    assert len({d["id"] for d in demandes}) == 192
     erreurs = {d["id"]: j.valider(d) for d in demandes if j.valider(d)}
     assert erreurs == {}
     test_genere = [d for d in demandes if d["jeu"] == "test"]
@@ -82,7 +82,7 @@ def test_vol_sans_depart_ni_date_et_devise():
 
 
 @pytest.mark.parametrize("modif, extrait", [
-    ({"destination": "Bizerte"}, "destination"),
+    ({"destination": "Matmata"}, "destination"),
     ({"duree_jours": 61, "nb_nuits": 61}, "hors limites"),
     ({"duree_jours": 3, "nb_nuits": 5}, "incohérents"),
     ({"preferences": ["ski"]}, "preferences"),
@@ -118,7 +118,7 @@ def test_ecarts_equipe_budget_par_personne():
 def test_repartition_stratifiee_et_deterministe():
     demandes = _toutes()
     parts = repartir(demandes, RELECTEURS, 1)
-    assert sorted(len(p) for p in parts.values()) == [47, 47, 48, 48]
+    assert sorted(len(p) for p in parts.values()) == [48, 48, 48, 48]  # 192 demandes
     assert sorted(d["id"] for p in parts.values() for d in p) == sorted(d["id"] for d in demandes)
     for langue in j.LANGUES:
         effectifs = [sum(d["attendu"]["langue"] == langue for d in p) for p in parts.values()]
@@ -179,7 +179,7 @@ def test_aller_retour_excel(jeu_copie, tmp_path):
     assert rapport.non_relues == ["H-015 (ali)"]
     assert any("H-002" in e and "ski" in e for e in rapport.erreurs)
     assert any("G-101" in a for a in rapport.avertissements)
-    assert len(rapport.non_distribuees) == 185
+    assert len(rapport.non_distribuees) == 187  # 192 demandes - 5 lignes du fichier de test
 
     apres = {d["id"]: d for d in _toutes(jeu_copie)}
     h041 = apres["H-041"]
@@ -189,7 +189,8 @@ def test_aller_retour_excel(jeu_copie, tmp_path):
     assert h041["attendu"]["activites_souhaitees"] == ["medina", "sidi bou said, le soir"]  # virgule conservée
     assert apres["G-101"]["statut"] == "corrige" and apres["G-101"]["attendu"]["duree_jours"] == 7
     assert apres["G-001"]["statut"] == "valide" and apres["G-001"]["attendu"] == index["G-001"]["attendu"]
-    assert apres["H-002"]["statut"] == "a_relire" and apres["H-002"]["attendu"] == index["H-002"]["attendu"]
+    # ligne en erreur : ni ses valeurs ni son statut ne changent (quel que soit le statut de départ)
+    assert apres["H-002"]["statut"] == index["H-002"]["statut"] and apres["H-002"]["attendu"] == index["H-002"]["attendu"]
 
 
 # --- Activités souhaitées (F1 tolérant) ----------------------------------------------

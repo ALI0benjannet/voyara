@@ -162,7 +162,7 @@ cd ..\..
 
 # 5.6 Données du moteur IA (Internet nécessaire ; tables créées automatiquement)
 cd services\ai
-# POI OpenStreetMap, 9 villes (~10 min : le serveur Overpass public répond souvent 504,
+# POI OpenStreetMap, 29 villes (~10 min : le serveur Overpass public répond souvent 504,
 # le script réessaie ; une ville en échec se relance avec --ville <nom>)
 ..\..\.venv\Scripts\python scripts\collecter_pois.py
 # Météo Open-Meteo des 7 prochains jours (cache de 6 h)
