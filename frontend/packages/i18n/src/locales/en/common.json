@@ -34,7 +34,67 @@
       "placeholder": "E.g. 4 days in Djerba as a couple, beach time, pottery in Guellala and an 850 TND budget…",
       "status": "AI model active",
       "generate": "Plan my trip",
-      "soon": "The AI agent is coming soon — your request is not processed yet.",
+      "note": "The AI already understands your request; the full day-by-day plan is coming soon.",
+      "loading": "Analysing your request…",
+      "errors": {
+        "rateLimited": "Too many requests in a short time. Please wait a minute and try again.",
+        "unavailable": "The AI service is temporarily unavailable. Please try again in a moment.",
+        "unexpected": "We could not analyse your request. Please rephrase it and try again."
+      },
+      "understood": {
+        "title": "What we understood",
+        "method": {
+          "hybride": "AI + rules",
+          "regles": "Rules",
+          "llm": "AI"
+        },
+        "destination": "Destination",
+        "duration": "Duration",
+        "budget": "Budget",
+        "travellers": "Travellers",
+        "preferences": "Interests",
+        "activities": "Activities",
+        "departure": "From",
+        "transport": "Transport",
+        "days": "{{count}} day",
+        "days_other": "{{count}} days",
+        "nights": "{{count}} night",
+        "nights_other": "{{count}} nights",
+        "people": "{{count}} person",
+        "people_other": "{{count}} people",
+        "adults": "{{count}} adult",
+        "adults_other": "{{count}} adults",
+        "children": "{{count}} child",
+        "children_other": "{{count}} children",
+        "unlimited": "No limit",
+        "types": {
+          "famille": "Family",
+          "couple": "Couple",
+          "solo": "Solo",
+          "amis": "Friends",
+          "groupe": "Group"
+        },
+        "themes": {
+          "plage": "Beach",
+          "culture": "Culture",
+          "histoire": "History",
+          "nature": "Nature",
+          "gastronomie": "Food",
+          "aventure": "Adventure",
+          "detente": "Relaxation",
+          "shopping": "Shopping",
+          "nautique": "Water sports",
+          "desert": "Desert"
+        },
+        "need": {
+          "vol_oui": "Flight",
+          "vol_non": "No flight",
+          "voiture_oui": "Car rental",
+          "voiture_non": "No car",
+          "transfert_oui": "Transfer",
+          "transfert_non": "No transfer"
+        }
+      },
       "inspirations": "Ideas:",
       "chips": {
         "culture": "Culture & History",

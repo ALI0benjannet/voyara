@@ -34,7 +34,67 @@
       "placeholder": "Ex : 4 jours à Djerba en couple, détente plage, poterie à Guellala et budget 850 DT…",
       "status": "Modèle IA actif",
       "generate": "Générer mon voyage",
-      "soon": "L'agent IA arrive bientôt — votre demande n'est pas encore traitée.",
+      "note": "L'IA comprend déjà votre demande ; le planning complet jour par jour arrive bientôt.",
+      "loading": "Analyse de votre demande…",
+      "errors": {
+        "rateLimited": "Trop de demandes en peu de temps. Patientez une minute puis réessayez.",
+        "unavailable": "Le service d'IA est momentanément indisponible. Réessayez dans quelques instants.",
+        "unexpected": "Votre demande n'a pas pu être analysée. Reformulez-la puis réessayez."
+      },
+      "understood": {
+        "title": "Ce que nous avons compris",
+        "method": {
+          "hybride": "IA + règles",
+          "regles": "Règles",
+          "llm": "IA"
+        },
+        "destination": "Destination",
+        "duration": "Durée",
+        "budget": "Budget",
+        "travellers": "Voyageurs",
+        "preferences": "Envies",
+        "activities": "Activités",
+        "departure": "Départ de",
+        "transport": "Transport",
+        "days": "{{count}} jour",
+        "days_other": "{{count}} jours",
+        "nights": "{{count}} nuit",
+        "nights_other": "{{count}} nuits",
+        "people": "{{count}} personne",
+        "people_other": "{{count}} personnes",
+        "adults": "{{count}} adulte",
+        "adults_other": "{{count}} adultes",
+        "children": "{{count}} enfant",
+        "children_other": "{{count}} enfants",
+        "unlimited": "Sans limite",
+        "types": {
+          "famille": "Famille",
+          "couple": "Couple",
+          "solo": "Solo",
+          "amis": "Entre amis",
+          "groupe": "Groupe"
+        },
+        "themes": {
+          "plage": "Plage",
+          "culture": "Culture",
+          "histoire": "Histoire",
+          "nature": "Nature",
+          "gastronomie": "Gastronomie",
+          "aventure": "Aventure",
+          "detente": "Détente",
+          "shopping": "Shopping",
+          "nautique": "Activités nautiques",
+          "desert": "Désert"
+        },
+        "need": {
+          "vol_oui": "Vol",
+          "vol_non": "Sans vol",
+          "voiture_oui": "Location de voiture",
+          "voiture_non": "Sans voiture",
+          "transfert_oui": "Transfert",
+          "transfert_non": "Sans transfert"
+        }
+      },
       "inspirations": "Inspirations :",
       "chips": {
         "culture": "Culture & Histoire",

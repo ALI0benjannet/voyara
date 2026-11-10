@@ -183,3 +183,4 @@ de PFE (étape 13).
 | 2-bis · Hébergements et offres de transport pour l'IA | [etape-02bis-transport-catalogue.md](rapports/etape-02bis-transport-catalogue.md) |
 | 3 · Service `ai` et couche LLM hybride | [etape-03-service-ai-llm-hybride.md](rapports/etape-03-service-ai-llm-hybride.md) |
 | 4 · Module 1 : comprendre le voyageur (NLU) — livrée avec réserve | [etape-04-module1-comprehension.md](rapports/etape-04-module1-comprehension.md) |
+| 4 · Accueil branché sur `/api/ai/comprendre` (sous-tâche) | [etape-04-accueil-comprendre.md](rapports/etape-04-accueil-comprendre.md) |

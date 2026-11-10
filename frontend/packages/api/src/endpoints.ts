@@ -53,4 +53,6 @@ export const endpoints = {
     activity: (id: string | number) => `/api/v1/moderation/activities/${id}`,
   },
   reviews: { list: "/api/v1/reviews", create: "/api/v1/reviews", stats: "/api/v1/reviews/stats" },
+  /** Moteur IA (service ai, ADR-007) : préfixe /api/ai, hors /api/v1. */
+  ai: { comprendre: "/api/ai/comprendre" },
 } as const;
