@@ -36,16 +36,20 @@ F1 macro sur le test :
 
 | Approche | type_voyage | vol | voiture |
 | :--- | ---: | ---: | ---: |
+| **Baseline : règles (étape 4)** | **0,838** | **0,856** | **0,857** |
 | ML : TF-IDF + régression logistique | 0,460 | 0,513 | 0,604 |
 | DL Transfer Learning : XLM-R gelé | 0,366 | 0,595 | 0,538 |
 | **DL Fine-Tuning phase 1 (3 graines)** | **0,547 ± 0,015** | **0,602 ± 0,006** | **0,808 ± 0,029** |
 | DL Fine-Tuning phase 2 (1 graine) | 0,486 | — | — |
 
-- Le Fine-Tuning gagne sur type_voyage (+0,09 face au ML) et voiture (+0,20). Sur vol, égalité avec le Transfer Learning (écart < variance).
+- Parmi les modèles appris, le Fine-Tuning gagne sur type_voyage (+0,09 face au ML) et voiture (+0,20). Sur vol, égalité avec le Transfer Learning (écart < variance).
+- **La baseline par règles de l'étape 4 reste la meilleure sur les trois champs** (0,838 / 0,856 / 0,857), mesurée au même format par `services/ai/scripts/baseline_regles_classif.py` (résultats : `docs/ia/resultats/dl_classif_regles.csv`). Les règles ont été construites sur le dev uniquement, sans regarder le test (rapport de l'étape 4) : la comparaison est loyale.
 - type_voyage, modèle de démonstration (F1 0,51) : famille 0,74 · couple 0,65 · amis 0,50 · solo 0,33 · non précisé 0,30.
 - Temps d'entraînement d'un run phase 1 : ≈ 17 s sur T4 (hors chargement).
 
 ## 6. Limites, dette technique, risques
+
+- **Les règles expertes battent le modèle fine-tuné** : ces champs se décident surtout par des mots-clés (« avion », « tayara », « louer une voiture », « enfants »), que les règles encodent directement dans les quatre langues, alors que le modèle doit les apprendre avec 264 exemples. Conséquence produit : la compréhension reste assurée par règles + LLM (étape 4) ; le classifieur DL sert de comparaison et de secours rapide. Il garde l'avantage de ne pas demander de règles écrites à la main et progressera avec plus de données, alors que les règles sont sur-ajustées au dev.
 
 - **Tentative 1 : effondrement sur la classe majoritaire** (F1 validation bloqué à 0,28, prédiction toujours « indifférent » pour vol et voiture) → corrigé par la perte pondérée et une patience plus longue.
 - **Variance** : un même réglage a donné 0,600 puis 0,51 sur type_voyage → résultats rapportés en moyenne de 3 graines.
@@ -62,4 +66,4 @@ F1 macro sur le test :
 
 ## 8. Étape suivante recommandée
 
-Ajouter des exemples pour solo et la darija, puis évaluer ce classifieur rapide (quelques ms, hors ligne) comme filtre avant le LLM de l'agent (niveau 5). Relecture de la branche par Ali avant fusion dans `main`.
+Tester une combinaison règles + modèle (le modèle tranche quand les règles ne trouvent rien). Ajouter des exemples pour solo et la darija, puis évaluer ce classifieur rapide (quelques ms, hors ligne) comme filtre avant le LLM de l'agent (niveau 5). Relecture de la branche par Ali avant fusion dans `main`.

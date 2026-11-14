@@ -1,0 +1,4 @@
+approche,champ,F1_macro,F1_fr,F1_en,F1_ar,F1_darija
+Baseline : règles (étape 4),type_voyage,0.838,0.965,0.843,0.659,0.714
+Baseline : règles (étape 4),vol,0.856,0.909,0.63,1.0,0.651
+Baseline : règles (étape 4),voiture,0.857,0.929,0.822,1.0,0.608
