@@ -14,6 +14,9 @@ services/auth/static/avatars/*
 # Cache des sorties du LLM de l'évaluation NLU (scripts/evaluer_nlu.py) — régénérable
 services/ai/data/eval/cache/
 
+# Modèles fine-tunés de la validation DL (≈ 1 Go) — copiés sur Drive, jamais versionnés
+modeles/
+
 # Python
 __pycache__/
 *.py[cod]

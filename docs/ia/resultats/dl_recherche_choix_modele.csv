@@ -1,0 +1,5 @@
+modele,parametres_M,nDCG@10,Recall@5,MRR,latence_ms,chargement+index_s
+multilingual-e5-base,278,0.796,0.83,0.787,14.0,17.4
+multilingual-e5-small,118,0.777,0.791,0.774,11.0,10.1
+LaBSE,472,0.683,0.721,0.658,11.4,18.0
+bge-m3,568,0.827,0.841,0.829,22.8,27.1

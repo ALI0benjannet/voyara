@@ -1,0 +1,71 @@
+id,langue,requete,rang_tfidf,rang_gele,rang_ft,top1_ft,attendu
+R-001,fr,plage calme en famille à Djerba,3,3,3,Croisière au couchant à Djerba,Bateau pirate vers l'île aux Flamants (Ras Rmel)
+R-002,fr,plongée à Tabarka,1,1,2,Baptême de plongée à Port El Kantaoui,Plongée aux récifs de Tabarka
+R-003,fr,un truc sympa pour les enfants à Hammamet,3,1,5,Baptême de plongée à Hammamet,Journée au parc Carthage Land
+R-004,fr,visiter des ruines romaines près de Tunis,1,1,3,Site antique de Meninx et chaussée d'El Kantara,Amphithéâtre et villas romaines de Carthage
+R-005,fr,dormir sous les étoiles dans le Sahara,1,1,4,Balade à dromadaire au coucher du soleil à Tozeur,Bivouac dans le désert de Douz
+R-006,fr,apprendre à préparer un couscous,1,1,1,Cours de cuisine tunisienne : couscous et brik,Cours de cuisine tunisienne : couscous et brik
+R-007,fr,se faire masser à deux en amoureux,4,1,1,Massage en duo à l'huile d'argan à Aghir,Massage en duo à l'huile d'argan à Aghir
+R-008,fr,jouer au golf à Monastir,1,1,1,Parcours au Flamingo Golf de Monastir,Parcours au Flamingo Golf de Monastir
+R-009,fr,activité très tôt le matin à Tozeur,1,3,2,Balade à dromadaire au coucher du soleil à Tozeur,Lever du soleil sur le Chott el-Jérid
+R-010,fr,voir les lieux de tournage de Star Wars,1,1,1,Sur les traces de Star Wars à Ajim,Décors de Star Wars et rocher d'Ong Jemel
+R-011,fr,sensations fortes sur l'eau à Sousse,27,2,16,Thalasso à Port El Kantaoui : bassin d'eau de mer et soins,Jet-ski à Port El Kantaoui
+R-012,fr,musée avec de belles mosaïques,1,1,1,Musée national du Bardo : mosaïques romaines,Musée national du Bardo : mosaïques romaines
+R-013,fr,monter à cheval au bord de la mer,1,1,1,Balade à cheval sur la plage d'Aghir,Balade à cheval sur la plage d'Aghir
+R-014,fr,journée détente spa et soins vers Sousse,2,1,7,Soins aux dattes et hammam dans un spa de l'oasis,Thalasso à Port El Kantaoui : bassin d'eau de mer et soins
+R-015,fr,découvrir l'artisanat de la poterie,1,1,1,Atelier de poterie à Guellala,Atelier de poterie à Guellala
+R-016,fr,visite culturelle à Monastir sans trop marcher,1,7,4,Excursion à l'amphithéâtre d'El Jem,Mausolée Habib Bourguiba
+R-017,fr,excursion en 4x4 dans les oasis de montagne,1,1,1,"Oasis de montagne en 4x4 : Chebika, Tamerza et Mides","Oasis de montagne en 4x4 : Chebika, Tamerza et Mides"
+R-018,fr,observer des flamants roses,1,1,1,Observation des oiseaux à la lagune de Bin El Ouedian,Bateau pirate vers l'île aux Flamants (Ras Rmel)
+R-019,fr,goûter aux spécialités locales à Tunis,1,1,1,Visite gourmande du marché central de Tunis,Food tour de la médina de Tunis
+R-020,fr,faire du quad,1,1,1,Quad dans l'arrière-pays de Midoun,Quad dans les dunes autour de Tozeur
+R-021,fr,sortie en bateau vers une île près de Monastir,1,2,4,Bateau pirate vers l'île aux Flamants (Ras Rmel),Sortie en mer aux îles Kuriat
+R-022,fr,hammam traditionnel,1,1,1,Hammam traditionnel et gommage au kassa à Houmt Souk,Hammam et rituel de soins dans la médina de Tunis
+R-023,fr,zoo pour les petits,1,1,1,"Zoo du Paradis, le zoo du désert de Tozeur",Parc du Belvédère et zoo de Tunis en famille
+R-024,fr,voir le colisée d'El Jem,1,1,1,Excursion à l'amphithéâtre d'El Jem,Excursion à l'amphithéâtre d'El Jem
+R-025,fr,mosquées anciennes à Djerba,1,5,3,Synagogue de la Ghriba et village d'Erriadh,Circuit des mosquées ibadites : Fadhloun et El May
+R-026,fr,balade à vélo avec visite,1,1,1,Tour de Djerba à vélo : menzels et huileries souterraines,"Carthage à vélo, des thermes d'Antonin à Sidi Bou Saïd"
+R-027,fr,marché local pour faire des achats,2,1,1,Marché hebdomadaire de Midoun,Marché hebdomadaire de Midoun
+R-028,fr,randonnée en pleine nature près de Tunis,3,2,1,Randonnée au parc national de Boukornine,Randonnée au parc national de Boukornine
+R-029,fr,tout savoir sur les dattes,1,1,1,Dégustation de dattes Deglet Nour dans une palmeraie,Dégustation de dattes Deglet Nour dans une palmeraie
+R-030,fr,activité nautique pour ados à Hammamet,1,1,1,Baptême de plongée à Hammamet,Parachute ascensionnel à Yasmine Hammamet
+R-031,fr,l'histoire punique de Carthage,1,1,1,Carthage punique : tophet de Salammbô et ports puniques,Carthage punique : tophet de Salammbô et ports puniques
+R-032,fr,moment romantique au coucher du soleil,1,1,1,Balade à dromadaire au coucher du soleil à Tozeur,Croisière au couchant à Djerba
+R-033,fr,parc d'attractions avec manèges,1,1,1,Journée au parc Carthage Land,Journée au parc Carthage Land
+R-034,fr,voir des fresques murales,1,1,1,Parcours street art Djerbahood à Erriadh,Parcours street art Djerbahood à Erriadh
+R-035,fr,dégustation d'huile d'olive,1,1,1,Dégustation d'huile d'olive et huilerie souterraine,Dégustation d'huile d'olive et huilerie souterraine
+R-036,en,camel ride in the desert at sunset,9,6,1,Balade à dromadaire au coucher du soleil à Tozeur,Balade à dromadaire au coucher du soleil à Tozeur
+R-037,en,scuba diving for beginners,52,2,1,Baptême de plongée au large de la zone touristique,Baptême de plongée au large de la zone touristique
+R-038,en,family day out with kids near Sousse,2,1,15,Parc du Belvédère et zoo de Tunis en famille,Sortie au Hannibal Park de Port El Kantaoui
+R-039,en,learn kitesurfing,1,1,1,Initiation au kitesurf sur la lagune de Bin El Ouedian,Initiation au kitesurf sur la lagune de Bin El Ouedian
+R-040,en,Roman history tour,1,1,1,Excursion d'une journée à Dougga,Amphithéâtre et villas romaines de Carthage
+R-041,en,hot air balloon flight,92,2,1,Montgolfière sur les oasis de Tozeur,Montgolfière sur les oasis de Tozeur
+R-042,en,street food tasting in the old town,2,5,1,Food tour de la médina de Tunis,Food tour de la médina de Tunis
+R-043,en,relaxing thalasso day,1,1,1,Demi-journée de thalassothérapie à Skanes,"Demi-journée thalasso à Djerba : parcours marin, hammam et enveloppement"
+R-044,en,walk through the old medina of Hammamet,3,1,1,Médina et Kasbah de Hammamet,Médina et Kasbah de Hammamet
+R-045,en,sailing trip,11,1,1,Sortie en voilier dans le golfe de Tunis,Sortie en voilier dans le golfe de Tunis
+R-046,en,indoor activity for children on a rainy day in Tunis,1,3,5,Parc du Belvédère et zoo de Tunis en famille,Cité des sciences de Tunis et séance au planétarium
+R-047,en,traditional fishing with local fishermen,7,1,1,Pêche traditionnelle à la charfia avec les pêcheurs d'Ajim,Pêche traditionnelle à la charfia avec les pêcheurs d'Ajim
+R-048,en,morning yoga session,1,1,1,Yoga au lever du soleil face au golfe de Tunis,Yoga au lever du soleil face au golfe de Tunis
+R-049,en,Berber troglodyte houses,1,1,4,"Dar Ennejma Ezzahra, palais du baron d'Erlanger",Journée à Matmata et aux ksour de Tataouine
+R-050,ar,غوص في طبرقة,2,22,21,Pêche traditionnelle à la charfia avec les pêcheurs d'Ajim,Plongée aux récifs de Tabarka
+R-051,ar,رحلة إلى الصحراء والمبيت في خيمة,3,9,8,Thalasso et hammam à Yasmine Hammamet,Bivouac dans le désert de Douz
+R-052,ar,أنشطة للأطفال في تونس العاصمة,105,1,1,Parc du Belvédère et zoo de Tunis en famille,Parc du Belvédère et zoo de Tunis en famille
+R-053,ar,حمّام تقليدي في جربة,96,1,1,Hammam traditionnel et gommage au kassa à Houmt Souk,Hammam traditionnel et gommage au kassa à Houmt Souk
+R-054,ar,زيارة متحف باردو,41,1,1,Musée national du Bardo : mosaïques romaines,Musée national du Bardo : mosaïques romaines
+R-055,ar,جولة بالدراجة الهوائية,20,9,1,Tour de Djerba à vélo : menzels et huileries souterraines,"Carthage à vélo, des thermes d'Antonin à Sidi Bou Saïd"
+R-056,ar,تعلّم الطبخ التونسي,36,1,1,Cours de cuisine tunisienne : couscous et brik,Cours de cuisine tunisienne : couscous et brik
+R-057,ar,ركوب الخيل على الشاطئ,31,1,1,Balade à cheval sur la plage d'Aghir,Balade à cheval sur la plage d'Aghir
+R-058,ar,المدينة العتيقة في سوسة والرباط,57,1,1,Médina de Sousse : Grande Mosquée et Ribat,Médina de Sousse : Grande Mosquée et Ribat
+R-059,ar,جولة في الواحات بسيارة رباعية الدفع,87,42,23,"Carthage à vélo, des thermes d'Antonin à Sidi Bou Saïd","Oasis de montagne en 4x4 : Chebika, Tamerza et Mides"
+R-060,ar,لعب الغولف في الحمامات,112,1,1,Green-fee au golf Citrus de Hammamet,Green-fee au golf Citrus de Hammamet
+R-061,darija,nheb nchouf sahra f Tozeur,1,1,2,"Zoo du Paradis, le zoo du désert de Tozeur",Quad dans les dunes autour de Tozeur
+R-062,darija,n7eb nghtes f jerba,28,4,18,Cours de cuisine djerbienne chez l'habitant,Baptême de plongée au large de la zone touristique
+R-063,darija,chniya na3mlou m3a sghar f Hammamet,4,11,13,Hammam traditionnel et gommage au kassa à Houmt Souk,Journée au parc Carthage Land
+R-064,darija,nheb nekel makla tounsia f lmedina,5,1,2,Médina de Tunis : Zitouna et Dar Ben Abdallah,Food tour de la médina de Tunis
+R-065,darija,jet ski f sousse,1,1,1,Jet-ski à Port El Kantaoui,Jet-ski à Port El Kantaoui
+R-066,darija,hammam w massage m3a mrti,2,1,1,Hammam et rituel de soins dans la médina de Tunis,Massage en duo à l'huile d'argan à Aghir
+R-067,darija,nhebou na3mlou dawra bel babour,15,4,69,Marché du vendredi et poterie de Nabeul,Bateau pirate vers l'île aux Flamants (Ras Rmel)
+R-068,darija,nzour Carthage w Sidi Bou Said,1,1,1,Sidi Bou Saïd & Carthage,Sidi Bou Saïd & Carthage
+R-069,darija,dawra fel souk f Houmt Souk,1,1,1,"Visite guidée de Houmt Souk : souks, fondouks et Borj El Kebir","Visite guidée de Houmt Souk : souks, fondouks et Borj El Kebir"
+R-070,darija,nheb nerkeb 3la jmal fel sahra,52,73,39,Atelier de calligraphie arabe dans la médina,Balade à dromadaire au coucher du soleil à Tozeur
