@@ -49,6 +49,13 @@ nbformat==5.11.1
 nbconvert==7.17.2
 ipykernel==7.4.0
 
+# Moteur IA — validation Deep Learning (embeddings de recherche, notebooks/05_dl_recherche.ipynb)
+sentence-transformers==6.3.0
+transformers==5.23.0
+torch==2.15.0
+peft==0.21.3
+scikit-learn==1.9.1
+
 # Tests & qualité
 pytest~=8.3
 ruff~=0.9
