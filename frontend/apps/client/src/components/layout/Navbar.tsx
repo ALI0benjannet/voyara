@@ -6,6 +6,7 @@ import {
   CarTaxiFront,
   Briefcase,
   FerrisWheel,
+  FlaskConical,
   Heart,
   LogIn,
   Plane,
@@ -163,6 +164,15 @@ export function Navbar() {
               {t("nav.providerSpace")}
             </Link>
           </div>
+          {/* TEMPORAIRE — démonstration de la validation Deep Learning (page /dl-test).
+              À retirer avec src/app/dl-test, src/components/dl-test et src/features/dl-test. */}
+          <Link
+            href={paths.dlTest}
+            className="border-accent bg-accent/15 hover:bg-accent/30 ms-3 flex items-center gap-1.5 self-center rounded-full border border-dashed px-3 py-1.5 text-sm font-semibold transition-colors"
+          >
+            <FlaskConical className="size-4" />
+            {t("nav.dlTest")}
+          </Link>
         </div>
       </div>
 

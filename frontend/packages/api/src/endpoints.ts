@@ -54,5 +54,16 @@ export const endpoints = {
   },
   reviews: { list: "/api/v1/reviews", create: "/api/v1/reviews", stats: "/api/v1/reviews/stats" },
   /** Moteur IA (service ai, ADR-007) : préfixe /api/ai, hors /api/v1. */
-  ai: { comprendre: "/api/ai/comprendre" },
+  ai: {
+    comprendre: "/api/ai/comprendre",
+    /** Démonstration temporaire de la validation Deep Learning (page « DL test »), sans LLM. */
+    dl: {
+      resultats: "/api/ai/dl/resultats",
+      etat: "/api/ai/dl/etat",
+      exemples: "/api/ai/dl/exemples",
+      prechauffer: "/api/ai/dl/prechauffer",
+      rechercher: "/api/ai/dl/rechercher",
+      classifier: "/api/ai/dl/classifier",
+    },
+  },
 } as const;

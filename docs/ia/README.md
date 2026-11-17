@@ -185,3 +185,4 @@ de PFE (étape 13).
 | 4 · Module 1 : comprendre le voyageur (NLU) — livrée avec réserve | [etape-04-module1-comprehension.md](rapports/etape-04-module1-comprehension.md) |
 | 4 · Accueil branché sur `/api/ai/comprendre` (sous-tâche) | [etape-04-accueil-comprendre.md](rapports/etape-04-accueil-comprendre.md) |
 | Validation DL · Recherche d'activités (e5 gelé vs fine-tuné) | [etape-dl-recherche.md](rapports/etape-dl-recherche.md) |
+| Validation DL · Interface « DL test » (résultats + tests en direct, sans LLM) | [etape-dl-interface-test.md](rapports/etape-dl-interface-test.md) |

@@ -153,7 +153,8 @@
     "carRentals": "Voitures de location",
     "transfers": "Transferts",
     "travelerSpace": "Espace voyageur",
-    "providerSpace": "Espace prestataire"
+    "providerSpace": "Espace prestataire",
+    "dlTest": "DL test"
   },
   "activities": {
     "description": "Découvrez les meilleures activités à réserver près de chez vous."
@@ -942,5 +943,84 @@
     "pickup": "Prise en charge",
     "agency": "Agence",
     "flightsHint": "Vols directs à venir avec des places disponibles."
+  },
+  "dlTest": {
+    "badge": "Démonstration temporaire · sans LLM",
+    "title": "Validation Deep Learning",
+    "subtitle": "Résultats mesurés et tests en direct des deux travaux de validation : la recherche d'activités par embeddings (Ons) et la classification des demandes de voyage (Boutheina). Aucun LLM n'est appelé.",
+    "tabs": {
+      "recherche": "Recherche d'activités (Ons)",
+      "classification": "Classification des demandes (Boutheina)"
+    },
+    "examples": "Exemples du jeu de test…",
+    "unavailable": "Modèle non disponible sur ce poste",
+    "noData": "Aucun résultat disponible.",
+    "error": "Le service IA ne répond pas. Vérifiez que le backend est démarré, puis réessayez.",
+    "firstCall": "Premier appel : chargement du modèle (jusqu'à une minute sur CPU)…",
+    "byLanguage": "Par langue",
+    "seed": "graine",
+    "epoch": "Époque",
+    "lang": {
+      "fr": "Français",
+      "en": "Anglais",
+      "ar": "Arabe",
+      "darija": "Darija"
+    },
+    "col": {
+      "approach": "Approche",
+      "model": "Modèle",
+      "run": "Run"
+    },
+    "search": {
+      "liveTitle": "Tester la recherche",
+      "liveHelp": "Tapez une requête libre ou choisissez une requête du jeu de test : les 10 meilleures activités de chaque méthode s'affichent côte à côte. Pour une requête du jeu de test, les bonnes réponses sont surlignées en vert.",
+      "placeholder": "Ex. : plage calme en famille à Djerba",
+      "submit": "Rechercher",
+      "fromTest": "Requête {{id}} du jeu de test — activités attendues :",
+      "freeQuery": "Requête libre : pas de bonne réponse connue.",
+      "firstRelevant": "Rang de la 1re bonne activité :",
+      "methods": {
+        "tfidf": "TF-IDF (baseline)",
+        "e5_gele": "e5 gelé (Transfer Learning)",
+        "e5_fine_tune": "e5 fine-tuné (Fine-Tuning)"
+      },
+      "globalTitle": "Résultats mesurés (70 requêtes)",
+      "globalHelp": "Plus c'est proche de 1, mieux c'est. La meilleure valeur de chaque colonne est en couleur.",
+      "modelChoice": "Choix du modèle (modèles gelés)",
+      "lossTitle": "Perte d'entraînement par époque",
+      "lossHelp": "La perte tombe très vite : signe de sur-apprentissage sur 291 paires."
+    },
+    "classif": {
+      "liveTitle": "Tester la classification",
+      "liveHelp": "Écrivez une demande de voyage ou choisissez une demande du jeu de test : chaque méthode prédit le type de voyage et les besoins en vol et en voiture. Pour une demande du jeu de test, la bonne réponse est affichée.",
+      "placeholder": "Ex. : Je pars à Djerba avec ma femme, on prend l'avion depuis Tunis",
+      "submit": "Classer",
+      "field": "Champ",
+      "expected": "Attendu",
+      "methods": {
+        "regles": "Règles (baseline)",
+        "ml_tfidf": "TF-IDF + régression logistique",
+        "xlmr_fine_tune": "XLM-R fine-tuné"
+      },
+      "fields": {
+        "type_voyage": "Type de voyage",
+        "vol": "Vol",
+        "voiture": "Voiture"
+      },
+      "labels": {
+        "famille": "Famille",
+        "couple": "Couple",
+        "amis": "Amis",
+        "solo": "Solo",
+        "non_precise": "Non précisé",
+        "oui": "Oui",
+        "non": "Non",
+        "indifferent": "Indifférent"
+      },
+      "globalTitle": "Résultats mesurés : F1 macro (115 demandes)",
+      "globalHelp": "Plus c'est proche de 1, mieux c'est. Les règles expertes restent les meilleures sur les trois champs."
+    },
+    "loadingModel": "Chargement du modèle en arrière-plan (environ une minute la première fois)… la recherche se relance toute seule.",
+    "modelError": "Le modèle n'a pas pu être chargé : mémoire insuffisante sur ce poste. Fermez d'autres applications puis relancez la recherche."
   }
 }

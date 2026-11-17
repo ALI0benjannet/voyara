@@ -16,6 +16,8 @@ export const paths = {
   checkEmail: "/check-email",
   profile: "/profile",
   forbidden: "/403",
+  /** TEMPORAIRE : démonstration de la validation Deep Learning. */
+  dlTest: "/dl-test",
   admin: {
     root: "/admin",
     dashboard: "/admin/dashboard",

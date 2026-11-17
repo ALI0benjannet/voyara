@@ -19,6 +19,7 @@ from voyara_common.logging import setup_logging
 from app.clients.catalog import ClientCatalog
 from app.config import settings
 from app.database import Base, SessionLocal, engine
+from app.dl.routes import router as router_dl
 from app.llm.fabrique import creer_client_llm
 from app.llm.journal import JournalLLM
 from app.nlu.routes import router as router_nlu
@@ -71,3 +72,5 @@ def health():
 
 app.include_router(router, prefix=settings.API_AI_PREFIX)
 app.include_router(router_nlu, prefix=settings.API_AI_PREFIX)
+# Démonstration temporaire de la validation DL (page « DL test » du site client), sans LLM.
+app.include_router(router_dl, prefix=settings.API_AI_PREFIX)

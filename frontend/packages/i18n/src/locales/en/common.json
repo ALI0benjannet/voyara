@@ -153,7 +153,8 @@
     "carRentals": "Car rentals",
     "transfers": "Airport taxis",
     "travelerSpace": "Traveler space",
-    "providerSpace": "Provider space"
+    "providerSpace": "Provider space",
+    "dlTest": "DL test"
   },
   "activities": {
     "description": "Browse the best activities to book near you."
@@ -942,5 +943,84 @@
     "pickup": "Pick-up",
     "agency": "Agency",
     "flightsHint": "Upcoming direct flights with seats available."
+  },
+  "dlTest": {
+    "badge": "Temporary demo · no LLM",
+    "title": "Deep Learning validation",
+    "subtitle": "Measured results and live tests of the two validation projects: activity search with embeddings (Ons) and travel request classification (Boutheina). No LLM is called.",
+    "tabs": {
+      "recherche": "Activity search (Ons)",
+      "classification": "Request classification (Boutheina)"
+    },
+    "examples": "Test set examples…",
+    "unavailable": "Model not available on this machine",
+    "noData": "No results available.",
+    "error": "The AI service is not responding. Check that the backend is running, then try again.",
+    "firstCall": "First call: loading the model (up to a minute on CPU)…",
+    "byLanguage": "By language",
+    "seed": "seed",
+    "epoch": "Epoch",
+    "lang": {
+      "fr": "French",
+      "en": "English",
+      "ar": "Arabic",
+      "darija": "Darija"
+    },
+    "col": {
+      "approach": "Approach",
+      "model": "Model",
+      "run": "Run"
+    },
+    "search": {
+      "liveTitle": "Try the search",
+      "liveHelp": "Type a free query or pick one from the test set: the top 10 activities of each method are shown side by side. For a test set query, the correct answers are highlighted in green.",
+      "placeholder": "E.g. quiet family beach in Djerba",
+      "submit": "Search",
+      "fromTest": "Test set query {{id}} — expected activities:",
+      "freeQuery": "Free query: no known correct answer.",
+      "firstRelevant": "Rank of the first correct activity:",
+      "methods": {
+        "tfidf": "TF-IDF (baseline)",
+        "e5_gele": "Frozen e5 (Transfer Learning)",
+        "e5_fine_tune": "Fine-tuned e5 (Fine-Tuning)"
+      },
+      "globalTitle": "Measured results (70 queries)",
+      "globalHelp": "The closer to 1, the better. The best value of each column is highlighted.",
+      "modelChoice": "Model choice (frozen models)",
+      "lossTitle": "Training loss per epoch",
+      "lossHelp": "The loss drops very fast: a sign of overfitting on 291 pairs."
+    },
+    "classif": {
+      "liveTitle": "Try the classification",
+      "liveHelp": "Write a travel request or pick one from the test set: each method predicts the trip type and the flight and car needs. For a test set request, the correct answer is shown.",
+      "placeholder": "E.g. I'm going to Djerba with my wife, we fly from Tunis",
+      "submit": "Classify",
+      "field": "Field",
+      "expected": "Expected",
+      "methods": {
+        "regles": "Rules (baseline)",
+        "ml_tfidf": "TF-IDF + logistic regression",
+        "xlmr_fine_tune": "Fine-tuned XLM-R"
+      },
+      "fields": {
+        "type_voyage": "Trip type",
+        "vol": "Flight",
+        "voiture": "Car"
+      },
+      "labels": {
+        "famille": "Family",
+        "couple": "Couple",
+        "amis": "Friends",
+        "solo": "Solo",
+        "non_precise": "Not specified",
+        "oui": "Yes",
+        "non": "No",
+        "indifferent": "No preference"
+      },
+      "globalTitle": "Measured results: macro F1 (115 requests)",
+      "globalHelp": "The closer to 1, the better. Expert rules remain the best on all three fields."
+    },
+    "loadingModel": "Loading the model in the background (about a minute the first time)… the search will rerun on its own.",
+    "modelError": "The model could not be loaded: not enough memory on this machine. Close other applications, then run the search again."
   }
 }

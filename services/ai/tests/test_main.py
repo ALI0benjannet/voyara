@@ -21,5 +21,7 @@ def test_health_et_health_detaillee():
 
 def test_routes_exposees():
     chemins = set(app.openapi()["paths"])
-    assert chemins == {"/health", "/api/ai/health", "/api/ai/comprendre"}
+    # Démonstration temporaire de la validation DL (page « DL test ») : 6 routes publiques sans LLM.
+    dl = {f"/api/ai/dl/{r}" for r in ("resultats", "etat", "exemples", "prechauffer", "rechercher", "classifier")}
+    assert chemins == {"/health", "/api/ai/health", "/api/ai/comprendre"} | dl
     assert not any("/internal" in c for c in chemins)
